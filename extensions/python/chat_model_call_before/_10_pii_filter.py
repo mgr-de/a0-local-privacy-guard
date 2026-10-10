@@ -43,6 +43,33 @@ def _get_filter(agent, config: dict):
     return _filter_cache[cache_key]
 
 
+def _safe_log(agent, level: str, message: str):
+    """Log safely regardless of agent object shape (agent.log may not exist).
+
+    Tries, in order: agent.log, agent.context.log, Python logging module.
+    Never raises - logging must not break the LLM call.
+    """
+    try:
+        log = getattr(agent, "log", None)
+        if log is not None and hasattr(log, level):
+            getattr(log, level)(message)
+            return
+    except Exception:
+        pass
+    try:
+        ctx_log = getattr(getattr(agent, "context", None), "log", None)
+        if ctx_log is not None and hasattr(ctx_log, level):
+            getattr(ctx_log, level)(message)
+            return
+    except Exception:
+        pass
+    try:
+        import logging
+        getattr(logging.getLogger("local_privacy_guard"), level)(message)
+    except Exception:
+        pass
+
+
 def _get_message_role(message) -> str:
     """Get the role/type of a langchain message."""
     msg_type = type(message).__name__.lower()
@@ -134,7 +161,7 @@ class LocalPrivacyPIIFilterExtension(Extension):
                 pii_summary = ", ".join(f"{d.pii_type}" for d in result.detections[:5])
                 if len(result.detections) > 5:
                     pii_summary += f", ... +{len(result.detections) - 5} more"
-                self.agent.log.info(
+                _safe_log(self.agent, "info", 
                     f"[Local Privacy Guard] Detected {result.pii_count} PII items "
                     f"(languages: {', '.join(loaded_langs)}): {pii_summary}"
                 )
@@ -143,7 +170,7 @@ class LocalPrivacyPIIFilterExtension(Extension):
             if action == "redact":
                 _set_message_content(message, result.filtered_text)
             elif action == "block":
-                self.agent.log.warning(
+                _safe_log(self.agent, "warning", 
                     f"[Local Privacy Guard] BLOCKED message with {result.pii_count} PII items"
                 )
                 _set_message_content(
@@ -153,7 +180,7 @@ class LocalPrivacyPIIFilterExtension(Extension):
             # log_only: do nothing, message passes through unmodified
 
         if total_detections > 0:
-            self.agent.log.info(
+            _safe_log(self.agent, "info", 
                 f"[Local Privacy Guard] Filtered {total_detections} PII items total "
                 f"(languages: {', '.join(loaded_langs)})"
             )
