@@ -1,6 +1,8 @@
-# 🛡️ Local Privacy Guard
-
-**Comprehensive local privacy protection for Agent Zero**
+<div align="center">
+  <img src="assets/icon.svg" width="150" alt="Local Privacy Guard Logo" />
+  <h1>🛡️ Local Privacy Guard</h1>
+  <p><b>Comprehensive local privacy protection for Agent Zero</b></p>
+</div>
 
 [![Agent Zero Plugin](https://img.shields.io/badge/Agent%20Zero-Plugin-blue)](https://github.com/agent0ai/agent-zero)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -25,7 +27,15 @@ Similarly, Agent Zero's default memory embedding configuration may use external 
 
 ---
 
-## 🌍 Multi-Language Support
+## 📸 Screenshots
+
+| Architecture Overview | PII Filter Demo |
+|:---:|:---:|
+| ![Architecture Overview](docs/screenshots/architecture_demo.png) | ![PII Filter Demo](docs/screenshots/pii_filter_demo.png) |
+
+| Plugin Settings | Startup Verification |
+|:---:|:---:|
+| ![Plugin Settings](docs/screenshots/settings.png) | ![Startup Verification](docs/screenshots/startup_verification.png) |
 
 The PII filter supports **multiple languages simultaneously**. Select which languages to load in the plugin settings:
 
