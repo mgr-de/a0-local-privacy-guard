@@ -19,6 +19,10 @@ Local Privacy Guard protects your personal data when using Agent Zero with exter
 | 🧠 **Local Embedding** | Forces memory embeddings to run 100% locally using sentence-transformers — no memory content is sent to external APIs |
 | ✅ **Privacy Verification** | Checks on startup that all privacy-relevant components are configured for local-only operation |
 
+### Related plugin
+
+This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard), from the same authors. Local Privacy Guard anonymizes **what** is sent to your LLM (PII filtering before every model call, local embeddings); Requesty Privacy Guard controls **where** your traffic is routed (EU router, provider ZDR, no training) for Agent Zero models using Requesty. Use both together for end-to-end data protection.
+
 ### Why is this needed?
 
 Many LLM gateway providers (like Requesty) offer strong compliance features (EU-only routing, Zero Data Retention, No Training), but **PII scanning is often Enterprise-only**. This plugin compensates by anonymizing PII **locally** before data ever reaches the provider.
