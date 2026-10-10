@@ -105,10 +105,37 @@ def pre_update() -> dict:
     return {"status": "ok"}
 
 
+def _load_embedding_config_module():
+    """Load embedding_config.py by file path (robust at uninstall time)."""
+    import importlib.util
+
+    module_path = Path(__file__).parent / "helpers" / "embedding_config.py"
+    spec = importlib.util.spec_from_file_location("_lpg_embedding_config", module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def uninstall() -> dict:
     """
     Clean up on uninstall.
-    Note: We don't remove spaCy models as they may be used by other plugins.
+
+    - Restores presets.yaml from the pre-plugin backup (embedding config),
+      so no configuration written by this plugin survives it.
+    - spaCy models are preserved: they are shared packages that other
+      plugins or agents may use.
     """
-    return {"status": "ok",
-            "note": "spaCy models preserved (may be used by other plugins)"}
+    result = {
+        "status": "ok",
+        "note": "spaCy models preserved (may be used by other plugins)",
+        "embedding_restore": None,
+    }
+    try:
+        module = _load_embedding_config_module()
+        result["embedding_restore"] = module.restore_embedding_backup()
+        if result["embedding_restore"].get("restored"):
+            result["note"] += "; embedding presets restored from backup"
+    except Exception as exc:
+        result["status"] = "partial"
+        result["note"] += f"; embedding restore unavailable: {exc}"
+    return result
