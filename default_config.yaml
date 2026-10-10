@@ -1,0 +1,58 @@
+# Local Privacy Guard Configuration
+# ==================================
+
+# Master switch for all privacy features
+enabled: true
+
+# ============================================================
+# PII FILTER SETTINGS
+# ============================================================
+pii_filter:
+  enabled: true
+  use_regex: true
+  use_ner: true
+  action: redact
+  log_detections: true
+  ner_language: de
+  ner_entity_types:
+    - PER
+    - LOC
+    - ORG
+    - GPE
+    - DATE
+    - TIME
+  custom_patterns: []
+  skip_roles:
+    - system
+  skip_providers: []
+  placeholder_format: "<{type}>"
+  store_mapping: false
+  max_scan_length: 0
+
+# ============================================================
+# LOCAL EMBEDDING SETTINGS
+# ============================================================
+local_embedding:
+  enabled: true
+  model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+  auto_configure_presets: true
+  verify_local: true
+
+# ============================================================
+# PRIVACY VERIFICATION
+# ============================================================
+verification:
+  enabled: true
+  check_components:
+    - embedding
+    - memory
+    - pii_filter
+  log_results: true
+  warn_on_external: true
+
+# ============================================================
+# ADVANCED SETTINGS
+# ============================================================
+advanced:
+  debug: false
+  cache_ner_model: true

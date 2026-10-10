@@ -1,0 +1,160 @@
+<html>
+<head>
+  <title>Local Privacy Guard</title>
+  <script type="module">
+    import { store } from "/plugins/local_privacy_guard/webui/plugin-settings-store.js";
+  </script>
+</head>
+<body>
+  <div x-data>
+    <template x-if="$store.pluginSettingsPrototype">
+      <div x-init="$store.pluginSettingsPrototype.onOpen()" x-destroy="$store.pluginSettingsPrototype.cleanup()">
+
+        <div class="settings-section">
+          <h3>🛡️ Local Privacy Guard</h3>
+          <p class="settings-description">
+            Comprehensive local privacy protection. Anonymizes PII before external API calls
+            and configures local embeddings for memory. 100% local processing.
+          </p>
+        </div>
+
+        <!-- Master Switch -->
+        <div class="settings-section">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" x-model="config.enabled" />
+            <span><strong>Enable Local Privacy Guard</strong></span>
+          </label>
+          <p class="text-sm text-gray-500">Master switch for all privacy features</p>
+        </div>
+
+        <!-- PII Filter Settings -->
+        <div class="settings-section" x-show="config.enabled">
+          <h4>🔍 PII Filter</h4>
+
+          <label class="flex items-center gap-2">
+            <input type="checkbox" x-model="config.pii_filter.enabled" />
+            <span>Enable PII detection and anonymization</span>
+          </label>
+
+          <div class="grid grid-cols-2 gap-4 mt-2">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" x-model="config.pii_filter.use_regex" />
+              <span>Regex patterns (fast)</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" x-model="config.pii_filter.use_ner" />
+              <span>AI NER detection (spaCy)</span>
+            </label>
+          </div>
+
+          <div class="mt-2">
+            <label class="block text-sm font-medium">Action when PII detected:</label>
+            <select x-model="config.pii_filter.action" class="w-full mt-1">
+              <option value="redact">Redact (replace with placeholders)</option>
+              <option value="block">Block message entirely</option>
+              <option value="log_only">Log only (send unmodified - testing)</option>
+            </select>
+          </div>
+
+          <div class="mt-2">
+            <label class="block text-sm font-medium">NER Language:</label>
+            <select x-model="config.pii_filter.ner_language" class="w-full mt-1">
+              <option value="de">German (de)</option>
+              <option value="en">English (en)</option>
+              <option value="fr">French (fr)</option>
+              <option value="es">Spanish (es)</option>
+            </select>
+          </div>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.pii_filter.log_detections" />
+            <span>Log detected PII (for auditing)</span>
+          </label>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.pii_filter.store_mapping" />
+            <span>Store mapping in memory (for de-anonymization)</span>
+          </label>
+          <p class="text-xs text-yellow-600" x-show="config.pii_filter.store_mapping">
+            ⚠️ Warning: PII is stored in memory during the session
+          </p>
+        </div>
+
+        <!-- Local Embedding Settings -->
+        <div class="settings-section" x-show="config.enabled">
+          <h4>🧠 Local Embedding</h4>
+
+          <label class="flex items-center gap-2">
+            <input type="checkbox" x-model="config.local_embedding.enabled" />
+            <span>Configure local embeddings for memory</span>
+          </label>
+
+          <div class="mt-2">
+            <label class="block text-sm font-medium">Embedding Model:</label>
+            <input type="text" x-model="config.local_embedding.model" class="w-full mt-1"
+                   placeholder="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2" />
+            <p class="text-xs text-gray-500">Must start with "sentence-transformers/" for local execution</p>
+          </div>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.local_embedding.auto_configure_presets" />
+            <span>Auto-configure presets on startup</span>
+          </label>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.local_embedding.verify_local" />
+            <span>Verify embedding is local</span>
+          </label>
+        </div>
+
+        <!-- Privacy Verification -->
+        <div class="settings-section" x-show="config.enabled">
+          <h4>✅ Privacy Verification</h4>
+
+          <label class="flex items-center gap-2">
+            <input type="checkbox" x-model="config.verification.enabled" />
+            <span>Run privacy checks on startup</span>
+          </label>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.verification.log_results" />
+            <span>Log verification results</span>
+          </label>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.verification.warn_on_external" />
+            <span>Warn if external API endpoints detected</span>
+          </label>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="settings-section" x-show="config.enabled">
+          <h4>⚙️ Advanced</h4>
+
+          <label class="flex items-center gap-2">
+            <input type="checkbox" x-model="config.advanced.debug" />
+            <span>Enable debug logging</span>
+          </label>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input type="checkbox" x-model="config.advanced.cache_ner_model" />
+            <span>Cache spaCy model in memory (faster, more RAM)</span>
+          </label>
+        </div>
+
+        <!-- Privacy Status Info -->
+        <div class="settings-section bg-green-50 border border-green-200 rounded p-3">
+          <h4 class="text-green-800">🔒 Privacy Status</h4>
+          <ul class="text-sm text-green-700 mt-2 space-y-1">
+            <li>✅ PII anonymized locally before any external API call</li>
+            <li>✅ Memory embeddings computed 100% locally</li>
+            <li>✅ No data leaves your machine for detection or embedding</li>
+            <li>✅ spaCy models run entirely offline</li>
+          </ul>
+        </div>
+
+      </div>
+    </template>
+  </div>
+</body>
+</html>

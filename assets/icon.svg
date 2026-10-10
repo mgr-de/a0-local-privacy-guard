@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="lockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#0f172a" rx="64"/>
+  <path d="M256 64 L432 120 L432 250 C432 350 360 430 256 460 C152 430 80 350 80 250 L80 120 Z" 
+        fill="url(#shieldGrad)" stroke="#047857" stroke-width="4"/>
+  <rect x="200" y="240" width="112" height="88" rx="10" fill="url(#lockGrad)" stroke="#b45309" stroke-width="3"/>
+  <path d="M220 240 L220 205 C220 178 236 162 256 162 C276 162 292 178 292 205 L292 240" 
+        fill="none" stroke="url(#lockGrad)" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="256" cy="272" r="12" fill="#78350f"/>
+  <rect x="251" y="272" width="10" height="24" rx="4" fill="#78350f"/>
+  <path d="M180 180 L198 198 L232 164" 
+        fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
