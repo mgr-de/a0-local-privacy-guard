@@ -1,18 +1,20 @@
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
 .Python
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.venv/
-venv/
-ENV/
-env/
-build/
-dist/
-*.log
+
+# Agent Zero runtime state (local activation, not for distribution)
+.toggle-*
+*.toggle
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
 Thumbs.db
