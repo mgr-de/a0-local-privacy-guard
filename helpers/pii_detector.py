@@ -4,29 +4,104 @@ Local PII Detection and Anonymization Engine.
 
 Detects PII using regex patterns and spaCy NER (Named Entity Recognition).
 All processing happens locally - no data leaves the machine for detection.
+
+Multi-language support: English (en) is ALWAYS loaded as base language.
+Additional languages can be enabled in plugin settings.
 """
 
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 
 # spaCy models are loaded lazily to reduce startup cost when plugin is disabled
 _nlp_models: Dict[str, object] = {}
 
+# spaCy model names per language
+# English (en) is ALWAYS loaded as the base language
+SPACY_MODEL_NAMES: Dict[str, str] = {
+    "en": "en_core_web_sm",       # Base - always installed
+    "de": "de_core_news_sm",
+    "fr": "fr_core_news_sm",
+    "es": "es_core_news_sm",
+    "it": "it_core_news_sm",
+    "nl": "nl_core_news_sm",
+    "pt": "pt_core_news_sm",
+    "pl": "pl_core_news_sm",
+}
 
-def _get_nlp(language: str = "de"):
+# Base language - always loaded, cannot be disabled
+BASE_LANGUAGE = "en"
+
+# Language-specific label mappings (spaCy labels can vary slightly by language)
+LABEL_MAPS: Dict[str, Dict[str, str]] = {
+    "en": {
+        "PERSON": "PERSON",
+        "ORG": "ORGANISATION",
+        "GPE": "ORT",
+        "LOC": "ORT",
+        "DATE": "DATUM",
+        "TIME": "DATUM",
+    },
+    "de": {
+        "PER": "PERSON",
+        "LOC": "ORT",
+        "ORG": "ORGANISATION",
+        "DATE": "DATUM",
+        "TIME": "DATUM",
+    },
+    "fr": {
+        "PER": "PERSON",
+        "LOC": "ORT",
+        "ORG": "ORGANISATION",
+        "DATE": "DATUM",
+        "TIME": "DATUM",
+    },
+    "es": {
+        "PER": "PERSON",
+        "LOC": "ORT",
+        "ORG": "ORGANISATION",
+        "DATE": "DATUM",
+        "TIME": "DATUM",
+    },
+    "it": {
+        "PER": "PERSON",
+        "LOC": "ORT",
+        "ORG": "ORGANISATION",
+        "DATE": "DATUM",
+        "TIME": "DATUM",
+    },
+}
+
+
+def _get_nlp(language: str = BASE_LANGUAGE):
     """Lazy-load spaCy model for the given language."""
     global _nlp_models
     if language in _nlp_models:
         return _nlp_models[language]
     try:
         import spacy
-        model_name = f"{language}_core_news_sm" if language == "de" else f"{language}_core_web_sm"
+        model_name = SPACY_MODEL_NAMES.get(language)
+        if model_name is None:
+            return None
         nlp = spacy.load(model_name)
         _nlp_models[language] = nlp
         return nlp
     except Exception:
         return None
+
+
+def get_available_languages() -> List[str]:
+    """Return list of languages that have spaCy models configured."""
+    return list(SPACY_MODEL_NAMES.keys())
+
+
+def get_installed_languages() -> List[str]:
+    """Return list of languages with successfully loaded spaCy models."""
+    installed = []
+    for lang in SPACY_MODEL_NAMES.keys():
+        if _get_nlp(lang) is not None:
+            installed.append(lang)
+    return installed
 
 
 @dataclass
@@ -39,6 +114,7 @@ class PIIDetection:
     replacement: str       # The placeholder to use
     source: str            # "regex" or "ner"
     confidence: float = 1.0
+    language: str = ""     # Detected language (for NER detections)
 
 
 @dataclass
@@ -58,26 +134,14 @@ class FilterResult:
         return len(self.detections)
 
 
-# Standard regex patterns for common PII types
-# Use raw strings (r-prefix) with SINGLE backslashes for regex metacharacters
-# In Python source: r"\b" means the string contains: \b (word boundary in regex)
-REGEX_PATTERNS: Dict[str, Tuple[str, str]] = {
+# ============================================================================
+# UNIVERSAL PATTERNS (work across all languages)
+# ============================================================================
+UNIVERSAL_PATTERNS: Dict[str, Tuple[str, str]] = {
     # Email addresses
     "EMAIL": (
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",
         "<EMAIL>"
-    ),
-
-    # German phone numbers (simplified pattern - no nested groups)
-    "TELEFON": (
-        r"(?<![\w.])(?:\+49|0049|0)[\s./()-]?\d{2,5}[\s./()-]?\d{1,4}[\s./()-]?\d{1,9}(?![\w.])",
-        "<TELEFON>"
-    ),
-
-    # International phone numbers
-    "TELEFON_INTL": (
-        r"\+\d{1,3}[\s.-]?\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}",
-        "<TELEFON>"
     ),
 
     # International Bank Account Number (IBAN) with spaces
@@ -86,7 +150,7 @@ REGEX_PATTERNS: Dict[str, Tuple[str, str]] = {
         "<IBAN>"
     ),
 
-    # German IBAN without spaces
+    # German IBAN without spaces (DE)
     "IBAN_DE": (
         r"\bDE\d{20}\b",
         "<IBAN>"
@@ -104,12 +168,6 @@ REGEX_PATTERNS: Dict[str, Tuple[str, str]] = {
         "<KREDITKARTE>"
     ),
 
-    # German postal codes (standalone 5 digits)
-    "PLZ": (
-        r"\b\d{5}\b(?=\s|$|[,.])",
-        "<PLZ>"
-    ),
-
     # IP addresses (IPv4)
     "IP": (
         r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
@@ -120,7 +178,7 @@ REGEX_PATTERNS: Dict[str, Tuple[str, str]] = {
     "DATUM": (
         r"\b\d{1,2}\.\d{1,2}\.\d{2,4}\b"
         r"|\b\d{4}-\d{2}-\d{2}\b"
-        r"|\b\d{1,2}\.\s?(?:Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)\s?\d{2,4}\b",
+        r"|\b\d{1,2}\.\s?(?:Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s?\d{2,4}\b",
         "<DATUM>"
     ),
 
@@ -136,24 +194,70 @@ REGEX_PATTERNS: Dict[str, Tuple[str, str]] = {
         "<STEUER_ID>"
     ),
 
-    # Passport numbers (various formats)
+    # Passport numbers (letter + 8 digits, common format)
     "REISEPASS": (
         r"\b[A-Z]\d{8}\b",
         "<REISEPASS>"
     ),
+
+    # International phone numbers (simplified)
+    "TELEFON_INTL": (
+        r"\+\d{1,3}[\s.-]?\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}",
+        "<TELEFON>"
+    ),
+
+    # URLs (may contain sensitive query params)
+    "URL": (
+        r"\bhttps?://[^\s<>\"]+\b",
+        "<URL>"
+    ),
+
+    # UUIDs
+    "UUID": (
+        r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b",
+        "<UUID>"
+    ),
 }
 
-# German-specific patterns
+# ============================================================================
+# GERMAN-SPECIFIC PATTERNS
+# ============================================================================
 GERMAN_PATTERNS: Dict[str, Tuple[str, str]] = {
+    # German phone numbers
+    "TELEFON": (
+        r"(?<![\w.])(?:\+49|0049|0)[\s./()-]?\d{2,5}[\s./()-]?\d{1,4}[\s./()-]?\d{1,9}(?![\w.])",
+        "<TELEFON>"
+    ),
+
+    # German postal codes (standalone 5 digits)
+    "PLZ": (
+        r"\b\d{5}\b(?=\s|$|[,.])",
+        "<PLZ>"
+    ),
+
     # German addresses (street + number) - includes ß in straße
     "ADRESSE": (
-        r"\b(?:\w*(?:stra\u00dfe|strasse)|str\.|weg|platz|allee|gasse|ring|damm|ufer|chaussee|promenade)\s+\d+[a-zA-Z]?\b",
+        r"\b(?:\w*[Ss]tra[ßSs]e|[Ss]trasse|[Ss]tr\.|[Ww]eg|[Pp]latz|[Aa]llee|[Gg]asse|[Rr]ing|[Dd]amm|[Uu]fer|[Cc]haussee|[Pp]romenade)\s+\d+[a-zA-Z]?\b",
         "<ADRESSE>"
     ),
 }
 
-# English-specific patterns
+# ============================================================================
+# ENGLISH-SPECIFIC PATTERNS
+# ============================================================================
 ENGLISH_PATTERNS: Dict[str, Tuple[str, str]] = {
+    # English phone numbers (US/UK style)
+    "TELEFON": (
+        r"(?<![\w.])(?:\+1|1|0)?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?![\w.])",
+        "<TELEFON>"
+    ),
+
+    # US ZIP codes (standalone 5 digits or 5+4)
+    "PLZ": (
+        r"\b\d{5}(?:-\d{4})?\b",
+        "<PLZ>"
+    ),
+
     # English addresses (number + street + type)
     "ADDRESS": (
         r"\b\d+\s+[A-Z][a-z]+\s+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Blvd|Boulevard)\b",
@@ -161,38 +265,156 @@ ENGLISH_PATTERNS: Dict[str, Tuple[str, str]] = {
     ),
 }
 
+# ============================================================================
+# FRENCH-SPECIFIC PATTERNS
+# ============================================================================
+FRENCH_PATTERNS: Dict[str, Tuple[str, str]] = {
+    # French phone numbers (01-05 or +33)
+    "TELEFON": (
+        r"(?<![\w.])(?:\+33|0033|0)[\s.-]?[1-9][\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}(?![\w.])",
+        "<TELEFON>"
+    ),
 
+    # French postal codes (5 digits)
+    "PLZ": (
+        r"\b\d{5}\b(?=\s|$|[,.])",
+        "<PLZ>"
+    ),
+
+    # French addresses (rue, avenue, boulevard, etc.)
+    "ADRESSE": (
+        r"\b(?:[Rr]ue|[Aa]venue|[Aa]v\.|[Bb]oulevard|[Bb]d\.|[Pp]lace|[Pp]l\.|[Cc]hemin|[Cc]h\.|[Ii]mpasse|[Ii]mp\.|[Qq]uai|[Aa]llée|[Aa]ll)\s+[^\s]+(?:\s+[^\s]+){0,2}\s+\d+[a-zA-Z]?\b",
+        "<ADRESSE>"
+    ),
+
+    # French NIR (Numéro de sécurité sociale - 15 digits)
+    "NIR": (
+        r"\b[12]\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{3}\s?\d{3}\s?\d{2}\b",
+        "<NIR>"
+    ),
+
+    # French SIREN (9 digits, company registration)
+    "SIREN": (
+        r"(?<!\d)\d{9}(?!\d)",
+        "<SIREN>"
+    ),
+}
+
+# ============================================================================
+# SPANISH-SPECIFIC PATTERNS
+# ============================================================================
+SPANISH_PATTERNS: Dict[str, Tuple[str, str]] = {
+    # Spanish phone numbers (6xx, 7xx, 9xx or +34)
+    "TELEFON": (
+        r"(?<![\w.])(?:\+34|0034)?[\s.-]?[6-9]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}(?![\w.])",
+        "<TELEFON>"
+    ),
+
+    # Spanish postal codes (5 digits)
+    "PLZ": (
+        r"\b\d{5}\b(?=\s|$|[,.])",
+        "<PLZ>"
+    ),
+
+    # Spanish addresses (calle, avenida, plaza, etc.)
+    "ADRESSE": (
+        r"\b(?:[Cc]alle|[Cc]/|[Aa]vda|[Aa]venida|[Pp]laza|[Pp]za|[Pp]aseo|[Cc]amino|[Cc]arretera)\s+[^\s]+(?:\s+[^\s]+){0,2}\s+\d+[a-zA-Z]?\b",
+        "<ADRESSE>"
+    ),
+
+    # Spanish DNI (8 digits + letter)
+    "DNI": (
+        r"\b\d{8}[A-Za-z]\b",
+        "<DNI>"
+    ),
+}
+
+# ============================================================================
+# ITALIAN-SPECIFIC PATTERNS
+# ============================================================================
+ITALIAN_PATTERNS: Dict[str, Tuple[str, str]] = {
+    # Italian phone numbers (+39 or 0x)
+    "TELEFON": (
+        r"(?<![\w.])(?:\+39|0039)?[\s.-]?0?\d{2,4}[\s.-]?\d{3,4}[\s.-]?\d{3,4}(?![\w.])",
+        "<TELEFON>"
+    ),
+
+    # Italian postal codes (CAP - 5 digits)
+    "PLZ": (
+        r"\b\d{5}\b(?=\s|$|[,.])",
+        "<PLZ>"
+    ),
+
+    # Italian addresses (via, piazza, corso, etc.)
+    "ADRESSE": (
+        r"\b(?:[Vv]ia|[Vv]iale|[Pp]iazza|[Pp]za|[Cc]orso|[Ll]argo|[Ss]trada|[Pp]iazzale)\s+[^\s]+(?:\s+[^\s]+){0,2}\s+\d+[a-zA-Z]?\b",
+        "<ADRESSE>"
+    ),
+
+    # Italian Codice Fiscale (16 chars, alphanumeric)
+    "CODICE_FISCALE": (
+        r"\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b",
+        "<CODICE_FISCALE>"
+    ),
+}
+
+# Language -> patterns mapping
+LANGUAGE_PATTERNS: Dict[str, Dict[str, Tuple[str, str]]] = {
+    "de": GERMAN_PATTERNS,
+    "en": ENGLISH_PATTERNS,
+    "fr": FRENCH_PATTERNS,
+    "es": SPANISH_PATTERNS,
+    "it": ITALIAN_PATTERNS,
+}
+
+
+# ============================================================================
+# PII FILTER ENGINE
+# ============================================================================
 class PIIFilter:
-    """Main PII filtering engine."""
+    """Main PII filtering engine with multi-language support."""
 
     # Common words that spaCy often misclassifies as entities
     NER_SKIP_WORDS = {
-        "tel", "email", "mail", "datum", "name", "ort", "adresse",
-        "telefon", "date", "call", "fax", "ip", "web", "key", "api",
-        "herr", "frau", "dr", "prof",
+        "tel", "email", "mail", "datum", "name", "ort", "adresse", "address",
+        "telefon", "phone", "date", "call", "fax", "ip", "web", "key", "api",
+        "herr", "frau", "dr", "prof", "monsieur", "madame", "mme", "mr",
+        "señor", "señora", "sr", "sra", "signore", "signora", "sig",
     }
 
     def __init__(self, config: dict = None):
         self.config = config or {}
         self.use_regex = self.config.get("use_regex", True)
         self.use_ner = self.config.get("use_ner", True)
-        self.ner_language = self.config.get("ner_language", "de")
         self.action = self.config.get("action", "redact")
         self.custom_patterns = self.config.get("custom_patterns", [])
         self.ner_entity_types = self.config.get("ner_entity_types", [])
         self.store_mapping = self.config.get("store_mapping", False)
         self.placeholder_format = self.config.get("placeholder_format", "<{type}>")
 
+        # Languages for NER - English always included as base
+        ner_languages = self.config.get("languages", ["de"])
+        if BASE_LANGUAGE not in ner_languages:
+            ner_languages = [BASE_LANGUAGE] + list(ner_languages)
+        self.ner_languages = ner_languages
+        # Primary language for language-specific regex patterns
+        self.primary_language = ner_languages[0] if ner_languages else BASE_LANGUAGE
+
         # Compile regex patterns
         self.compiled_patterns: List[Tuple[str, re.Pattern, str]] = []
         if self.use_regex:
-            all_patterns = dict(REGEX_PATTERNS)
-            if self.ner_language == "de":
-                all_patterns.update(GERMAN_PATTERNS)
-            else:
-                all_patterns.update(ENGLISH_PATTERNS)
+            all_patterns = dict(UNIVERSAL_PATTERNS)
+
+            # Add patterns for ALL configured languages
+            for lang in self.ner_languages:
+                lang_patterns = LANGUAGE_PATTERNS.get(lang, {})
+                all_patterns.update(lang_patterns)
+
+            # Add custom patterns
             for cp in self.custom_patterns:
                 all_patterns[cp.get("name", "CUSTOM")] = (cp.get("regex", ""), "<CUSTOM>")
+
+            # Compile all patterns
             for name, (pattern, replacement) in all_patterns.items():
                 try:
                     compiled = re.compile(pattern, re.IGNORECASE)
@@ -225,42 +447,48 @@ class PIIFilter:
         return detections
 
     def _detect_ner(self, text: str) -> List[PIIDetection]:
+        """Detect PII using NER spaCy models for all configured languages."""
         if not self.use_ner:
             return []
-        nlp = _get_nlp(self.ner_language)
-        if nlp is None:
-            return []
-        detections = []
-        doc = nlp(text)
-        for ent in doc.ents:
-            label_map = {
-                "PER": "PERSON", "PERSON": "PERSON",
-                "LOC": "ORT", "GPE": "ORT",
-                "ORG": "ORGANISATION",
-                "DATE": "DATUM", "TIME": "DATUM",
-            }
-            pii_type = label_map.get(ent.label_, ent.label_)
-            if self.ner_entity_types and ent.label_ not in self.ner_entity_types:
+
+        all_detections: List[PIIDetection] = []
+        seen_spans = set()  # Prevent duplicates across languages
+
+        for lang in self.ner_languages:
+            nlp = _get_nlp(lang)
+            if nlp is None:
                 continue
-            placeholder = self._format_placeholder(pii_type, f"<{pii_type}>")
-            detections.append(PIIDetection(
-                pii_type=pii_type,
-                original=ent.text,
-                start=ent.start_char,
-                end=ent.end_char,
-                replacement=placeholder,
-                source="ner",
-                confidence=0.85
-            ))
-        return detections
+            label_map = LABEL_MAPS.get(lang, LABEL_MAPS[BASE_LANGUAGE])
+            doc = nlp(text)
+            for ent in doc.ents:
+                span_key = (ent.start_char, ent.end_char, ent.text.lower())
+                if span_key in seen_spans:
+                    continue
+                seen_spans.add(span_key)
+
+                pii_type = label_map.get(ent.label_, ent.label_)
+                if self.ner_entity_types and ent.label_ not in self.ner_entity_types:
+                    continue
+                placeholder = self._format_placeholder(pii_type, f"<{pii_type}>")
+                all_detections.append(PIIDetection(
+                    pii_type=pii_type,
+                    original=ent.text,
+                    start=ent.start_char,
+                    end=ent.end_char,
+                    replacement=placeholder,
+                    source="ner",
+                    confidence=0.85,
+                    language=lang
+                ))
+        return all_detections
 
     def _merge_detections(self, detections: List[PIIDetection]) -> List[PIIDetection]:
-        """Merge detections. REGEX ALWAYS wins over NER on overlap."""
+        """Merge detections. Regex ALWAYS wins over NER on overlap."""
         regex_dets = [d for d in detections if d.source == "regex"]
         regex_dets.sort(key=lambda d: d.start)
         ner_dets = [d for d in detections if d.source == "ner"]
 
-        # Filter NER false positives: skip single common words
+        # Filter NER false positives: skip single known non-PII words
         ner_dets = [d for d in ner_dets if not (
             d.original.lower().strip() in self.NER_SKIP_WORDS and len(d.original.split()) == 1
         )]
@@ -303,6 +531,14 @@ class PIIFilter:
             detections=detections,
             mapping=mapping
         )
+
+    def get_loaded_languages(self) -> List[str]:
+        """Return list of languages with successfully loaded spaCy models."""
+        loaded = []
+        for lang in self.ner_languages:
+            if _get_nlp(lang) is not None:
+                loaded.append(lang)
+        return loaded
 
 
 def create_filter(config: dict = None) -> PIIFilter:

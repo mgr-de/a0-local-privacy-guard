@@ -1,160 +1,315 @@
-<html>
-<head>
-  <title>Local Privacy Guard</title>
-  <script type="module">
-    import { store } from "/plugins/local_privacy_guard/webui/plugin-settings-store.js";
-  </script>
-</head>
-<body>
-  <div x-data>
-    <template x-if="$store.pluginSettingsPrototype">
-      <div x-init="$store.pluginSettingsPrototype.onOpen()" x-destroy="$store.pluginSettingsPrototype.cleanup()">
+<!-- Local Privacy Guard - Settings UI -->
+<!-- Multi-language support with user-configurable language selection -->
 
-        <div class="settings-section">
-          <h3>🛡️ Local Privacy Guard</h3>
-          <p class="settings-description">
-            Comprehensive local privacy protection. Anonymizes PII before external API calls
-            and configures local embeddings for memory. 100% local processing.
-          </p>
-        </div>
+<div class="space-y-6" x-data="pluginSettingsPage('local_privacy_guard', 'local_privacy_guard')" x-init="init">
 
-        <!-- Master Switch -->
-        <div class="settings-section">
-          <label class="flex items-center gap-2">
-            <input type="checkbox" x-model="config.enabled" />
-            <span><strong>Enable Local Privacy Guard</strong></span>
-          </label>
-          <p class="text-sm text-gray-500">Master switch for all privacy features</p>
-        </div>
-
-        <!-- PII Filter Settings -->
-        <div class="settings-section" x-show="config.enabled">
-          <h4>🔍 PII Filter</h4>
-
-          <label class="flex items-center gap-2">
-            <input type="checkbox" x-model="config.pii_filter.enabled" />
-            <span>Enable PII detection and anonymization</span>
-          </label>
-
-          <div class="grid grid-cols-2 gap-4 mt-2">
-            <label class="flex items-center gap-2">
-              <input type="checkbox" x-model="config.pii_filter.use_regex" />
-              <span>Regex patterns (fast)</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="checkbox" x-model="config.pii_filter.use_ner" />
-              <span>AI NER detection (spaCy)</span>
-            </label>
-          </div>
-
-          <div class="mt-2">
-            <label class="block text-sm font-medium">Action when PII detected:</label>
-            <select x-model="config.pii_filter.action" class="w-full mt-1">
-              <option value="redact">Redact (replace with placeholders)</option>
-              <option value="block">Block message entirely</option>
-              <option value="log_only">Log only (send unmodified - testing)</option>
-            </select>
-          </div>
-
-          <div class="mt-2">
-            <label class="block text-sm font-medium">NER Language:</label>
-            <select x-model="config.pii_filter.ner_language" class="w-full mt-1">
-              <option value="de">German (de)</option>
-              <option value="en">English (en)</option>
-              <option value="fr">French (fr)</option>
-              <option value="es">Spanish (es)</option>
-            </select>
-          </div>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.pii_filter.log_detections" />
-            <span>Log detected PII (for auditing)</span>
-          </label>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.pii_filter.store_mapping" />
-            <span>Store mapping in memory (for de-anonymization)</span>
-          </label>
-          <p class="text-xs text-yellow-600" x-show="config.pii_filter.store_mapping">
-            ⚠️ Warning: PII is stored in memory during the session
-          </p>
-        </div>
-
-        <!-- Local Embedding Settings -->
-        <div class="settings-section" x-show="config.enabled">
-          <h4>🧠 Local Embedding</h4>
-
-          <label class="flex items-center gap-2">
-            <input type="checkbox" x-model="config.local_embedding.enabled" />
-            <span>Configure local embeddings for memory</span>
-          </label>
-
-          <div class="mt-2">
-            <label class="block text-sm font-medium">Embedding Model:</label>
-            <input type="text" x-model="config.local_embedding.model" class="w-full mt-1"
-                   placeholder="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2" />
-            <p class="text-xs text-gray-500">Must start with "sentence-transformers/" for local execution</p>
-          </div>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.local_embedding.auto_configure_presets" />
-            <span>Auto-configure presets on startup</span>
-          </label>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.local_embedding.verify_local" />
-            <span>Verify embedding is local</span>
-          </label>
-        </div>
-
-        <!-- Privacy Verification -->
-        <div class="settings-section" x-show="config.enabled">
-          <h4>✅ Privacy Verification</h4>
-
-          <label class="flex items-center gap-2">
-            <input type="checkbox" x-model="config.verification.enabled" />
-            <span>Run privacy checks on startup</span>
-          </label>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.verification.log_results" />
-            <span>Log verification results</span>
-          </label>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.verification.warn_on_external" />
-            <span>Warn if external API endpoints detected</span>
-          </label>
-        </div>
-
-        <!-- Advanced Settings -->
-        <div class="settings-section" x-show="config.enabled">
-          <h4>⚙️ Advanced</h4>
-
-          <label class="flex items-center gap-2">
-            <input type="checkbox" x-model="config.advanced.debug" />
-            <span>Enable debug logging</span>
-          </label>
-
-          <label class="flex items-center gap-2 mt-2">
-            <input type="checkbox" x-model="config.advanced.cache_ner_model" />
-            <span>Cache spaCy model in memory (faster, more RAM)</span>
-          </label>
-        </div>
-
-        <!-- Privacy Status Info -->
-        <div class="settings-section bg-green-50 border border-green-200 rounded p-3">
-          <h4 class="text-green-800">🔒 Privacy Status</h4>
-          <ul class="text-sm text-green-700 mt-2 space-y-1">
-            <li>✅ PII anonymized locally before any external API call</li>
-            <li>✅ Memory embeddings computed 100% locally</li>
-            <li>✅ No data leaves your machine for detection or embedding</li>
-            <li>✅ spaCy models run entirely offline</li>
-          </ul>
-        </div>
-
-      </div>
-    </template>
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-white flex items-center gap-2">
+        🛡️ Local Privacy Guard
+      </h2>
+      <p class="text-sm text-gray-400">Multi-language PII anonymization & local embedding enforcement</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span x-show="config.enabled" class="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400">Active</span>
+      <span x-show="!config.enabled" class="px-2 py-1 text-xs rounded-full bg-gray-500/20 text-gray-400">Disabled</span>
+    </div>
   </div>
-</body>
-</html>
+
+  <!-- Master Switch -->
+  <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+    <label class="flex items-center justify-between cursor-pointer">
+      <div>
+        <span class="text-white font-medium">Enable Privacy Guard</span>
+        <p class="text-xs text-gray-400">Master switch for all privacy features</p>
+      </div>
+      <input type="checkbox" x-model="config.enabled" class="toggle toggle-primary">
+    </label>
+  </div>
+
+  <!-- PII Filter Settings -->
+  <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700 space-y-4">
+    <h3 class="text-white font-semibold flex items-center gap-2">
+      🔒 PII Filter
+      <span x-show="config.pii_filter?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
+    </h3>
+
+    <!-- Enable PII Filter -->
+    <label class="flex items-center justify-between cursor-pointer">
+      <span class="text-gray-300">Enable PII Filtering</span>
+      <input type="checkbox" x-model="config.pii_filter.enabled" class="toggle toggle-sm">
+    </label>
+
+    <!-- Action -->
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Action on Detection</label>
+      <select x-model="config.pii_filter.action" class="select select-bordered select-sm w-full max-w-xs bg-gray-700 text-white">
+        <option value="redact">Redact (replace with placeholder)</option>
+        <option value="block">Block (reject message)</option>
+        <option value="log_only">Log Only (don't modify)</option>
+      </select>
+    </div>
+
+    <!-- Detection Methods -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.pii_filter.use_regex" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">Regex Patterns</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.pii_filter.use_ner" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">spaCy NER (AI)</span>
+      </label>
+    </div>
+
+    <!-- Language Selection -->
+    <div class="border-t border-gray-600 pt-4">
+      <h4 class="text-white font-medium mb-2 flex items-center gap-2">
+        🌍 Languages
+        <span class="text-xs text-gray-400 font-normal">(English always loaded)</span>
+      </h4>
+      <p class="text-xs text-gray-400 mb-3">Select additional languages for PII detection. Each language requires its spaCy model.</p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <!-- English (always on) -->
+        <div class="flex items-center gap-2 px-3 py-2 rounded bg-blue-500/20 border border-blue-500/50">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-primary">
+          <span class="text-sm text-white">🇬🇧 English</span>
+          <span class="text-xs text-blue-400 ml-auto">required</span>
+        </div>
+
+        <!-- German -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('de')" @change="toggleLanguage('de')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇩🇪 Deutsch</span>
+        </label>
+
+        <!-- French -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('fr')" @change="toggleLanguage('fr')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇫🇷 Français</span>
+        </label>
+
+        <!-- Spanish -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('es')" @change="toggleLanguage('es')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇪🇸 Español</span>
+        </label>
+
+        <!-- Italian -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('it')" @change="toggleLanguage('it')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇮🇹 Italiano</span>
+        </label>
+
+        <!-- Dutch -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('nl')" @change="toggleLanguage('nl')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇳🇱 Nederlands</span>
+        </label>
+
+        <!-- Portuguese -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('pt')" @change="toggleLanguage('pt')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇵🇹 Português</span>
+        </label>
+
+        <!-- Polish -->
+        <label class="flex items-center gap-2 px-3 py-2 rounded bg-gray-700/50 border border-gray-600 cursor-pointer hover:border-gray-500">
+          <input type="checkbox" :checked="isLanguageSelected('pl')" @change="toggleLanguage('pl')" class="checkbox checkbox-xs">
+          <span class="text-sm text-gray-300">🇵🇱 Polski</span>
+        </label>
+      </div>
+
+      <p class="text-xs text-yellow-400 mt-2" x-show="config.pii_filter.languages?.length > 3">
+        ⚠️ Many languages may slow down detection. Each spaCy model uses ~50-100 MB RAM.
+      </p>
+    </div>
+
+    <!-- Options -->
+    <div class="grid grid-cols-2 gap-4 border-t border-gray-600 pt-4">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.pii_filter.log_detections" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">Log detections</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.pii_filter.store_mapping" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">Store mapping</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Local Embedding Settings -->
+  <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700 space-y-4">
+    <h3 class="text-white font-semibold flex items-center gap-2">
+      🧠 Local Embedding
+      <span x-show="config.local_embedding?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
+    </h3>
+
+    <label class="flex items-center justify-between cursor-pointer">
+      <div>
+        <span class="text-gray-300">Enforce local embeddings</span>
+        <p class="text-xs text-gray-400">Memory embeddings run 100% on your machine</p>
+      </div>
+      <input type="checkbox" x-model="config.local_embedding.enabled" class="toggle toggle-sm">
+    </label>
+
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Embedding Model</label>
+      <input type="text" x-model="config.local_embedding.model"
+             class="input input-bordered input-sm w-full bg-gray-700 text-white font-mono"
+             placeholder="sentence-transformers/...">
+      <p class="text-xs text-gray-500 mt-1">Must start with <code>sentence-transformers/</code> for local execution</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.local_embedding.auto_configure" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">Auto-configure</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" x-model="config.local_embedding.verify_local" class="checkbox checkbox-sm">
+        <span class="text-gray-300 text-sm">Verify on startup</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Privacy Verification Settings -->
+  <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700 space-y-4">
+    <h3 class="text-white font-semibold flex items-center gap-2">
+      ✅ Privacy Verification
+      <span x-show="config.verification?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
+    </h3>
+
+    <label class="flex items-center justify-between cursor-pointer">
+      <div>
+        <span class="text-gray-300">Run startup checks</span>
+        <p class="text-xs text-gray-400">Verify privacy config on Agent Zero start</p>
+      </div>
+      <input type="checkbox" x-model="config.verification.enabled" class="toggle toggle-sm">
+    </label>
+
+    <div>
+      <label class="block text-sm text-gray-400 mb-2">Check Components</label>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" :checked="hasComponent('embedding')" @change="toggleComponent('embedding')" class="checkbox checkbox-sm">
+          <span class="text-gray-300 text-sm">Embedding (local)</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" :checked="hasComponent('memory')" @change="toggleComponent('memory')" class="checkbox checkbox-sm">
+          <span class="text-gray-300 text-sm">Memory (local)</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" :checked="hasComponent('requesty')" @change="toggleComponent('requesty')" class="checkbox checkbox-sm">
+          <span class="text-gray-300 text-sm">Requesty (EU/ZDR)</span>
+        </label>
+      </div>
+    </div>
+
+    <label class="flex items-center gap-2 cursor-pointer">
+      <input type="checkbox" x-model="config.verification.warn_on_external" class="checkbox checkbox-sm">
+      <span class="text-gray-300 text-sm">Warn on external APIs</span>
+    </label>
+  </div>
+
+  <!-- Save Button -->
+  <div class="flex justify-end gap-2">
+    <button @click="save" class="btn btn-primary btn-sm" :disabled="saving">
+      <span x-show="saving" class="loading loading-spinner loading-xs"></span>
+      Save Settings
+    </button>
+  </div>
+
+  <!-- Status Message -->
+  <div x-show="message" x-text="message"
+       :class="messageType === 'success' ? 'text-green-400' : 'text-red-400'"
+       class="text-sm"></div>
+
+</div>
+
+<script>
+// Helper functions for language and component toggles
+window.pluginSettingsPage = window.pluginSettingsPage || function(pluginId, storeId) {
+  return {
+    config: {},
+    saving: false,
+    message: '',
+    messageType: 'success',
+
+    async init() {
+      // Load config from store
+      try {
+        const response = await fetch(`/api/plugins/${pluginId}/config`);
+        if (response.ok) {
+          this.config = await response.json();
+        }
+      } catch (e) {
+        console.error('Failed to load config:', e);
+      }
+
+      // Ensure structure exists
+      this.config.pii_filter = this.config.pii_filter || {};
+      this.config.pii_filter.languages = this.config.pii_filter.languages || ['de'];
+      this.config.local_embedding = this.config.local_embedding || {};
+      this.config.verification = this.config.verification || {};
+      this.config.verification.check_components = this.config.verification.check_components || ['embedding', 'memory', 'requesty'];
+    },
+
+    isLanguageSelected(lang) {
+      return (this.config.pii_filter?.languages || []).includes(lang);
+    },
+
+    toggleLanguage(lang) {
+      if (!this.config.pii_filter.languages) {
+        this.config.pii_filter.languages = [];
+      }
+      const idx = this.config.pii_filter.languages.indexOf(lang);
+      if (idx >= 0) {
+        this.config.pii_filter.languages.splice(idx, 1);
+      } else {
+        this.config.pii_filter.languages.push(lang);
+      }
+    },
+
+    hasComponent(comp) {
+      return (this.config.verification?.check_components || []).includes(comp);
+    },
+
+    toggleComponent(comp) {
+      if (!this.config.verification.check_components) {
+        this.config.verification.check_components = [];
+      }
+      const idx = this.config.verification.check_components.indexOf(comp);
+      if (idx >= 0) {
+        this.config.verification.check_components.splice(idx, 1);
+      } else {
+        this.config.verification.check_components.push(comp);
+      }
+    },
+
+    async save() {
+      this.saving = true;
+      this.message = '';
+      try {
+        const response = await fetch(`/api/plugins/${pluginId}/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.config)
+        });
+        if (response.ok) {
+          this.message = 'Settings saved! Restart Agent Zero to apply language changes.';
+          this.messageType = 'success';
+        } else {
+          throw new Error('Save failed');
+        }
+      } catch (e) {
+        this.message = 'Failed to save: ' + e.message;
+        this.messageType = 'error';
+      }
+      this.saving = false;
+    }
+  };
+};
+</script>

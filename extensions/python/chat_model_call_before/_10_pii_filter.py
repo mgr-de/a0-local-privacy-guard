@@ -1,8 +1,8 @@
 """
 Local Privacy Guard - PII Filter Extension.
 
-Intercepts all messages before they are sent to the LLM API
-and applies local PII detection and anonymization.
+Intercepts all messages before they are sent to external LLM APIs
+and applies local PII detection and anonymization with multi-language support.
 
 The filtering happens ENTIRELY locally - no data is sent to external
 services for PII detection. Only the anonymized text is sent to the
@@ -19,12 +19,17 @@ _filter_cache: dict = {}
 
 
 def _get_config(agent) -> dict:
-    """Load plugin configuration for the agent."""
+    """Load plugin config and flatten for PII filter."""
     cfg = plugins.get_plugin_config(PLUGIN_NAME, agent=agent) or {}
     # Flatten nested config: pii_filter sub-dict becomes the filter config
     pii_cfg = cfg.get("pii_filter", {})
     flat = dict(pii_cfg)
     flat["enabled"] = cfg.get("enabled", True) and pii_cfg.get("enabled", True)
+    # Ensure languages list exists (English always included)
+    if "languages" not in flat:
+        flat["languages"] = ["de"]
+    if "en" not in flat["languages"]:
+        flat["languages"] = ["en"] + flat["languages"]
     return flat
 
 
@@ -83,7 +88,7 @@ def _set_message_content(message, new_content: str):
 
 
 class LocalPrivacyPIIFilterExtension(Extension):
-    """Filters PII from messages before they are sent to the LLM API."""
+    """Filters PII from messages before they are sent to external APIs."""
 
     async def execute(self, call_data: dict = None, **kwargs):
         if call_data is None:
@@ -105,7 +110,7 @@ class LocalPrivacyPIIFilterExtension(Extension):
 
         filt = _get_filter(self.agent, config)
         log_detections = config.get("log_detections", True)
-        action = config.get("action", "redact")
+        loaded_langs = filt.get_loaded_languages()
 
         total_detections = 0
 
@@ -126,25 +131,29 @@ class LocalPrivacyPIIFilterExtension(Extension):
             total_detections += result.pii_count
 
             if log_detections:
-                pii_summary = ", ".join(
-                    f"{d.pii_type}({d.source})" for d in result.detections[:5]
-                )
+                pii_summary = ", ".join(f"{d.pii_type}" for d in result.detections[:5])
                 if len(result.detections) > 5:
                     pii_summary += f", ... +{len(result.detections) - 5} more"
                 self.agent.log.info(
-                    f"[Local Privacy Guard] Detected {result.pii_count} PII items: {pii_summary}"
+                    f"[Local Privacy Guard] Detected {result.pii_count} PII items "
+                    f"(languages: {', '.join(loaded_langs)}): {pii_summary}"
                 )
 
+            action = config.get("action", "redact")
             if action == "redact":
                 _set_message_content(message, result.filtered_text)
             elif action == "block":
                 self.agent.log.warning(
                     f"[Local Privacy Guard] BLOCKED message with {result.pii_count} PII items"
                 )
-                _set_message_content(message, "[Message blocked by Local Privacy Guard due to PII detection]")
+                _set_message_content(
+                    message,
+                    "[Message blocked by Local Privacy Guard due to PII detection]"
+                )
             # log_only: do nothing, message passes through unmodified
 
         if total_detections > 0:
             self.agent.log.info(
-                f"[Local Privacy Guard] Filtered {total_detections} PII items total"
+                f"[Local Privacy Guard] Filtered {total_detections} PII items total "
+                f"(languages: {', '.join(loaded_langs)})"
             )

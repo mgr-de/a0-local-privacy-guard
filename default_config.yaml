@@ -1,58 +1,50 @@
-# Local Privacy Guard Configuration
-# ==================================
+# Local Privacy Guard - Default Configuration
+# ============================================
 
-# Master switch for all privacy features
+# Master switch for the plugin
 enabled: true
 
-# ============================================================
-# PII FILTER SETTINGS
-# ============================================================
+# ==================== PII FILTER SETTINGS ====================
 pii_filter:
   enabled: true
   use_regex: true
   use_ner: true
   action: redact
   log_detections: true
-  ner_language: de
-  ner_entity_types:
-    - PER
-    - LOC
-    - ORG
-    - GPE
-    - DATE
-    - TIME
-  custom_patterns: []
-  skip_roles:
-    - system
-  skip_providers: []
-  placeholder_format: "<{type}>"
   store_mapping: false
-  max_scan_length: 0
+  placeholder_format: "<{type}>"
+  
+  # Languages to load for NER detection
+  # English (en) is ALWAYS loaded and cannot be disabled
+  # Add additional languages here: de, fr, es, it, nl, pt, pl
+  # Each language requires its spaCy model to be installed
+  languages:
+    - de
+    # - fr    # Uncomment to enable French
+    # - es    # Uncomment to enable Spanish
+    # - it    # Uncomment to enable Italian
+    # - nl    # Uncomment to enable Dutch
+    # - pt    # Uncomment to enable Portuguese
+    # - pl    # Uncomment to enable Polish
 
-# ============================================================
-# LOCAL EMBEDDING SETTINGS
-# ============================================================
+  # Custom regex patterns (added to built-in patterns)
+  # custom_patterns:
+  #   - name: "MY_CUSTOM_TYPE"
+  #     regex: "your-pattern-here"
+  #     replacement: "<MY_TYPE>"
+
+# ==================== LOCAL EMBEDDING SETTINGS ====================
 local_embedding:
   enabled: true
   model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
-  auto_configure_presets: true
+  auto_configure: true
   verify_local: true
 
-# ============================================================
-# PRIVACY VERIFICATION
-# ============================================================
+# ==================== PRIVACY VERIFICATION SETTINGS ====================
 verification:
   enabled: true
   check_components:
     - embedding
     - memory
-    - pii_filter
-  log_results: true
+    - requesty
   warn_on_external: true
-
-# ============================================================
-# ADVANCED SETTINGS
-# ============================================================
-advanced:
-  debug: false
-  cache_ner_model: true
