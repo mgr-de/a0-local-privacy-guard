@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" fill="none">
+  <rect width="900" height="400" fill="#1a1a2e"/>
+  
+  <!-- Header -->
+  <text x="20" y="30" style="font-family: monospace; font-size: 16px; font-weight: bold;" fill="#e94560">PII Filter - Before &amp; After</text>
+  
+  <!-- Input Box -->
+  <text x="20" y="60" style="font-family: sans-serif; font-size: 12px;" fill="#a0a0a0">Input (with real PII):</text>
+  <rect x="20" y="70" width="860" height="120" rx="8" fill="#16213e" stroke="#0f3460"/>
+  
+  <text x="40" y="100" style="font-family: monospace; font-size: 11px;" fill="#e94560">Kunde: Max Mustermann, geb. 15.03.1985</text>
+  <text x="40" y="120" style="font-family: monospace; font-size: 11px;" fill="#e94560">Tel: 030 123456 / +49 170 1234567</text>
+  <text x="40" y="140" style="font-family: monospace; font-size: 11px;" fill="#e94560">Email: max.mustermann@example.com</text>
+  <text x="40" y="160" style="font-family: monospace; font-size: 11px;" fill="#e94560">IBAN: DE89 3704 0044 0532 0130 00 | Steuer-ID: 12345678901</text>
+  <text x="40" y="180" style="font-family: monospace; font-size: 11px;" fill="#e94560">Karte: 4111 1111 1111 1111 | Adresse: Hauptstrasse 42, 10115 Berlin</text>
+  
+  <!-- Arrow -->
+  <polygon points="440,200 450,210 440,220" fill="#00ff88"/>
+  <text x="460" y="215" style="font-family: sans-serif; font-size: 11px;" fill="#00ff88">PII Filter (100% local)</text>
+  
+  <!-- Output Box -->
+  <text x="20" y="250" style="font-family: sans-serif; font-size: 12px;" fill="#00ff88">Output (anonymized):</text>
+  <rect x="20" y="260" width="860" height="120" rx="8" fill="#0f3460" stroke="#00ff88"/>
+  
+  <text x="40" y="290" style="font-family: monospace; font-size: 11px;" fill="#00ff88">Kunde: &lt;PERSON&gt;, geb. &lt;DATUM&gt;</text>
+  <text x="40" y="310" style="font-family: monospace; font-size: 11px;" fill="#00ff88">Tel: &lt;TELEFON&gt; / &lt;TELEFON&gt;</text>
+  <text x="40" y="330" style="font-family: monospace; font-size: 11px;" fill="#00ff88">Email: &lt;EMAIL&gt;</text>
+  <text x="40" y="350" style="font-family: monospace; font-size: 11px;" fill="#00ff88">IBAN: &lt;IBAN&gt; | Steuer-ID: &lt;STEUER_ID&gt;</text>
+  <text x="40" y="370" style="font-family: monospace; font-size: 11px;" fill="#00ff88">Karte: &lt;KREDITKARTE&gt; | Adresse: &lt;ADRESSE&gt;, &lt;PLZ&gt; &lt;ORT&gt;</text>
+  
+  <!-- Success Badge -->
+  <rect x="20" y="385" width="860" height="10" rx="5" fill="#533483"/>
+</svg>

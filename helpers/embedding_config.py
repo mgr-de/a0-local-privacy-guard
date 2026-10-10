@@ -91,7 +91,9 @@ def verify_embedding_is_local(path: Path | None = None) -> Dict[str, Any]:
     Returns a dict with 'is_local' and details.
     """
     presets = load_presets(path)
-    embedding = presets.get("embedding", {})
+    if isinstance(presets, list):
+        presets = presets[0] if presets else {}
+    embedding = presets.get("embedding", {}) if isinstance(presets, dict) else {}
     name = embedding.get("name", "")
     provider = embedding.get("provider", "")
 

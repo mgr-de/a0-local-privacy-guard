@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" fill="none">
+  <rect width="900" height="600" fill="#1a1a2e"/>
+  
+  <!-- Header -->
+  <text x="450" y="40" text-anchor="middle" style="font-family: sans-serif; font-size: 20px; font-weight: bold;" fill="#e94560">Local Privacy Architecture</text>
+  
+  <!-- Local Machine Box -->
+  <rect x="50" y="70" width="800" height="250" rx="10" fill="#16213e" stroke="#0f3460" stroke-width="2"/>
+  <text x="450" y="100" text-anchor="middle" style="font-family: sans-serif; font-size: 16px; font-weight: bold;" fill="#a0a0a0">🖥️ YOUR LOCAL MACHINE (100% Private)</text>
+  
+  <!-- PII Filter -->
+  <rect x="80" y="130" width="180" height="60" rx="5" fill="#0f3460"/>
+  <text x="170" y="155" text-anchor="middle" style="font-family: sans-serif; font-size: 12px;" fill="#ffffff">PII Filter</text>
+  <text x="170" y="175" text-anchor="middle" style="font-family: monospace; font-size: 10px;" fill="#a0a0a0">regex + NER</text>
+  
+  <!-- Anonymized Text -->
+  <rect x="280" y="130" width="180" height="60" rx="5" fill="#0f3460"/>
+  <text x="370" y="155" text-anchor="middle" style="font-family: sans-serif; font-size: 12px;" fill="#ffffff">Anonymized</text>
+  <text x="370" y="175" text-anchor="middle" style="font-family: monospace; font-size: 10px;" fill="#00ff88">&lt;PERSON&gt;, &lt;EMAIL&gt;</text>
+  
+  <!-- Memory -->
+  <rect x="480" y="130" width="180" height="60" rx="5" fill="#0f3460"/>
+  <text x="570" y="155" text-anchor="middle" style="font-family: sans-serif; font-size: 12px;" fill="#ffffff">Memory (RAG)</text>
+  <text x="570" y="175" text-anchor="middle" style="font-family: monospace; font-size: 10px;" fill="#00ff88">FAISS local</text>
+  
+  <!-- Embedding -->
+  <rect x="680" y="130" width="150" height="60" rx="5" fill="#0f3460"/>
+  <text x="755" y="155" text-anchor="middle" style="font-family: sans-serif; font-size: 12px;" fill="#ffffff">Embedding</text>
+  <text x="755" y="175" text-anchor="middle" style="font-family: monospace; font-size: 10px;" fill="#00ff88">100% local</text>
+  
+  <!-- Arrows within local box -->
+  <line x1="260" y1="160" x2="280" y2="160" stroke="#00ff88" stroke-width="2"/>
+  <line x1="460" y1="160" x2="480" y2="160" stroke="#00ff88" stroke-width="2"/>
+  <line x1="660" y1="160" x2="680" y2="160" stroke="#00ff88" stroke-width="2"/>
+  
+  <!-- Data Flow Arrow Down -->
+  <line x1="370" y1="190" x2="370" y2="310" stroke="#e94560" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="450" y="250" style="font-family: sans-serif; font-size: 11px;" fill="#e94560">Only anonymized data</text>
+  
+  <!-- External Box -->
+  <rect x="50" y="340" width="800" height="120" rx="10" fill="#533483" stroke="#e94560" stroke-width="2"/>
+  <text x="450" y="370" text-anchor="middle" style="font-family: sans-serif; font-size: 14px; font-weight: bold;" fill="#ffffff">🌐 EXTERNAL: Your LLM Gateway (Requesty, etc.)</text>
+  <text x="450" y="400" text-anchor="middle" style="font-family: monospace; font-size: 11px;" fill="#cccccc">🇺 EU region: EU-only | 🚫 Zero Data Retention | 🚫 ZDR Models | ✅ Whitelist</text>
+  
+  <!-- Final Security Badge -->
+  <rect x="50" y="480" width="800" height="80" rx="10" fill="#0f3460"/>
+  <text x="450" y="510" text-anchor="middle" style="font-family: sans-serif; font-size: 14px; font-weight: bold;" fill="#00ff88">🔒 LLM receives ONLY placeholders - no real PII ever leaves your machine</text>
+</svg>

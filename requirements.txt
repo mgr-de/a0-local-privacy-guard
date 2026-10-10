@@ -1,0 +1,6 @@
+# PII Detection
+spacy>=3.7.0
+# Local Embeddings
+sentence-transformers>=2.2.0
+# Core dependencies (already in Agent Zero)
+# pyyaml, numpy, etc.

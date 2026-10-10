@@ -101,3 +101,7 @@ def run_verification(config: Dict[str, Any], components: List[str] | None = None
         "overall_ok": all(r.get("ok", False) for r in results),
         "results": results,
     }
+
+
+# Alias for backward compatibility
+verify_all = run_verification

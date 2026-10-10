@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" fill="none">
+  <rect width="900" height="400" fill="#1a1a2e"/>
+  
+  <!-- Header -->
+  <text x="450" y="50" text-anchor="middle" style="font-family: sans-serif; font-size: 24px; font-weight: bold;" fill="#e94560">🛡️ Local Privacy Guard</text>
+  <text x="450" y="80" text-anchor="middle" style="font-family: sans-serif; font-size: 14px;" fill="#a0a0a0">Startup Verification</text>
+  
+  <!-- Check Items -->
+  <text x="50" y="130" style="font-family: monospace; font-size: 14px;" fill="#00ff88">✅ PII Filter: Active (regex + spaCy NER)</text>
+  <text x="50" y="170" style="font-family: monospace; font-size: 14px;" fill="#00ff88">✅ Local Embedding: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</text>
+  <text x="50" y="210" style="font-family: monospace; font-size: 14px;" fill="#00ff88">✅ Requesty Check: EU-only, ZDR enabled, No-Training enforced</text>
+  <text x="50" y="250" style="font-family: monospace; font-size: 14px;" fill="#00ff88">✅ Memory: FAISS local (no external embedding API calls)</text>
+  
+  <!-- Success Box -->
+  <rect x="20" y="280" width="860" height="80" rx="8" fill="#533483"/>
+  <text x="450" y="315" text-anchor="middle" style="font-family: sans-serif; font-size: 16px; font-weight: bold;" fill="#ffffff">🔒 All privacy checks passed!</text>
+  <text x="450" y="340" text-anchor="middle" style="font-family: sans-serif; font-size: 12px;" fill="#cccccc">Agent Zero ready - PII processed 100% locally</text>
+</svg>
