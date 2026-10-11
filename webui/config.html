@@ -14,6 +14,7 @@
   <p>Replace detected personal details before supported conversation and helper-model calls, and calculate memory embeddings locally.</p>
   <aside class="privacy-note"><strong>What stays local?</strong>
     <p>Detection and local embedding calculations happen on your device. The remaining conversation text, including recalled memory, can still go to an external model. Detection can miss details and does not cover every tool, image or third-party data path.</p>
+    <p>Your original details can remain visible in your local chat. The protection check concerns outgoing model requests, not names shown in the browser. Masking reduces disclosure risk; it does not guarantee complete anonymization.</p>
   </aside>
   <div class="privacy-status" role="status" aria-live="polite">
     <strong>Settings summary</strong>
@@ -74,6 +75,7 @@
       <p>Local logs are separate from provider retention settings. Review who can access them.</p>
       <div class="field"><div class="field-label"><label class="field-title" for="local-switch-7">Keep a session mapping from placeholders to original details</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.store_mapping" id="local-switch-7"><span class="toggler" aria-hidden="true"></span></label></div></div>
       <p x-show="config.pii_filter.store_mapping" class="privacy-note">Original details remain in session memory when mapping is enabled.</p>
+      <p class="field-description privacy-help">A session mapping does not guarantee correct restoration of replies. Persistent, unique person mappings and local reply restoration are still required for reliable long conversations. Short names, aliases and identifying context can be missed.</p>
       <h3 class="section-title">Local embedding configuration</h3>
       <div class="field"><div class="field-label"><label class="field-title" for="local-embedding-model">Embedding model</label></div><div class="field-control"><input id="local-embedding-model" type="text" x-model="config.local_embedding.model" :disabled="!config.local_embedding.enabled" aria-describedby="local-embedding-help"></div></div>
       <p id="local-embedding-help">Use a sentence-transformers/ model. Changing models can affect existing memory search; restart after saving.</p>

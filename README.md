@@ -11,7 +11,7 @@
 
 ## What does this plugin do?
 
-Local Privacy Guard protects your personal data when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
+Local Privacy Guard reduces the disclosure of detected personal details when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
 
 | Feature | Description |
 |---------|-------------|
@@ -45,7 +45,9 @@ Agent Zero profiles are not process or filesystem security sandboxes. These chan
 
 ## Why is this needed?
 
-Many LLM gateway providers (like Requesty) offer strong compliance features (EU-only routing, Zero Data Retention, No Training), but **PII scanning is often Enterprise-only**. This plugin compensates by anonymizing PII **locally** before data ever reaches the provider.
+Gateway-side PII scanning takes place after the original request reaches the gateway. Local filtering instead replaces detected details on your device before supported requests are sent. This reduces disclosure risk; it does not guarantee complete anonymization. Regex and name detection can miss short names, aliases, spelling changes and indirectly identifying context.
+
+Requesty now documents Fast and model-based ML PII scanners for standard and Enterprise plans. Report forwards content unchanged; Mask replaces detected values before the model provider receives them. Its hosted scanner is an optional additional layer, not a substitute for local filtering. A claim of higher accuracy needs comparative tests. See [Requesty Guardrails](https://docs.requesty.ai/features/guardrails).
 
 Similarly, Agent Zero's default memory embedding configuration may use external API endpoints. This plugin ensures embeddings are computed entirely on your machine.
 
@@ -168,7 +170,7 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 
 ### Detected PII Types
 
-The plugin detects and anonymizes:
+The plugin attempts to detect these categories and replaces detected values in redact mode:
 
 | Category | Types |
 |----------|-------|
@@ -192,6 +194,8 @@ Choose an explicit Agent profile in the settings toolbar, enable protection and 
 4. **Memory embeddings** are computed locally when configured successfully; recalled memory text can still be sent to a helper model
 
 ### Example
+
+Original details in the local browser are expected to remain readable. The relevant privacy boundary is the outgoing model request. The target design uses unique placeholders in model history and restores replies only for local display. The current session-only mapping is not a complete implementation of that design and cannot guarantee correct person identities or reply restoration in long conversations. See [the measured limitations and next steps](docs/PII-TEST-RESULTS.md).
 
 **You type:**
 > "Mein Name ist Anna Müller, meine E-Mail ist anna@example.com und meine IBAN ist DE89 3704 0044 0532 0130 00"

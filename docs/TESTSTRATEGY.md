@@ -88,3 +88,11 @@ the manual checklist).
 The HTML convention test permits one external store module and continues to reject inline scripts and raw fetch calls. The example API inherits Agent Zero authentication and CSRF requirements. It does not modify presets or configuration.
 
 In an isolated Agent Zero v2.13 instance, verify the real settings dialog, save/scope behavior and the example API. At 390px viewport width, check all language labels and controls; with keyboard navigation check focus visibility and expanded details. Successful regex output must not hide unavailable spaCy models. A browser example is not a provider privacy audit or an active-chat protection check.
+
+## Completed opt-in privacy integration tests (2026-10-11)
+
+The subsequent real-model comparison used synthetic data, local Ollama and eight authorized live Requesty calls. It is separate from the earlier mocked release validation above. See [results and limitations](PII-TEST-RESULTS.md).
+
+Acceptance requires separate results for detection, exact input roundtrip, identity continuity, current relationships/debts, strict response format, outgoing payloads, reasoning/final answers, streaming, context compaction, real memory retrieval, restart and profile ownership. Original values in the browser are expected; original values in external requests are the privacy finding. Null known-value matches do not establish general PII freedom.
+
+The reproducible opt-in harness is in [Local Privacy Guard's integration tools](https://github.com/mgr-de/a0-local-privacy-guard/tree/ux/private-user-setup/tools/privacy_benchmark). It is not collected by the ordinary offline test suite. Hosted Requesty PII scanner accuracy is not covered by these model-routing tests.

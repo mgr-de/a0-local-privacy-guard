@@ -14,12 +14,16 @@ def test_real_framework_profile_embedding_and_memory_isolation(monkeypatch,tmp_p
     from usr.plugins.local_privacy_guard.helpers import agent_scope
     def selected(project,profile):return tmp_path/project/profile/"config.json"
     monkeypatch.setattr(agent_scope,"selected_path",selected)
-    protected=selected("","agent0");protected.parent.mkdir(parents=True)
+    # Dedicated names avoid a saved Requesty setup in a user's agent0 profile
+    # suspending the override that this Local Privacy Guard test must exercise.
+    alpha_profile = "privacy_test_alpha"
+    beta_profile = "privacy_test_beta"
+    protected=selected("",alpha_profile);protected.parent.mkdir(parents=True)
     protected.write_text(json.dumps({"enabled":True,"local_embedding":{"enabled":True,"auto_configure":True,
         "model":"sentence-transformers/synthetic-local"},"pii_filter":{"enabled":True},"verification":{"enabled":False}}))
     shared_path=Path(mc._get_presets_path());before=shared_path.read_bytes() if shared_path.exists() else None
-    alpha=Agent(0,AgentConfig(profile="agent0",mcp_servers=""))
-    beta=Agent(0,AgentConfig(profile="developer",mcp_servers=""))
+    alpha=Agent(0,AgentConfig(profile=alpha_profile,mcp_servers=""))
+    beta=Agent(0,AgentConfig(profile=beta_profile,mcp_servers=""))
     native=deepcopy(mc.get_embedding_model_config(beta))
     assert mc.get_embedding_model_config(alpha)["name"]=="sentence-transformers/synthetic-local"
     assert mc.get_embedding_model_config(beta)==native
@@ -32,9 +36,9 @@ def test_real_framework_profile_embedding_and_memory_isolation(monkeypatch,tmp_p
     Plugins = import_module("api/plugins.py").Plugins
     import threading
     api=Plugins(None,threading.RLock())
-    display=api._get_config({"plugin_name":"local_privacy_guard","agent_profile":"agent0"})
+    display=api._get_config({"plugin_name":"local_privacy_guard","agent_profile":alpha_profile})
     assert display["data"]["local_embedding"]["model"]=="sentence-transformers/synthetic-local"
-    unconfigured=api._get_config({"plugin_name":"local_privacy_guard","agent_profile":"developer"})
+    unconfigured=api._get_config({"plugin_name":"local_privacy_guard","agent_profile":beta_profile})
     assert unconfigured["loaded_path"]==""
     # A conflicting named chat preset is blocked without rewriting it.
     alpha.context.set_data("chat_model_override",{"preset_name":"Default"})
