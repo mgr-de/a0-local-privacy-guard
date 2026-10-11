@@ -82,7 +82,7 @@ class LocalPrivacyPIIUtilFilterExtension(Extension):
             if log_detections:
                 pii_summary = ", ".join(d.pii_type for d in result.detections[:5])
                 _safe_log(self.agent, "info",
-                    f"[Local Privacy Guard] Utility call: detected and redacted "
+                    f"[Local Privacy Guard] Utility call: detected "
                     f"{result.pii_count} PII items: {pii_summary}"
                 )
             action = config.get("action", "redact")
@@ -92,5 +92,5 @@ class LocalPrivacyPIIUtilFilterExtension(Extension):
                 _safe_log(self.agent, "warning",
                     "[Local Privacy Guard] BLOCKED utility call content due to PII"
                 )
-                call_data[field] = "[Blocked by Local Privacy Guard due to PII detection]"
+                raise ValueError("Local Privacy Guard blocked this profile's helper-model request because personal details were detected.")
             # log_only: pass through unmodified

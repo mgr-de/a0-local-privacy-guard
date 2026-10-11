@@ -9,13 +9,15 @@
 <template x-if="config && config.pii_filter && config.local_embedding && config.verification && $store.localPrivacy">
 <div class="privacy-settings" x-init="$store.localPrivacy.cleanup()" x-destroy="$store.localPrivacy.cleanup()">
   <h2>Protect personal details</h2>
+  <aside class="privacy-note"><strong>Protection belongs to one agent profile.</strong><p>Choose an Agent profile in the toolbar, enable protection and save settings for it. Global or project-only settings do not activate protection. Other profiles keep their own settings.</p><p x-text="context.agentProfileKey ? 'Selected profile: ' + context.agentProfileKey : 'Choose a profile before saving.'"></p></aside>
+  <fieldset :disabled="!context.agentProfileKey"><legend>Profile privacy settings</legend>
   <p>Replace detected personal details before supported conversation and helper-model calls, and calculate memory embeddings locally.</p>
   <aside class="privacy-note"><strong>What stays local?</strong>
     <p>Detection and local embedding calculations happen on your device. The remaining conversation text, including recalled memory, can still go to an external model. Detection can miss details and does not cover every tool, image or third-party data path.</p>
   </aside>
   <div class="privacy-status" role="status" aria-live="polite">
     <strong>Settings summary</strong>
-    <p x-text="context.hasUnsavedChanges ? 'Unsaved changes in the selected project/profile scope.' : 'Settings match the saved configuration for the selected scope.'"></p>
+    <p x-text="!context.agentProfileKey ? 'Choose one profile before saving.' : context.loadedAgentProfile !== context.agentProfileKey ? 'Defaults for this profile. Save to create its own configuration.' : context.hasUnsavedChanges ? 'Unsaved changes in the selected project/profile scope.' : 'Settings match the saved configuration for the selected scope.'"></p>
     <p x-text="!config.enabled ? 'Protection is switched off in these settings.' : !config.pii_filter.enabled ? 'Personal-detail filtering is switched off.' : config.pii_filter.action === 'log_only' ? 'Logging only: personal details are sent unchanged.' : !config.pii_filter.use_regex && !config.pii_filter.use_ner ? 'No detection methods selected: details will not be detected.' : config.pii_filter.action === 'block' ? 'Detected details will block supported requests.' : 'Detected details will be replaced in supported requests.'"></p>
     <p>This summary describes settings, not a verified active chat. The plugin must also be enabled in the scope toolbar above. Save changes; restart Agent Zero after changing languages or the embedding model.</p>
   </div>
@@ -42,9 +44,9 @@
   <section class="privacy-card" aria-labelledby="local-memory-title">
     <h3 id="local-memory-title">2. Local memory search</h3>
     <fieldset :disabled="!config.enabled"><legend>Embedding calculation</legend>
-      <label class="privacy-choice"><input type="checkbox" x-model="config.local_embedding.enabled"> <span>Configure local embeddings for memory search</span></label>
+      <label class="privacy-choice"><input type="checkbox" x-model="config.local_embedding.enabled"> <span>Use local embeddings for this profile’s memory search</span></label>
     </fieldset>
-    <p>Embeddings are the calculations used to find relevant memories. Local calculations do not prevent a helper model from receiving recalled memory text.</p>
+    <p>Embeddings are the calculations used to find relevant memories. Local calculations do not prevent a helper model from receiving recalled memory text. Protected profiles use a separate memory folder; existing shared memories are preserved and are not automatically copied. No shared model presets are rewritten. Conflicting chat embedding overrides are blocked.</p>
   </section>
   <section class="privacy-card" aria-labelledby="local-example-title">
     <h3 id="local-example-title">3. Try a local example</h3>
@@ -77,12 +79,12 @@
       <label for="local-embedding-model">Embedding model</label>
       <input id="local-embedding-model" type="text" x-model="config.local_embedding.model" :disabled="!config.local_embedding.enabled" aria-describedby="local-embedding-help">
       <p id="local-embedding-help">Use a sentence-transformers/ model. Changing models can affect existing memory search; restart after saving.</p>
-      <label class="privacy-choice"><input type="checkbox" x-model="config.local_embedding.auto_configure" :disabled="!config.local_embedding.enabled"> <span>Apply the local model to presets when the agent starts</span></label>
+      <label class="privacy-choice"><input type="checkbox" x-model="config.local_embedding.auto_configure" :disabled="!config.local_embedding.enabled"> <span>Apply local embeddings to this profile at runtime</span></label>
       <label class="privacy-choice"><input type="checkbox" x-model="config.local_embedding.verify_local" :disabled="!config.local_embedding.enabled"> <span>Check local embedding configuration at startup</span></label>
       <h3>Startup configuration checks</h3>
       <label class="privacy-choice"><input type="checkbox" x-model="config.verification.enabled"> <span>Run configuration checks when the agent starts</span></label>
       <fieldset :disabled="!config.verification.enabled"><legend>Components to check</legend>
-        <template x-for="component in [{code:'embedding',name:'Embedding configuration'},{code:'memory',name:'Local memory storage'},{code:'requesty',name:'Requesty gateway references in presets'}]" :key="component.code"><label class="privacy-choice"><input type="checkbox" :checked="(config.verification.check_components || []).includes(component.code)" @change="config.verification.check_components = $event.target.checked ? [...new Set([...(config.verification.check_components || []), component.code])] : (config.verification.check_components || []).filter(code => code !== component.code)"> <span x-text="component.name"></span></label></template>
+        <template x-for="component in [{code:'embedding',name:'Profile embedding configuration'},{code:'memory',name:'Profile memory folder'},{code:'requesty',name:'Requesty use by this profile'}]" :key="component.code"><label class="privacy-choice"><input type="checkbox" :checked="(config.verification.check_components || []).includes(component.code)" @change="config.verification.check_components = $event.target.checked ? [...new Set([...(config.verification.check_components || []), component.code])] : (config.verification.check_components || []).filter(code => code !== component.code)"> <span x-text="component.name"></span></label></template>
         <label class="privacy-choice"><input type="checkbox" x-model="config.verification.warn_on_external"> <span>Log warnings about external API configuration</span></label>
       </fieldset>
       <p>Startup results appear in the agent log. These configuration checks do not audit provider practices or block every external data path.</p>

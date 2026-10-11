@@ -1,3 +1,11 @@
+## Profile isolation regression coverage
+
+The current version requires explicit profile ownership. See [profile scope review](PROFILE-SCOPE-REVIEW.md) for the current acceptance criteria and validation results. Tests run inside an isolated Agent Zero v2.13 instance with actual native extension discovery. Two profiles are exercised independently, using temporary profile storage and synthetic model/catalog results. No paid network calls are required.
+
+The new coverage includes native settings display (which otherwise bypasses config hooks), profile-only model/key/policy setup, no shared preset writes, separate Memory folders, per-profile filters, ownership-bound validation tickets, stale replies, existing wrappers after deactivation/extension removal, chat gate credential status without exposing keys, and path containment. Legacy generation-safe preset backup tests remain for deliberate manual recovery helpers, which are no longer called by startup or uninstall.
+
+The following historical strategy describes earlier version behavior; global preset creation/cleanup and global credentials are superseded by the profile setup in the current version.
+
 # Test Strategy — Local Privacy Guard
 
 ## Goals

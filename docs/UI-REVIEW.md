@@ -111,3 +111,8 @@ Abnahme des ersten Pakets:
 - Vier bereitgestellte Screenshots der Einstellungsdialoge.
 
 Das Dokument trennt beobachtete Probleme, Empfehlungen und Abnahmekriterien. Live-Modelltests können technische Kompatibilität prüfen, liefern aber keinen unabhängigen Nachweis über tatsächliche Verarbeitung, Speicherung oder Training beim Anbieter.
+
+
+## Ergänzung: Agentenprofil als verbindliche Grenze
+
+Nach der Klärung vom 11. Oktober 2026 wurde die Umsetzung auf ausdrücklich konfigurierte Agentenprofile begrenzt. Globale Einstellungen reichen nicht zur Aktivierung. Requesty verwendet profilbezogene Schlüssel und Modell-Setups; Local Privacy Guard schreibt keine gemeinsamen Embedding-Vorlagen mehr um. Geschützte Profile erhalten getrennte Memory-Ordner. Die Oberfläche führt zur Profilauswahl und zeigt Erstellen und Aktivieren getrennt. Bestehende gemeinsame Erinnerungen werden nicht automatisch kopiert. Details und Grenzen stehen in [PROFILE-SCOPE-REVIEW.md](PROFILE-SCOPE-REVIEW.md).

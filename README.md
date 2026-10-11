@@ -31,7 +31,19 @@ The settings page separates everyday choices from advanced detection and startup
 
 The original screenshots below predate the 1.2.0 settings redesign. See [the UI review](docs/UI-REVIEW.md) for the design rationale and acceptance criteria.
 
-### Why is this needed?
+### Profile isolation in 1.3.0
+
+Save configuration for one explicit Agent profile, optionally within a project. Settings inherited from a global or project-only installation cannot activate protection. The profile selection and disabled global form are visible in the settings page.
+
+Local embedding settings are applied to the resolved configuration at runtime; startup never writes shared model presets. PII filter instances are owned by the actual Agent object and recreated after configuration changes. Weak references prevent a recycled object identifier from reusing another agent’s filter.
+
+Protected profiles use a separate Memory folder, identified by project/profile and local embedding settings. Existing shared memories are preserved and are not copied automatically. Conflicting chat model overrides are rejected before an external embedding can be used. Startup checks describe this profile only.
+
+Uninstall never restores shared presets automatically. Legacy backup journals remain available for deliberate manual recovery. Installation of Python/spaCy models is shared instance administration and may download model packages; runtime detection is local. Native global toggles and uninstall affect the entire instance. Use the profile toolbar toggle for a profile-only change. Native uninstall/ZIP replacement can remove scoped config files; back up configuration first.
+
+Agent Zero profiles are not process or filesystem security sandboxes. These changes prevent this plugin from accidentally rewriting another profile’s configuration or memory index; they cannot restrict arbitrary third-party tools or an administrator. See [profile scope review](docs/PROFILE-SCOPE-REVIEW.md).
+
+## Why is this needed?
 
 Many LLM gateway providers (like Requesty) offer strong compliance features (EU-only routing, Zero Data Retention, No Training), but **PII scanning is often Enterprise-only**. This plugin compensates by anonymizing PII **locally** before data ever reaches the provider.
 
@@ -151,7 +163,7 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 |---------|---------|-------------|
 | `enabled` | `true` | Configure local embeddings |
 | `model` | `paraphrase-multilingual-MiniLM-L12-v2` | sentence-transformers model (multilingual, 384 dims) |
-| `auto_configure` | `true` | Automatically update presets.yaml on agent start |
+| `auto_configure` | `true` | Apply local embedding settings to this profile at runtime; shared presets are unchanged |
 | `verify_local` | `true` | Verify embedding runs locally |
 
 ### Detected PII Types
@@ -172,7 +184,7 @@ The plugin detects and anonymizes:
 
 ## Usage
 
-Once installed and enabled, the plugin works **automatically**:
+Choose an explicit Agent profile in the settings toolbar, enable protection and save settings for it. Global/project-only settings do not activate protection. Once configured for that profile, the plugin works **automatically**:
 
 1. On **supported chat and utility model calls**, eligible text messages are scanned using available detection methods and models; system messages are skipped by default
 2. In **redact mode**, detected details are replaced with placeholders like `<EMAIL>`, `<PERSON>`, `<TELEFON>`; block mode stops detected requests, and log-only mode sends details unchanged
@@ -218,7 +230,7 @@ Once installed and enabled, the plugin works **automatically**:
 ```
 
 ### Embedding still uses external API
-Check `/a0/usr/plugins/_model_config/presets.yaml` — the embedding model name must start with `sentence-transformers/`. The plugin configures this automatically.
+Check this profile’s plugin settings. Runtime embedding resolution uses its configured `sentence-transformers/` model without rewriting shared presets. Conflicting per-chat embedding overrides are blocked; clear the override or select matching local embeddings.
 
 ### Plugin not loading
 1. Check Agent Zero logs for errors

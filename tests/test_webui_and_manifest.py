@@ -62,9 +62,9 @@ def test_license_at_root():
     assert (ROOT / "LICENSE").exists()
 
 
-def test_hooks_restore_result_contract():
-    """uninstall() must tolerate the new restore result shape."""
+def test_uninstall_never_restores_shared_presets():
     import ast
     src = (ROOT / "hooks.py").read_text(encoding="utf-8")
     tree = ast.parse(src)
-    assert "restore_embedding_backup" in src
+    uninstall = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "uninstall")
+    assert "restore_embedding_backup" not in ast.unparse(uninstall)
