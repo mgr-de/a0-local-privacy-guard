@@ -1,340 +1,197 @@
 <!--
-  Local Privacy Guard — Plugin Settings
-  Multi-language PII filtering, embedding enforcement & startup verification
+  Local Privacy Guard - Plugin Settings
+  Multi-language PII filtering, embedding enforcement & startup verification.
+  Binds to the framework-provided `config` scope; load/save is handled by the
+  plugin settings modal (store gate pattern via <template x-if>).
 -->
-<div x-data="pluginSettingsPage('local_privacy_guard', 'local_privacy_guard')" x-init="init" class="max-w-3xl mx-auto space-y-6 p-4">
+<html>
+<head>
+    <title>Local Privacy Guard</title>
+</head>
 
-  <!-- ==================== Header ==================== -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <span class="text-2xl">🛡️</span>
-      <div>
-        <h2 class="text-xl font-bold text-white leading-tight">Local Privacy Guard</h2>
-        <p class="text-xs text-gray-500">PII filtering, local embeddings & startup verification</p>
-      </div>
+<body>
+    <div x-data>
+        <template x-if="config">
+            <div class="section">
+
+                <div class="section-title">Local Privacy Guard</div>
+                <div class="section-description">
+                    PII filtering, local embeddings &amp; startup verification.
+                    Restart Agent Zero after changing languages or the embedding model.
+                </div>
+
+                <!-- Master toggle -->
+                <div class="field">
+                    <div class="field-label">
+                        <div class="field-title">Enable Privacy Guard</div>
+                        <div class="field-description">Master switch for all privacy features</div>
+                    </div>
+                    <div class="field-control">
+                        <input type="checkbox" x-model="config.enabled" />
+                    </div>
+                </div>
+
+                <!-- PII Filter -->
+                <template x-if="config.pii_filter">
+                    <div class="section">
+                        <div class="section-title">PII Filter</div>
+                        <div class="section-description">Anonymize personal data before it is sent to any model provider.</div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Enable PII filtering</div>
+                                <div class="field-description">Applies to chat and utility model calls</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.pii_filter.enabled" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Action on detection</div>
+                                <div class="field-description">What happens when PII is detected</div>
+                            </div>
+                            <div class="field-control">
+                                <select x-model="config.pii_filter.action">
+                                    <option value="redact">Redact - replace with placeholder</option>
+                                    <option value="block">Block - reject message</option>
+                                    <option value="log_only">Log only - do not modify</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Detection methods</div>
+                                <div class="field-description">Regex patterns and spaCy NER (names &amp; addresses)</div>
+                            </div>
+                            <div class="field-control">
+                                <label><input type="checkbox" x-model="config.pii_filter.use_regex" /> Regex patterns</label>
+                                <label><input type="checkbox" x-model="config.pii_filter.use_ner" /> AI detection (spaCy)</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Languages</div>
+                                <div class="field-description">English is always loaded. Each additional language requires its spaCy model (~50 MB), installed automatically on restart.</div>
+                            </div>
+                            <div class="field-control">
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('de')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('de') ? (config.pii_filter.languages || []).filter(x => x !== 'de') : [...(config.pii_filter.languages || []), 'de'])" /> Deutsch</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('fr')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('fr') ? (config.pii_filter.languages || []).filter(x => x !== 'fr') : [...(config.pii_filter.languages || []), 'fr'])" /> Francais</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('es')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('es') ? (config.pii_filter.languages || []).filter(x => x !== 'es') : [...(config.pii_filter.languages || []), 'es'])" /> Espanol</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('it')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('it') ? (config.pii_filter.languages || []).filter(x => x !== 'it') : [...(config.pii_filter.languages || []), 'it'])" /> Italiano</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('nl')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('nl') ? (config.pii_filter.languages || []).filter(x => x !== 'nl') : [...(config.pii_filter.languages || []), 'nl'])" /> Nederlands</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('pt')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('pt') ? (config.pii_filter.languages || []).filter(x => x !== 'pt') : [...(config.pii_filter.languages || []), 'pt'])" /> Portugues</label>
+                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('pl')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('pl') ? (config.pii_filter.languages || []).filter(x => x !== 'pl') : [...(config.pii_filter.languages || []), 'pl'])" /> Polski</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Options</div>
+                                <div class="field-description">Detection logging and placeholder mapping</div>
+                            </div>
+                            <div class="field-control">
+                                <label><input type="checkbox" x-model="config.pii_filter.log_detections" /> Log detections</label>
+                                <label><input type="checkbox" x-model="config.pii_filter.store_mapping" /> Store mapping (enables re-identification)</label>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Local Embedding -->
+                <template x-if="config.local_embedding">
+                    <div class="section">
+                        <div class="section-title">Local Embedding</div>
+                        <div class="section-description">Memory embeddings run 100% locally via sentence-transformers.</div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Enforce local embeddings</div>
+                                <div class="field-description">Replaces external embedding providers in presets.yaml</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.local_embedding.enabled" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Embedding model</div>
+                                <div class="field-description">Must start with sentence-transformers/ for local execution</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="text" x-model="config.local_embedding.model" placeholder="sentence-transformers/..." />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Auto-configure</div>
+                                <div class="field-description">Apply the local embedding model to presets when the agent starts</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.local_embedding.auto_configure" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Verify on startup</div>
+                                <div class="field-description">Check local embedding configuration after each start</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.local_embedding.verify_local" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Verification -->
+                <template x-if="config.verification">
+                    <div class="section">
+                        <div class="section-title">Startup Verification</div>
+                        <div class="section-description">Verify privacy configuration when the agent starts.</div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Run startup checks</div>
+                                <div class="field-description">Verify privacy configuration on agent start</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.verification.enabled" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Check components</div>
+                                <div class="field-description">Which components to verify</div>
+                            </div>
+                            <div class="field-control">
+                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('embedding')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('embedding') ? (config.verification.check_components || []).filter(x => x !== 'embedding') : [...(config.verification.check_components || []), 'embedding'])" /> Embedding (local)</label>
+                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('memory')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('memory') ? (config.verification.check_components || []).filter(x => x !== 'memory') : [...(config.verification.check_components || []), 'memory'])" /> Memory (local)</label>
+                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('requesty')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('requesty') ? (config.verification.check_components || []).filter(x => x !== 'requesty') : [...(config.verification.check_components || []), 'requesty'])" /> Requesty (gateway)</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="field-label">
+                                <div class="field-title">Warn on external access</div>
+                                <div class="field-description">Log warnings when components use external APIs</div>
+                            </div>
+                            <div class="field-control">
+                                <input type="checkbox" x-model="config.verification.warn_on_external" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
     </div>
-    <span x-show="config.enabled" class="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400">Enabled</span>
-    <span x-show="!config.enabled" class="px-2 py-1 text-xs rounded-full bg-gray-500/20 text-gray-400">Disabled</span>
-  </div>
+</body>
 
-  <!-- Master toggle -->
-  <div class="flex items-center justify-between bg-gray-800/60 rounded-lg border border-gray-700 px-4 py-3">
-    <div>
-      <div class="text-white font-medium text-sm">Enable Privacy Guard</div>
-      <p class="text-xs text-gray-500 mt-0.5">Master switch for all privacy features</p>
-    </div>
-    <input type="checkbox" x-model="config.enabled" class="toggle toggle-sm toggle-success">
-  </div>
-
-  <!-- ==================== PII Filter ==================== -->
-  <div class="bg-gray-800/60 rounded-lg border border-gray-700 p-4 space-y-4"
-       :class="config.enabled ? '' : 'opacity-50 pointer-events-none'">
-
-    <div class="flex items-center justify-between">
-      <h3 class="text-white font-semibold flex items-center gap-2">
-        <span>🔒</span> PII Filter
-      </h3>
-      <div class="flex items-center gap-2">
-        <span x-show="config.pii_filter?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
-        <span x-show="!config.pii_filter?.enabled" class="px-2 py-0.5 text-xs rounded bg-gray-500/20 text-gray-400">OFF</span>
-      </div>
-    </div>
-
-    <!-- Enable + Action side by side -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-gray-300 text-sm font-medium">Enable PII Filtering</div>
-          <p class="text-xs text-gray-500 mt-0.5">Anonymize data before sending</p>
-        </div>
-        <input type="checkbox" x-model="config.pii_filter.enabled" class="toggle toggle-sm toggle-success">
-      </div>
-      <div>
-        <label class="text-xs text-gray-400 block mb-1">Action on Detection</label>
-        <select x-model="config.pii_filter.action" class="select select-bordered select-sm w-full bg-gray-700 text-white border-gray-600">
-          <option value="redact">Redact — replace with placeholder</option>
-          <option value="block">Block — reject message</option>
-          <option value="log">Log only — don't modify</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Detection methods -->
-    <div class="flex flex-wrap gap-4">
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.pii_filter.use_regex" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">Regex Patterns</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.pii_filter.use_ner" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">AI Detection <span class="text-gray-500">(spaCy — names & addresses)</span></span>
-      </label>
-    </div>
-
-    <!-- Language selection -->
-    <div class="border-t border-gray-700 pt-4">
-      <div class="flex items-center gap-2 mb-1">
-        <span>🌍</span>
-        <h4 class="text-white font-medium text-sm">Languages</h4>
-        <span class="text-xs text-gray-500">English is always loaded</span>
-      </div>
-      <p class="text-xs text-gray-500 mb-3">Each additional language requires its spaCy model (~50 MB), installed automatically on restart.</p>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <!-- English (fixed) -->
-        <div class="flex items-center gap-2 px-3 py-2 rounded border border-blue-500/50 bg-blue-500/10">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-white flex-1">🇬🇧 English</span>
-          <span class="text-xs text-blue-400">fixed</span>
-        </div>
-
-        <!-- Configurable languages -->
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('de') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('de')" @change="toggleLanguage('de')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇩🇪 Deutsch</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('fr') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('fr')" @change="toggleLanguage('fr')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇫🇷 Français</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('es') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('es')" @change="toggleLanguage('es')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇪🇸 Español</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('it') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('it')" @change="toggleLanguage('it')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇮🇹 Italiano</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('nl') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('nl')" @change="toggleLanguage('nl')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇳🇱 Nederlands</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('pt') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('pt')" @change="toggleLanguage('pt')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇵🇹 Português</span>
-        </label>
-
-        <label class="flex items-center gap-2 px-3 py-2 rounded border cursor-pointer transition-colors"
-               :class="isLanguageSelected('pl') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="isLanguageSelected('pl')" @change="toggleLanguage('pl')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300 flex-1">🇵🇱 Polski</span>
-        </label>
-      </div>
-
-      <p class="text-xs text-yellow-400/80 mt-3 flex items-center gap-1.5">
-        <span>⚠️</span> Many languages may slow down detection.</p>
-    </div>
-
-    <!-- Options -->
-    <div class="flex flex-wrap gap-4 border-t border-gray-700 pt-4">
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.pii_filter.log_detections" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">Log detections</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.pii_filter.store_mapping" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">Store mapping <span class="text-gray-500">— enables re-identification</span></span>
-      </label>
-    </div>
-  </div>
-
-  <!-- ==================== Local Embedding ==================== -->
-  <div class="bg-gray-800/60 rounded-lg border border-gray-700 p-4 space-y-4"
-       :class="config.enabled ? '' : 'opacity-50 pointer-events-none'">
-
-    <div class="flex items-center justify-between">
-      <h3 class="text-white font-semibold flex items-center gap-2">
-        <span>🧠</span> Local Embedding
-      </h3>
-      <div class="flex items-center gap-2">
-        <span x-show="config.local_embedding?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
-        <span x-show="!config.local_embedding?.enabled" class="px-2 py-0.5 text-xs rounded bg-gray-500/20 text-gray-400">OFF</span>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-gray-300 text-sm font-medium">Enforce local embeddings</div>
-        <p class="text-xs text-gray-500 mt-0.5">Memory embeddings run 100% locally</p>
-      </div>
-      <input type="checkbox" x-model="config.local_embedding.enabled" class="toggle toggle-sm toggle-success">
-    </div>
-
-    <div>
-      <label class="text-xs text-gray-400 block mb-1">Embedding Model</label>
-      <input type="text" x-model="config.local_embedding.model"
-             class="input input-bordered input-sm w-full bg-gray-700 text-white font-mono border-gray-600"
-             placeholder="sentence-transformers/...">
-      <p class="text-xs text-gray-500 mt-1">Must start with <code>sentence-transformers/</code> for local execution</p>
-    </div>
-
-    <div class="flex flex-wrap gap-4">
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.local_embedding.auto_configure" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">Auto-configure</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" x-model="config.local_embedding.verify_local" class="checkbox checkbox-sm checkbox-primary">
-        <span class="text-gray-300 text-sm">Verify on startup</span>
-      </label>
-    </div>
-  </div>
-
-  <!-- ==================== Startup Verification ==================== -->
-  <div class="bg-gray-800/60 rounded-lg border border-gray-700 p-4 space-y-4"
-       :class="config.enabled ? '' : 'opacity-50 pointer-events-none'">
-
-    <div class="flex items-center justify-between">
-      <h3 class="text-white font-semibold flex items-center gap-2">
-        <span>✅</span> Startup Verification
-      </h3>
-      <div class="flex items-center gap-2">
-        <span x-show="config.verification?.enabled" class="px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">ON</span>
-        <span x-show="!config.verification?.enabled" class="px-2 py-0.5 text-xs rounded bg-gray-500/20 text-gray-400">OFF</span>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-gray-300 text-sm font-medium">Run startup checks</div>
-        <p class="text-xs text-gray-500 mt-0.5">Verify privacy configuration on Agent Zero start</p>
-      </div>
-      <input type="checkbox" x-model="config.verification.enabled" class="toggle toggle-sm toggle-success">
-    </div>
-
-    <div>
-      <label class="text-xs text-gray-400 block mb-2">Check Components</label>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded border transition-colors"
-               :class="hasComponent('embedding') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="hasComponent('embedding')" @change="toggleComponent('embedding')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300">Embedding (local)</span>
-        </label>
-        <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded border transition-colors"
-               :class="hasComponent('memory') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="hasComponent('memory')" @change="toggleComponent('memory')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300">Memory (local)</span>
-        </label>
-        <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded border transition-colors"
-               :class="hasComponent('requesty') ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700 bg-gray-800/40 hover:border-gray-500'">
-          <input type="checkbox" :checked="hasComponent('requesty')" @change="toggleComponent('requesty')" class="checkbox checkbox-xs checkbox-primary">
-          <span class="text-sm text-gray-300">Requesty (gateway)</span>
-        </label>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-gray-300 text-sm font-medium">Warn on external access</div>
-        <p class="text-xs text-gray-500 mt-0.5">Show warnings when components use external APIs</p>
-      </div>
-      <input type="checkbox" x-model="config.verification.warn_on_external" class="toggle toggle-sm toggle-success">
-    </div>
-  </div>
-
-  <!-- ==================== Footer ==================== -->
-  <div class="flex items-center justify-end gap-4">
-    <div x-show="message" x-text="message" class="text-sm flex-1"
-         :class="messageType === 'success' ? 'text-green-400' : 'text-red-400'"></div>
-    <button @click="save" class="btn btn-primary btn-sm" :disabled="saving">
-      <span x-show="saving" class="loading loading-spinner loading-xs"></span>
-      Save Settings
-    </button>
-  </div>
-
-</div>
-
-<script>
-// Plugin settings page logic
-window.pluginSettingsPage = window.pluginSettingsPage || function(pluginId, storeId) {
-  return {
-    config: {},
-    saving: false,
-    message: '',
-    messageType: 'success',
-
-    async init() {
-      // Load config from store
-      try {
-        const response = await fetch(`/plugins/${pluginId}/store/${storeId}/get`);
-        if (response.ok) {
-          this.config = await response.json();
-        }
-      } catch (e) {
-        console.error('Failed to load config:', e);
-      }
-
-      // Ensure defaults exist
-      this.config.pii_filter = this.config.pii_filter || {};
-      this.config.pii_filter.languages = this.config.pii_filter.languages || ['de'];
-      this.config.local_embedding = this.config.local_embedding || {};
-      this.config.verification = this.config.verification || {};
-      this.config.verification.check_components = this.config.verification.check_components || ['embedding', 'memory', 'requesty'];
-    },
-
-    isLanguageSelected(lang) {
-      return (this.config.pii_filter.languages || []).includes(lang);
-    },
-
-    toggleLanguage(lang) {
-      if (!this.config.pii_filter.languages) {
-        this.config.pii_filter.languages = [];
-      }
-      const idx = this.config.pii_filter.languages.indexOf(lang);
-      if (idx >= 0) {
-        this.config.pii_filter.languages.splice(idx, 1);
-      } else {
-        this.config.pii_filter.languages.push(lang);
-      }
-    },
-
-    hasComponent(comp) {
-      return (this.config.verification?.check_components || []).includes(comp);
-    },
-
-    toggleComponent(comp) {
-      if (!this.config.verification.check_components) {
-        this.config.verification.check_components = [];
-      }
-      const idx = this.config.verification.check_components.indexOf(comp);
-      if (idx >= 0) {
-        this.config.verification.check_components.splice(idx, 1);
-      } else {
-        this.config.verification.check_components.push(comp);
-      }
-    },
-
-    async save() {
-      this.saving = true;
-      this.message = '';
-      try {
-        const response = await fetch(`/plugins/${pluginId}/store/${storeId}/set`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.config)
-        });
-        if (response.ok) {
-          this.message = 'Settings saved! Restart Agent Zero to apply language changes.';
-          this.messageType = 'success';
-        } else {
-          throw new Error('Save failed');
-        }
-      } catch (e) {
-        this.message = 'Failed to save: ' + e.message;
-        this.messageType = 'error';
-      }
-      this.saving = false;
-    }
-  };
-};
-</script>
+</html>

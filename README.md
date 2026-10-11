@@ -17,7 +17,7 @@ Local Privacy Guard protects your personal data when using Agent Zero with exter
 |---------|-------------|
 | 🔒 **PII Filter** | Detects and anonymizes personally identifiable information (emails, phones, IBANs, addresses, names, etc.) **before** any message leaves your machine — with **multi-language support** |
 | 🧠 **Local Embedding** | Forces memory embeddings to run 100% locally using sentence-transformers — no memory content is sent to external APIs |
-| ✅ **Privacy Verification** | Checks on startup that all privacy-relevant components are configured for local-only operation |
+| ✅ **Privacy Verification** | Checks on agent start that all privacy-relevant components are configured for local-only operation |
 
 ### Related plugin
 
@@ -141,7 +141,7 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 |---------|---------|-------------|
 | `enabled` | `true` | Configure local embeddings |
 | `model` | `paraphrase-multilingual-MiniLM-L12-v2` | sentence-transformers model (multilingual, 384 dims) |
-| `auto_configure` | `true` | Automatically update presets.yaml on startup |
+| `auto_configure` | `true` | Automatically update presets.yaml on agent start |
 | `verify_local` | `true` | Verify embedding runs locally |
 
 ### Detected PII Types

@@ -13,6 +13,7 @@ from typing import Any, Dict, List
 from usr.plugins.local_privacy_guard.helpers.embedding_config import (
     verify_embedding_is_local,
     check_sentence_transformers_available,
+    load_presets,
 )
 
 
@@ -39,37 +40,97 @@ def verify_embedding() -> Dict[str, Any]:
     """Verify that memory embeddings run locally."""
     result = verify_embedding_is_local()
     issues: List[str] = []
-    if not result["is_local"]:
-        issues.append(
-            f"Embedding model '{result['model']}' is not a local sentence-transformers model"
-        )
-    if result["api_key_set"]:
+
+    sections = result.get("sections") or []
+    models = [str(s.get("model", "") or "") for s in sections]
+    model_summary = ", ".join(m for m in models if m) or "(none configured)"
+
+    for section in sections:
+        if not section.get("is_local"):
+            issues.append(
+                f"Preset '{section.get('preset', '')}' uses non-local embedding "
+                f"model '{section.get('model', '')}' (provider: {section.get('provider', '')})"
+            )
+    if result.get("api_key_set"):
         issues.append("Embedding configuration contains an API key")
-    if result["api_base"]:
+    if result.get("api_base"):
         issues.append(f"Embedding configuration points to external API: {result['api_base']}")
     if not check_sentence_transformers_available():
         issues.append("sentence-transformers package is not installed")
     return {
         "component": "embedding",
         "ok": len(issues) == 0,
-        "is_local": result["is_local"],
-        "model": result["model"],
+        "is_local": result.get("is_local", False),
+        "model": model_summary,
+        "sections": sections,
         "issues": issues,
     }
 
 
 def verify_memory() -> Dict[str, Any]:
-    """Verify memory storage is local (FAISS files under /a0/usr)."""
+    """Verify memory storage is local (FAISS files under the user dir)."""
     from pathlib import Path
 
     issues: List[str] = []
-    memory_dir = Path("/a0/usr/memory")
+    try:
+        from usr.plugins.local_privacy_guard.helpers.embedding_config import (
+            get_presets_path,
+        )
+
+        # presets live under <root>/usr/plugins/_model_config; memory lives
+        # under <root>/usr/memory in the same user tree.
+        memory_dir = get_presets_path().parent.parent.parent / "memory"
+    except Exception:
+        memory_dir = Path("/a0/usr/memory")
     if not memory_dir.exists():
         issues.append("Memory directory does not exist yet (will be created on first use)")
     return {
         "component": "memory",
         "ok": True,  # memory plugin is local by design
         "storage": str(memory_dir),
+        "issues": issues,
+    }
+
+
+def verify_requesty() -> Dict[str, Any]:
+    """Verify whether any preset routes chat/utility calls through Requesty.
+
+    Requesty is an external gateway: calls routed through it leave the
+    local machine even when the PII filter is active. This check reports
+    which presets reference it so the user can decide.
+    """
+    issues: List[str] = []
+    routed: List[Dict[str, str]] = []
+    try:
+        presets = load_presets()
+    except Exception as exc:
+        return {
+            "component": "requesty",
+            "ok": False,
+            "issues": [f"presets could not be read: {exc}"],
+        }
+
+    entries = presets if isinstance(presets, list) else [presets] if presets else []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        name = str(entry.get("name") or "legacy")
+        for slot in ("chat", "utility", "embedding"):
+            section = entry.get(slot)
+            if not isinstance(section, dict):
+                continue
+            api_base = str(section.get("api_base", "") or "")
+            provider = str(section.get("provider", "") or "")
+            if "requesty" in api_base.lower() or "requesty" in provider.lower():
+                routed.append({"preset": name, "slot": slot, "api_base": api_base})
+                issues.append(
+                    f"Preset '{name}' routes {slot} through external Requesty gateway"
+                )
+
+    return {
+        "component": "requesty",
+        "ok": len(routed) == 0,
+        "routed": routed,
         "issues": issues,
     }
 
@@ -83,8 +144,9 @@ def run_verification(config: Dict[str, Any], components: List[str] | None = None
         "pii_filter": lambda: verify_pii_filter(config),
         "embedding": verify_embedding,
         "memory": verify_memory,
+        "requesty": verify_requesty,
     }
-    wanted = components or list(checkers.keys())
+    wanted = [c for c in (components or list(checkers.keys())) if c]
 
     results = []
     for name in wanted:
