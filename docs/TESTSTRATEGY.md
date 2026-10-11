@@ -72,3 +72,11 @@ python -m pytest tests/ -q
 Requirements: `pytest`, `pyyaml` (no spaCy, no sentence-transformers, no
 network needed; NER-dependent paths degrade gracefully and are covered by
 the manual checklist).
+
+## Settings redesign 1.2.0
+
+`tests/test_ui_diagnostics.py` checks the fixed synthetic example using real built-in regex logic, redact/block/log-only modes, disabled detection, invalid input and missing name models. It confirms that arbitrary custom patterns and mapping persistence are not used in the UI example. `node --test tests/test_privacy_store.mjs` checks changed settings, persistent errors and late results after closing.
+
+The HTML convention test permits one external store module and continues to reject inline scripts and raw fetch calls. The example API inherits Agent Zero authentication and CSRF requirements. It does not modify presets or configuration.
+
+In an isolated Agent Zero v2.13 instance, verify the real settings dialog, save/scope behavior and the example API. At 390px viewport width, check all language labels and controls; with keyboard navigation check focus visibility and expanded details. Successful regex output must not hide unavailable spaCy models. A browser example is not a provider privacy audit or an active-chat protection check.

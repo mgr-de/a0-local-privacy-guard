@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/icon.svg" width="150" alt="Local Privacy Guard Logo" />
   <h1>🛡️ Local Privacy Guard</h1>
-  <p><b>Comprehensive local privacy protection for Agent Zero</b></p>
+  <p><b>Local personal-detail filtering and memory embeddings for Agent Zero</b></p>
 </div>
 
 [![Agent Zero Plugin](https://img.shields.io/badge/Agent%20Zero-Plugin-blue)](https://github.com/agent0ai/agent-zero)
@@ -15,13 +15,21 @@ Local Privacy Guard protects your personal data when using Agent Zero with exter
 
 | Feature | Description |
 |---------|-------------|
-| 🔒 **PII Filter** | Detects and anonymizes personally identifiable information (emails, phones, IBANs, addresses, names, etc.) **before** any message leaves your machine — with **multi-language support** |
-| 🧠 **Local Embedding** | Forces memory embeddings to run 100% locally using sentence-transformers — no memory content is sent to external APIs |
-| ✅ **Privacy Verification** | Checks on agent start that all privacy-relevant components are configured for local-only operation |
+| 🔒 **PII Filter** | Replaces detected personal details in supported chat and utility model calls, with multilingual detection. Detection can miss details. |
+| 🧠 **Local Embedding** | Configures local sentence-transformers calculations for memory search. Helper models can still receive recalled memory text. |
+| ✅ **Privacy Verification** | Checks selected configuration components on agent initialization; it does not audit all external data paths. |
 
 ### Related plugin
 
-This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard), from the same authors. Local Privacy Guard anonymizes **what** is sent to your LLM (PII filtering before every model call, local embeddings); Requesty Privacy Guard controls **where** your traffic is routed (EU router, provider ZDR, no training) for Agent Zero models using Requesty. Use both together for end-to-end data protection.
+This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard). Local Privacy Guard replaces detected details in supported model calls and configures local embeddings. Requesty Privacy Guard checks selected routing and provider data requirements against catalog metadata. Neither plugin independently audits provider practices or protects every tool, image or third-party data path.
+
+### Settings in version 1.2.0
+
+The settings page separates everyday choices from advanced detection and startup options. Its summary describes the selected project/profile configuration, not verified protection of an active chat. Save changes and restart after changing languages or the embedding model.
+
+**Run local example** uses the real built-in filter on a fixed artificial email example. It makes no external model requests, downloads no models, saves no settings and creates no placeholder mapping. Results reflect the settings in the form, including unsaved changes; changed settings invalidate the displayed result. Missing name-detection models are reported separately. Install the needed spaCy models before relying on name detection. This example does not test custom patterns, embeddings or complete detection.
+
+The original screenshots below predate the 1.2.0 settings redesign. See [the UI review](docs/UI-REVIEW.md) for the design rationale and acceptance criteria.
 
 ### Why is this needed?
 
@@ -60,6 +68,8 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 
 ## How it works
 
+The diagram illustrates detected-detail replacement and local embedding calculations. It does not show every external path: helper models may receive recalled memory text, system messages can be skipped, and tools or independent third-party model clients are outside these hooks. Replaced details do not make the remaining text necessarily anonymous.
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    YOUR LOCAL MACHINE                        │
@@ -67,7 +77,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 │  │              Agent Zero (Docker Container)           │    │
 │  │                                                      │    │
 │  │  ┌─────────────┐    ┌──────────────┐    ┌────────┐  │    │
-│  │  │ PII Filter  │───▶│  Anonymized  │───▶│ Memory │  │    │
+│  │  │ PII Filter  │───▶│   Filtered   │───▶│ Memory │  │    │
 │  │  │(regex+NER)  │    │    Text      │    │ (FAISS)│  │    │
 │  │  └─────────────┘    └──────────────┘    └────────┘  │    │
 │  │         │                                    ▲       │    │
@@ -79,7 +89,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 │  │         │                            └──────────────┘│    │
 │  │         ▼                                           │    │
 │  │  ┌─────────────────────────────────────────────┐    │    │
-│  │  │     ONLY anonymized data leaves the machine  │    │    │
+│  │  │      Detected details replaced in text      │    │    │
 │  │  │    "<PERSON>", "<EMAIL>" instead of real PII   │    │    │
 │  │  └─────────────────────────────────────────────┘    │    │
 │  └─────────────────────────────────────────────────────┘    │
@@ -164,10 +174,10 @@ The plugin detects and anonymizes:
 
 Once installed and enabled, the plugin works **automatically**:
 
-1. **Before every LLM call**, messages are scanned for PII (in all selected languages)
-2. **Detected PII is replaced** with placeholders like `<EMAIL>`, `<PERSON>`, `<TELEFON>`
-3. **Only anonymized text** is sent to the LLM provider
-4. **Memory embeddings** are computed locally — no memory content leaves your machine
+1. On **supported chat and utility model calls**, eligible text messages are scanned using available detection methods and models; system messages are skipped by default
+2. In **redact mode**, detected details are replaced with placeholders like `<EMAIL>`, `<PERSON>`, `<TELEFON>`; block mode stops detected requests, and log-only mode sends details unchanged
+3. Text with **detected details replaced** is sent on supported calls in redact mode; missed details can remain
+4. **Memory embeddings** are computed locally when configured successfully; recalled memory text can still be sent to a helper model
 
 ### Example
 

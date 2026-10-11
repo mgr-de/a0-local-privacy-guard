@@ -1,0 +1,27 @@
+.privacy-settings { color: var(--color-text, #eee); line-height: 1.5; display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.privacy-settings h2, .privacy-settings h3 { color: inherit; margin: 0 0 .5rem; line-height: 1.3; }
+.privacy-settings h2 { font-size: 1.4rem; }
+.privacy-settings h3 { font-size: 1.1rem; }
+.privacy-settings p { margin: .5rem 0; overflow-wrap: anywhere; }
+.privacy-settings .privacy-card, .privacy-settings .privacy-note, .privacy-settings .privacy-status { border: 1px solid var(--color-border, #666); border-radius: .6rem; padding: 1rem; min-width: 0; }
+.privacy-settings .privacy-status { border-inline-start: 4px solid var(--color-primary, #62b5ff); }
+.privacy-settings .privacy-error { border-inline-start: 4px solid #da7a36; padding: .6rem 1rem; }
+.privacy-settings .privacy-help { font-size: .95rem; }
+.privacy-settings fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.privacy-settings legend { font-weight: 600; margin: .5rem 0; }
+.privacy-settings label:not(.privacy-choice) { display: block; font-weight: 600; margin-top: .75rem; }
+.privacy-settings .privacy-choice { display: flex; align-items: flex-start; gap: .6rem; padding: .5rem 0; min-height: 2.75rem; box-sizing: border-box; cursor: pointer; }
+.privacy-settings input[type=checkbox] { flex: 0 0 auto; width: 1.15rem; height: 1.15rem; margin: .2rem 0 0; accent-color: var(--color-primary, #238fec); }
+.privacy-settings input:not([type=checkbox]), .privacy-settings select { display: block; box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; min-height: 2.75rem; margin: .35rem 0 .75rem; color: inherit; background: var(--color-background, #171717); border: 1px solid #777; border-radius: .35rem; padding: .6rem; }
+.privacy-settings .btn { min-height: 2.75rem; white-space: normal; margin: .5rem .5rem .25rem 0; max-width: 100%; }
+.privacy-settings :disabled { cursor: not-allowed; }
+.privacy-settings :focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.privacy-settings .privacy-languages { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .2rem 1rem; }
+.privacy-settings summary { cursor: pointer; font-weight: 600; padding: .65rem 0; min-height: 2.75rem; box-sizing: border-box; }
+.privacy-settings details > p { margin-top: .5rem; }
+.privacy-settings .privacy-table-scroll { overflow: auto; max-height: 24rem; margin-top: .75rem; }
+.privacy-settings table { border-collapse: collapse; width: 100%; }
+.privacy-settings th, .privacy-settings td { text-align: left; vertical-align: top; padding: .7rem; border-bottom: 1px solid var(--color-border, #666); overflow-wrap: anywhere; min-width: 8rem; }
+.privacy-settings caption { text-align: left; margin-bottom: .5rem; }
+.privacy-settings pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--color-border, #666); border-radius: .35rem; font: inherit; }
+@media (max-width: 480px) { .privacy-settings .privacy-card, .privacy-settings .privacy-note, .privacy-settings .privacy-status { padding: .75rem; } .privacy-settings .btn { width: 100%; margin-inline: 0; } }

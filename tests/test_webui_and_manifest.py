@@ -12,8 +12,9 @@ def test_config_html_uses_store_gate_pattern():
     html = (ROOT / "webui" / "config.html").read_text(encoding="utf-8")
     assert '<div x-data>' in html
     assert html.count('<template x-if="config') >= 1
-    # no inline scripts, no fetch calls, no self-registered Alpine components
-    assert '<script' not in html
+    # Framework store gate and external module, no inline scripts or raw fetch.
+    assert '<script type="module" src="/plugins/local_privacy_guard/webui/privacy-store.js"></script>' in html
+    assert not re.search(r'<script[^>]*>(?!</script>)', html)
     assert 'fetch(' not in html
     assert 'pluginSettingsPage' not in html
     assert 'window.' not in html
