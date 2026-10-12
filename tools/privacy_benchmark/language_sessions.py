@@ -5,21 +5,21 @@ import re
 from pathlib import Path
 from types import SimpleNamespace
 
-def run(output,use_ner=False):
+def run(output,use_ner=False,backend='local'):
     from agent import Agent,AgentConfig
     from usr.plugins.local_privacy_guard.helpers import model_guard as guard
     from usr.plugins.local_privacy_guard.helpers.mapping import Mapping
     from usr.plugins.local_privacy_guard.helpers.pii_detector import PIIFilter
     import tempfile
     corpus=json.loads((Path(__file__).parents[2]/'tests/fixtures/multilingual_sessions.json').read_text())
-    report={'llm_calls':0,'answer_quality':'not tested by this deterministic replay','mode':'ner' if use_ner else 'regex','sessions':[]}
+    report={'llm_calls':0,'answer_quality':'not tested by this deterministic replay','mode':'ner' if use_ner else 'regex','backend':backend,'sessions':[]}
     with tempfile.TemporaryDirectory(prefix='privacy-language-') as folder:
-      for language in [*corpus['languages'],'mixed']:
+      for language in ([*corpus['languages'],'mixed'] if backend=='local' else ['de','en','mixed']):
        for count in (40,100):
         source=corpus['languages']['de' if language=='mixed' else language]
         persons=source['persons']
-        langs=list(corpus['languages']) if language=='mixed' else [language]
-        settings={'enabled':True,'use_regex':True,'use_ner':use_ner,'languages':langs,'action':'redact'}
+        langs=(list(corpus['languages']) if backend=='local' else ['de','en']) if language=='mixed' else [language]
+        settings={'enabled':True,'use_regex':True,'use_ner':use_ner,'languages':langs,'action':'redact','backend':backend}
         scanner=PIIFilter(settings)
         missing=set(scanner.ner_languages)-set(scanner.get_loaded_languages()) if use_ner else set()
         if missing:
@@ -33,7 +33,8 @@ def run(output,use_ner=False):
           history=[];oracle=[];roundtrips=0;formal_leaks=0;name_leaks=0;alias_roundtrips=0;fragment_leaks=0;stable_families=0;first_families=None
           graph={'relationships':[],'debts':[]}
           for turn in range(count):
-            current_language=list(corpus['languages'])[turn%7] if language=='mixed' else language
+            mixed_languages=list(corpus['languages']) if backend=='local' else ['de','en']
+            current_language=mixed_languages[turn%len(mixed_languages)] if language=='mixed' else language
             template=corpus['languages'][current_language]['templates'][turn%2]
             statement=template.format(a=persons[0]['name'],b=persons[1]['name'],c=persons[2]['name'],d=persons[3]['name'],amount=turn+1)
             graph={'relationships':[['A','B']] if turn%2==0 else [],'debts':[['C','D',turn+1]] if turn%2==0 else []}
@@ -77,8 +78,8 @@ def run(output,use_ner=False):
     return report
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--ner',action='store_true')
-    args=parser.parse_args();report=run(args.output,args.ner)
+    parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--ner',action='store_true');parser.add_argument('--backend',choices=['local','presidio'],default='local')
+    args=parser.parse_args();report=run(args.output,args.ner,args.backend)
     print(json.dumps({'sessions':len(report['sessions']),'blocked':sum(s['blocked'] for s in report['sessions']),
         'formal_value_leak_turns':sum(s.get('formal_value_leak_turns',0) for s in report['sessions']),
         'exact_roundtrips':sum(s.get('exact_roundtrips',0) for s in report['sessions'])}))
