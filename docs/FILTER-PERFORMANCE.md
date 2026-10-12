@@ -25,3 +25,7 @@ Private 37,119-character system-context replay; 20 samples per scenario, sequent
 Warm p95 improved 93.7%; a new message ran one new recognition unit and reused 1,095. New-text p95 improved 45.8%. These results exclude model/provider time. Optimized model loading was measured separately at 1.055 s; baseline preload was outside its recorded interval and is not a comparable cold-load measurement.
 
 All 16 production language replays passed: 1,120 exact restorations and stable full-name families, no tested complete contact values or full names in captured text. This deterministic corpus does not establish free-answer quality, general PII-freedom or sanitized images.
+
+## Native form regression, 13 October 2026
+
+The first two real DeepSeek Flash extractions failed the strict field comparison, despite correct masking of the known full name/address. Diagnostic output showed an additional false PERSON mapping for `ich bin Herr`. Version 1.7.3 excludes specific introduction phrases both from NER merge and existing-value matching; old records are retained. A third reserved attempt returned exact field placeholders and filled the real native browser form with locally restored fictional values. No image was sent. This is a controlled native extraction-to-browser integration, not a 40/100-turn free-answer quality claim.

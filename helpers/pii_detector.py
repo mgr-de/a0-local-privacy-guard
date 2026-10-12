@@ -458,6 +458,13 @@ class PIIFilter:
                 except re.error:
                     raise ValueError('A local filter pattern is invalid. Correct custom pattern syntax before continuing.') from None
 
+    def is_non_entity(self, value):
+        normalized=' '.join(value.casefold().split()).strip(' ,.:;')
+        return normalized in self.skip_words or normalized in {
+            'ich bin','ich bin herr','ich bin frau','i am','i am mr','i am mrs','i am ms',
+            'my name is','mein name ist',
+        }
+
     def _format_placeholder(self, pii_type: str, replacement: str) -> str:
         """Format the placeholder for a detection."""
         if replacement.startswith("<") and replacement.endswith(">"):
@@ -561,7 +568,7 @@ class PIIFilter:
 
         # Filter NER false positives: skip single known non-PII words
         ner_dets = [d for d in ner_dets if not (
-            d.original.lower().strip() in self.skip_words
+            self.is_non_entity(d.original)
         )]
 
         # Remove NER detections that overlap with regex detections
