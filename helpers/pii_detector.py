@@ -488,7 +488,7 @@ class PIIFilter:
 
         started=time.perf_counter()
         paragraphs=list(re.finditer(r'[^\n]+',text))
-        jobs={};results={}
+        jobs={};results={};pending={};models={}
         de_words=set('der die das und ist sind mit für von nicht schuldet verheiratet personen bleibt unverändert beziehungen geschäftspartner telefon'.split())
         en_words=set('the and is are with for from not owes married people unchanged relationships return only to of'.split())
         for i,paragraph in enumerate(paragraphs):
@@ -506,12 +506,15 @@ class PIIFilter:
                 # Paragraphs are fixed independent recognition units. No outside
                 # context is supplied to either backend. Model identity/version
                 # and the complete recognizer configuration invalidate reuse.
-                model=configuration({'name':SPACY_MODEL_NAMES.get(lang),'meta':getattr(nlp,'meta',{}),'instance':id(nlp)})
+                if lang not in models:models[lang]=configuration({'name':SPACY_MODEL_NAMES.get(lang),'meta':getattr(nlp,'meta',{}),'instance':id(nlp)})
+                model=models[lang]
                 key=(self.scope,self.signature,self.backend,lang,model,fingerprint(unit),'paragraph-v1')
                 cached=spans.get(key)
                 if cached is not None:
                     self.metrics['cache_hits']+=1;results[(i,lang)]=cached
-                else:jobs.setdefault(lang,[]).append((i,unit,key,nlp))
+                else:
+                    if key not in pending:jobs.setdefault(lang,[]).append((i,unit,key,nlp));pending[key]=[]
+                    pending[key].append(i)
         for lang,work in jobs.items():
             with _nlp_lock:
                 if self.backend=='presidio':
@@ -525,7 +528,8 @@ class PIIFilter:
                         for ent in doc.ents if (ent.label_ in self.ner_entity_types if self.ner_entity_types else ent.label_ in label_map)
                         and not (len(ent.text.strip())==1 and ent.text.strip().isalpha()) ] for doc in docs)
                 for (i,unit,key,_),hits in zip(work,batches,strict=True):
-                    hits=tuple(hits);spans.put(key,hits);results[(i,lang)]=hits
+                    hits=tuple(hits);spans.put(key,hits)
+                    for position in pending[key]:results[(position,lang)]=hits
                     self.metrics['ner_units']+=1;self.metrics['characters']+=len(unit)
         detections=[];seen=set()
         # Restore original paragraph/language priority, independent of batching.
