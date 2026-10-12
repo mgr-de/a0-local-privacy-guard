@@ -22,3 +22,10 @@ Thumbs.db
 # Test cache
 .pytest_cache/
 inherited-bridge.json
+# Optional detector artifacts and local benchmark vaults
+*.onnx
+*.onnx.data
+*.safetensors
+*.sqlite
+*.sqlite-*
+*.partial

@@ -403,7 +403,7 @@ class PIIFilter:
         self.config = config or {}
         self.scope = self.config.get('_cache_scope') or os.urandom(16)
         self.backend = self.config.get('backend', 'local')
-        if self.backend not in {'local', 'presidio'}:
+        if self.backend not in {'local', 'presidio', 'nym'}:
             raise ValueError('Unknown local detection backend.')
         self.signature = configuration({k:v for k,v in self.config.items() if not k.startswith('_')})
         self.metrics = {'ner_seconds':0.0,'regex_seconds':0.0,'cache_hits':0,'ner_units':0,'characters':0}
@@ -420,6 +420,12 @@ class PIIFilter:
         if BASE_LANGUAGE not in ner_languages:
             ner_languages = [BASE_LANGUAGE] + list(ner_languages)
         self.ner_languages = ner_languages
+        if self.backend == 'nym':
+            if not set(ner_languages) <= {'de', 'en'}:
+                raise ValueError('Nym evaluation is currently limited to German and English.')
+            from .nym_backend import get_model
+            self.nym_model = get_model(self.config)
+            self.signature = configuration({'config': self.config, 'artifact': self.nym_model.identity})
         if self.backend=='presidio':
             from .presidio_backend import validate
             validate(self.ner_languages)
@@ -494,6 +500,9 @@ class PIIFilter:
         if not self.use_ner:
             return []
 
+        if self.backend == 'nym':
+            return self._detect_nym(text)
+
         started=time.perf_counter()
         paragraphs=list(re.finditer(r'[^\n]+',text))
         jobs={};results={};pending={};models={}
@@ -550,6 +559,31 @@ class PIIFilter:
                     seen.add(key)
                     detections.append(PIIDetection(kind,original,key[0],key[1],self._format_placeholder(kind,f'<{kind}>'),source,score,language))
         self.metrics['ner_seconds']+=time.perf_counter()-started
+        return detections
+
+    def _detect_nym(self, text):
+        started = time.perf_counter()
+        detections = []
+        for paragraph in re.finditer(r'[^\n]+', text):
+            unit = paragraph.group()
+            if not unit.strip():
+                continue
+            key = (self.scope, self.signature, 'nym', fingerprint(unit), 'paragraph-v1')
+            hits = spans.get(key)
+            if hits is None:
+                try:
+                    hits = self.nym_model.detect(unit, float(self.config.get('nym_threshold', .5)))
+                except Exception:
+                    raise ValueError('Local Nym detection failed; no model content was sent.') from None
+                spans.put(key, hits)
+                self.metrics['ner_units'] += 1
+                self.metrics['characters'] += len(unit)
+            else:
+                self.metrics['cache_hits'] += 1
+            for start, end, kind, score in hits:
+                detections.append(PIIDetection(kind, unit[start:end], start + paragraph.start(),
+                    end + paragraph.start(), f'<{kind}>', 'ner', score, 'mixed'))
+        self.metrics['ner_seconds'] += time.perf_counter() - started
         return detections
 
     def _merge_detections(self, detections: List[PIIDetection]) -> List[PIIDetection]:
@@ -618,6 +652,8 @@ class PIIFilter:
 
     def get_loaded_languages(self) -> List[str]:
         """Return list of languages with successfully loaded spaCy models."""
+        if self.backend == 'nym':
+            return list(self.ner_languages)
         loaded = []
         for lang in self.ner_languages:
             if _get_nlp(lang) is not None:

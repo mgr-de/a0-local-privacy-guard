@@ -42,6 +42,52 @@ def test_ner_cannot_wrap_existing_placeholder(environment,monkeypatch):
     assert pipeline.text(source)==source
     assert pipeline.mapping.restore(source)=='Contact Anna Weber today'
 
+
+def test_nym_native_gateway_does_not_load_spacy_and_restores_context(environment,monkeypatch):
+    guard, agent, config = environment
+    from usr.plugins.local_privacy_guard.helpers import nym_backend, pii_detector
+    def detect(text, threshold):
+        start = text.find('Alina Beispiel')
+        return [(start, start + 14, 'PERSON', .9)] if start >= 0 else []
+    monkeypatch.setattr(nym_backend, 'get_model', lambda cfg: SimpleNamespace(identity={'revision':'synthetic'}, detect=detect))
+    def unexpected(*args): raise AssertionError('Nym must not load spaCy')
+    monkeypatch.setattr(pii_detector, '_get_nlp', unexpected)
+    config['pii_filter'].update(backend='nym', use_ner=True, languages=['de', 'en'])
+    pipeline = guard.PayloadFilter(agent, config, True)
+    payload = {'system_message':'Alina Beispiel', 'tool_output':'Alina Beispiel',
+               'memory':'alina@example.invalid', 'summary':'Alina Beispiel'}
+    masked = pipeline.value(payload)
+    assert 'Alina Beispiel' not in str(masked)
+    assert 'alina@example.invalid' not in str(masked)
+    assert {k: pipeline.mapping.restore(v) for k,v in masked.items()} == payload
+    assert guard.PayloadFilter(agent, config, False).text(str(masked['summary'])) == masked['summary']
+
+
+def test_real_nym_native_wrapper_buffers_and_checks_output(environment,monkeypatch):
+    import os
+    if not os.environ.get('NYM_TEST_MODEL_DIR'):
+        pytest.skip('verified local Nym bundle not supplied')
+    guard, agent, config = environment
+    import models
+    config['pii_filter'].update(backend='nym', use_ner=True, languages=['de', 'en'],
+                              nym_model_dir=os.environ['NYM_TEST_MODEL_DIR'])
+    captured = []; displayed = []
+    class LocalTransport(models.LiteLLMChatWrapper):
+        async def unified_call(self, *args, **kwargs):
+            captured.append(kwargs)
+            await kwargs['response_callback']('alina@', 'alina@')
+            return 'alina@example.invalid', 'robin@example.invalid'
+    inner = LocalTransport(model='synthetic', provider='openai', api_base='http://127.0.0.1:11434')
+    data = {'result': inner}; guard.bind(data, agent)
+    async def display(delta, total): displayed.append(total)
+    result = asyncio.run(data['result'].unified_call(system_message='alina@example.invalid',
+        user_message='robin@example.invalid', response_callback=display, reasoning_callback=display))
+    assert inner.kwargs['api_base'] == 'http://127.0.0.1:11434'
+    assert all(email not in str(captured) + str(displayed) + str(result) for email in
+               ('alina@example.invalid', 'robin@example.invalid'))
+    mapping = guard.mapping_for(agent)
+    assert tuple(mapping.restore(value) for value in result) == ('alina@example.invalid', 'robin@example.invalid')
+
 def test_complete_known_values_and_tokens_do_not_rerun_detection(environment,monkeypatch):
     guard,agent,config=environment
     pipeline=guard.PayloadFilter(agent,config,False)

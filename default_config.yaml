@@ -9,7 +9,13 @@ pii_filter:
   enabled: true
   use_regex: true
   use_ner: true
-  backend: local  # Optional: presidio (DE/EN only; install optional dependencies first)
+  backend: local  # Optional: presidio or nym (DE/EN evaluation; dependencies required)
+  # Nym is opt-in, CPU-only, and never downloads weights during a request.
+  # nym_model_dir: /absolute/path/to/verified-nym-bundle
+  # nym_threads: 1
+  # nym_max_tokens: 512
+  # nym_stride: 64
+  # nym_threshold: 0.5
   action: redact
   log_detections: true
   # Legacy key retained for configuration compatibility. Runtime redact mode

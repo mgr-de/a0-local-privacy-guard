@@ -139,7 +139,9 @@ class PayloadFilter:
                 raise ValueError("Name detection unavailable for " + ", ".join(sorted(missing)) + ". Install the selected spaCy models in Agent Zero's Python environment or select local processing.")
         from usr.plugins.local_privacy_guard.helpers import pii_detector
         model_identity={}
-        if self.filter.use_ner:
+        if self.filter.use_ner and self.filter.backend == 'nym':
+            model_identity['nym'] = self.filter.nym_model.identity
+        elif self.filter.use_ner:
             for language in self.filter.ner_languages:
                 model=pii_detector._get_nlp(language)
                 model_identity[language]={'identity':id(model),'meta':getattr(model,'meta',{})}
