@@ -439,17 +439,13 @@ def test_native_disabled_child_plugins_still_enforce_parent_without_changing_ind
         captured.append(kwargs.get('messages'))
         return ModelResponse(choices=[{'message':{'role':'assistant','content':'clara@example.com'},'finish_reason':'stop'}])
     with monkeypatch.context() as limited:
-        from usr.plugins.requesty.helpers import runtime_guard
-        limited.setattr(runtime_guard.local_models,'confirm',lambda *a,**kw:True)
-        from usr.plugins.local_privacy_guard.helpers import model_guard
-        limited.setattr(model_guard.local_models,'confirm',lambda *a,**kw:True)
         limited.setattr(plugins,'get_enabled_plugins',lambda a:[name for name in real_enabled(a)
             if a is not None or name not in {'requesty','local_privacy_guard'}])
         limited.setattr(litellm_transport,'acompletion',transport)
         cache.clear(extension._CLASSES_CACHE_AREA);cache.clear(extension._EXTENSIONS_CACHE_AREA)
-        local=models.LiteLLMChatWrapper(model='synthetic',provider='ollama_chat',
-            model_config=models.ModelConfig(type=models.ModelType.CHAT,provider='ollama_chat',name='synthetic'),
-            api_base='http://host.docker.internal:11434')
+        local=models.LiteLLMChatWrapper(model='synthetic',provider='openai',
+            model_config=models.ModelConfig(type=models.ModelType.CHAT,provider='openai',name='synthetic'),
+            api_base='http://host.docker.internal:8080/v1')
         async def local_tool_call():
             await extension.call_extensions_async('tool_execute_before',child,tool_name='vision_load',tool_args={})
             try:return await local.unified_call(user_message='anna@example.com')

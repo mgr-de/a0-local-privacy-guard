@@ -2,7 +2,7 @@
 
 ## Umgesetzter Standardschutz
 
-Die bestehenden Plugins bleiben für Browser, Fotos, Formulare und Dateibearbeitung nutzbar. Requesty prüft die tatsächliche Modellroute eines geschützten Profils; lokale Ollama-Modelle bleiben zulässig. Ein natives Preset darf die Policy nicht umgehen und wird bei Konflikten abgelehnt, ohne die Auswahl still zu verändern. Unteragenten desselben Chats übernehmen die Mindestanforderungen seines geschützten Stammprofils. Andere unabhängige Chats behalten ihre eigene Konfiguration.
+Die bestehenden Plugins bleiben für Browser, Fotos, Formulare und Dateibearbeitung nutzbar. Requesty prüft die tatsächliche Modellroute eines geschützten Profils; native lokale Modellrouten bleiben zulässig. Ein natives Preset darf die Policy nicht umgehen und wird bei Konflikten abgelehnt, ohne die Auswahl still zu verändern. Unteragenten desselben Chats übernehmen die Mindestanforderungen seines geschützten Stammprofils. Andere unabhängige Chats behalten ihre eigene Konfiguration.
 
 Local Privacy Guard kopiert native Modellpayloads vor der Prüfung. Systemtexte, Werkzeugtexte und alle Textblöcke werden berücksichtigt. Der Modellwrapper erfasst auch direkte Kompaktierungsaufrufe; native Vision-Werkzeugaufrufe erhalten einen tasklokalen Besitzer. Fehlende erforderliche Namenserkennung stoppt externe Textaufrufe. Fremde, selbst geschriebene Modellclients sind außerhalb dieser Integration.
 
@@ -32,9 +32,9 @@ Freigaben werden auf Aufgaben begrenzt: konkrete Daten, Empfänger, Zweck und G�
 
 Strengere Bildregeln, lokale Verarbeitung und der Freigabeumfang werden dort konfigurierbar. Ausnahmen bleiben sichtbar und auf die Aufgabe begrenzt. Eine pauschale Freigabe für alle künftigen Daten wird nicht als sicherer Zustand dargestellt. Schutz vor Host-Administratoren und absichtlichen verdeckten Kommunikationskanälen gehört nicht zu einer umfassenden Sicherheitsgarantie dieser Plugins.
 
-## Keine Ollama-Voraussetzung
+## Entwicklungs-Testserver
 
-Ollama ist ausschließlich eine optionale Modellroute und eine vorhandene Entwicklungs-Testumgebung. Die Nutzung muss mit zugelassenen Requesty-Modellen allein funktionieren. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. OCR benötigt optional bereits installiertes Tesseract und wird nicht vorausgesetzt.
+Der vorhandene lokale Modelldienst dient nur als Entwicklungs-Testumgebung. Die Plugins erhalten dafür keine eigene Integration oder Metadatenabfrage. Die Nutzung funktioniert mit zugelassenen Requesty-Modellen allein. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. OCR benötigt optional bereits installiertes Tesseract und wird nicht vorausgesetzt.
 
 ## Native Adapter und Einführung
 

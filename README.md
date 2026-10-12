@@ -11,11 +11,11 @@
 
 ## What does this plugin do?
 
-### Standardschutz in 1.4.0
+### Standardschutz in 1.4.1
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
-Ollama ist keine Nutzungsvoraussetzung. Ein geschütztes Profil kann ausschließlich zugelassene Requesty-Modelle verwenden. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Ollama dient hier nur als optionale Modellroute und als vorhandene Entwicklungs-Testumgebung; Tesseract ist ebenfalls optional.
+Ein geschütztes Profil kann ausschließlich zugelassene Requesty-Modelle verwenden. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Es wird keine dienstspezifische Integration für den lokalen Entwicklungs-Testserver eingebaut; Tesseract bleibt optional.
 
 Redact-Modus verwendet eindeutige, persistente Tokenfamilien pro Schutzprofil und Chat. Schreibweisen und eindeutige Kurzformen können Varianten derselben Familie erhalten. Zuordnungen enthalten Originaldaten und liegen unter `usr/privacy-mappings` mit eingeschränkten Dateirechten. Die historische Option `store_mapping` bleibt lesbar, steuert aber nicht mehr die verbindliche Runtime-Zuordnung. Alte mehrdeutige Typ-Platzhalter werden nicht importiert.
 
@@ -282,4 +282,6 @@ To add support for a new language:
 
 ## Current standard-protection validation
 
-See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Ollama is optional and checked for actual local weights only when selected; Requesty-only use needs no Ollama server. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.
+See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Local models remain native Agent Zero choices; no local-server metadata or weight checks are performed by these plugins. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.
+
+See [the 12 October correction](docs/KORREKTUR-2026-10-12.md): effective Requesty model labels replace misleading shared-default labels in protected chats, without changing presets. Provider-specific local-server probes were removed.

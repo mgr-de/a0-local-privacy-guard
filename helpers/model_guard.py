@@ -17,7 +17,6 @@ from usr.plugins.local_privacy_guard.helpers import agent_scope
 from usr.plugins.local_privacy_guard.helpers.mapping import Mapping, TOKEN
 from usr.plugins.local_privacy_guard.helpers.pii_detector import PIIFilter, PIIDetection, UNIVERSAL_PATTERNS, LANGUAGE_PATTERNS, LABEL_MAPS
 from usr.plugins.local_privacy_guard.helpers.secrets import check
-from usr.plugins.local_privacy_guard.helpers import local_models
 
 tool_agent = ContextVar("local_privacy_tool_agent", default=None)
 CONTENT_OPTIONS=('tools','response_format','a0_responses_function_tools','responses_input_items',
@@ -67,18 +66,14 @@ def mapping_for(agent):
 
 
 def is_local(wrapper, overrides=None):
-    provider = str(getattr(wrapper.a0_model_conf, "provider", wrapper.provider)).lower()
     options = {**wrapper.kwargs, **(overrides or {})}
     base = options.get("api_base") or getattr(wrapper.a0_model_conf, "api_base", "")
     url = urlparse(str(base))
     secondary={'base_url','api_url','custom_llm_provider','fallbacks','context_window_fallbacks',
                'model_list','router','client','aclient','http_client','extra_body','extra_headers','headers','proxy'}
-    candidate=not secondary.intersection(options) and not url.username and not url.password and provider in {"ollama", "ollama_chat"} and url.scheme in {"http", "https"} and url.hostname in {
-        "localhost", "127.0.0.1", "::1", "host.docker.internal", "ollama"
+    return not secondary.intersection(options) and not url.username and not url.password and url.scheme in {"http", "https"} and url.hostname in {
+        "localhost", "127.0.0.1", "::1", "host.docker.internal"
     }
-    if not candidate:return False
-    try:return local_models.confirm(base,wrapper.model_name.split('/',1)[-1],options.get('runner'))
-    except ValueError:return False
 
 
 def route_host(value):

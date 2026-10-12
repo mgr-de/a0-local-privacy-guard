@@ -4,7 +4,7 @@ Die bestehenden Plugins wurden am nativen Agent-Zero-Modellpfad verstärkt. Olla
 
 ## Änderungen
 
-Zugelassene native Presets bleiben wählbar; Main, Utility und Browser/Vision müssen die aktive Profilpolicy erfüllen. Inkompatible Anbieter, Transportparameter und nicht bestätigte Vision-Fähigkeiten werden abgelehnt, ohne die Auswahl still zu ändern. Lokale Ollama-Routen werden nur als lokal akzeptiert, wenn `/api/show` lokale Modellgewichte bestätigt; Cloud-Aliase zählen nicht als lokale Verarbeitung. Es findet dabei keine Chatübertragung statt. Diese Prüfung läuft ausschließlich bei einer ausdrücklich gewählten Ollama-Route. [Ollama Cloud](https://docs.ollama.com/cloud), [ShowResponse](https://raw.githubusercontent.com/ollama/ollama/main/api/types.go).
+Zugelassene native Presets bleiben wählbar; Main, Utility und Browser/Vision müssen die aktive Profilpolicy erfüllen. Inkompatible Anbieter, Transportparameter und nicht bestätigte Vision-Fähigkeiten werden abgelehnt, ohne die Auswahl still zu ändern. Die nachträglich eingeführte dienstspezifische lokale Modellprüfung wurde auf Nutzeranweisung entfernt. Native lokale Endpunkte bleiben verwendbar; die Plugins fragen weder Modellgewichte noch Metadaten des lokalen Testservers ab. Eine lokale Zieladresse allein beweist nicht, dass ein dort betriebener Dienst seinerseits nichts weiterleitet.
 
 Unteragenten übernehmen die Mindestanforderungen des geschützten Stammchats, auch wenn ihre eigenen Profilhooks deaktiviert sind. Dazu installieren die Lebenszyklushooks kleine native Adapter unter `usr/extensions/python`; sie sind bei unabhängigen anderen Chats wirkungslos und schreiben keine gemeinsamen Presets. Besitznachweise liegen außerhalb des Plugin-Verzeichnisses, damit ZIP-Aktualisierungen sie erhalten. Fremde oder nachträglich veränderte Adapter werden nicht überschrieben bzw. gelöscht. Dies ist kein zusätzlicher Dienst.
 
@@ -12,7 +12,7 @@ Alle nativen Textblöcke einschließlich Systemtext, Werkzeugergebnissen, Kontex
 
 Der Schutzstatus trennt tatsächliche Route, Textfilter, konfigurierte lokale Embeddings und nicht abgedeckte Bild-/Werkzeugpfade. Originalbilder bleiben für zugelassene Vision-Modelle möglich; der permanente Hinweis erklärt die Grenze. OCR mit vorhandenem Tesseract ist optional und bereinigt keine Bilder. Es wurden keine allgemeinen Browserfreigaben oder zusätzlichen Bildrestriktionen eingeführt.
 
-## Ergebnisse
+## Ergebnisse der ursprünglichen 1.4 / 0.4-Abnahme
 
 | Prüfung | Ergebnis | Reichweite |
 |---|---|---|
@@ -43,3 +43,7 @@ Auch der finale freie 40-Nachrichten-Lauf enthält erfundene Beziehungen und vom
 Installations-/Aktualisierungshooks ausführen und Agent Zero anschließend neu starten, damit native Adapter geladen werden. Profilkonfigurationen und Zugangsdaten vor nativen ZIP-Ersetzungen sichern; der Rahmen kann Plugin-Daten entfernen. Bestehende Einstellungen bleiben durch die Runtime-Umsetzung erhalten. Neue Zuordnungen entstehen ab 1.4; keine unsichere Rekonstruktion alter Tokens.
 
 Ein zusätzlicher Privacy Hardened Agent mit eigener Instanz, Schutzmanager, lokalem Schutzdienst, Netzwerkregeln und aufgabenbezogenen Freigaben ist ausschließlich als optionaler Ausblick dokumentiert. Er wurde hier nicht gebaut. Wiederholungsprogramme liegen in `tools/privacy_benchmark` des Local-Repositories; nur in einer eigenen Testinstanz mit synthetischen Daten ausführen.
+
+## Korrektur 12.10.2026
+
+Dienstspezifische Metadaten-/Gewichtsprüfungen für den lokalen Testserver samt zwölf zugehörigen Python-Prüfungen entfernt. Die aktuelle Regression besteht aus 87 Local- und 71 Requesty-Python-Tests plus 32 Unterprüfungen und 20 Frontend-Prüfungen. Die native Modellbeschriftung zeigt für aktive Requesty-Profile die wirksame Main-Konfiguration; gemeinsame Presets bleiben unverändert. Die erfassten Browseranfragen enthalten 14 DeepSeek-Flash- und drei GPT-6-Luna-Utility-Aufrufe, keinen GPT-6.1-Sol-Aufruf. Die UI-Korrektur selbst löst keine LLM-Anfragen aus. [Details](KORREKTUR-2026-10-12.md).
