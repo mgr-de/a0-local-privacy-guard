@@ -1,0 +1,1375 @@
+{
+  "schema": 1,
+  "runs": [
+    {
+      "backend": "local",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.0888477090047672,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 9.547577006742358,
+          "p95_ms": 17.666962987277657
+        },
+        "mapping": {
+          "p50_ms": 0.0006199697963893414,
+          "p95_ms": 0.0009409850463271141
+        },
+        "transport": {
+          "p50_ms": 0.0002019805833697319,
+          "p95_ms": 0.00048696529120206833
+        },
+        "output": {
+          "p50_ms": 4.14585298858583,
+          "p95_ms": 7.835933996830136
+        },
+        "restore": {
+          "p50_ms": 0.1628969912417233,
+          "p95_ms": 0.24931196821853518
+        },
+        "total": {
+          "p50_ms": 15.910630056168884,
+          "p95_ms": 21.11784601584077
+        }
+      },
+      "cpu_seconds": 1.38,
+      "wall_seconds": 1.4002642589621246,
+      "cpu_percent_one_core": 98.55282609461557,
+      "rss_peak_sampled_bytes": 927670272,
+      "throughput_cases_per_second": 49.990563961036884,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 100,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.9564662802731618,
+          "regex_seconds": 0.01985997596057132,
+          "cache_hits": 550,
+          "ner_units": 228,
+          "characters": 52156
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1207,
+          "database_seconds": 0.0983808494056575
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.0406218160060234,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 4.411421017721295,
+          "p95_ms": 9.58431203616783
+        },
+        "mapping": {
+          "p50_ms": 0.00046798959374427795,
+          "p95_ms": 0.0008660135790705681
+        },
+        "transport": {
+          "p50_ms": 0.00017997808754444122,
+          "p95_ms": 0.000341970007866621
+        },
+        "output": {
+          "p50_ms": 1.9900519982911646,
+          "p95_ms": 7.579324999824166
+        },
+        "restore": {
+          "p50_ms": 0.14111405471339822,
+          "p95_ms": 0.2875100472010672
+        },
+        "total": {
+          "p50_ms": 6.6549929906614125,
+          "p95_ms": 13.117352034896612
+        }
+      },
+      "cpu_seconds": 1.0899999999999999,
+      "wall_seconds": 1.1138807029929012,
+      "cpu_percent_one_core": 97.85608073389403,
+      "rss_peak_sampled_bytes": 928935936,
+      "throughput_cases_per_second": 62.84335459974847,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 100,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.4145408007898368,
+          "regex_seconds": 0.020195619319565594,
+          "cache_hits": 741,
+          "ner_units": 37,
+          "characters": 29863
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1315,
+          "database_seconds": 0.10485550144221634
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.0393134210025892,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 11.495443002786487,
+          "p95_ms": 20.875371992588043
+        },
+        "mapping": {
+          "p50_ms": 0.0007600174285471439,
+          "p95_ms": 0.0010969815775752068
+        },
+        "transport": {
+          "p50_ms": 0.00020599691197276115,
+          "p95_ms": 0.0004500034265220165
+        },
+        "output": {
+          "p50_ms": 4.530940961558372,
+          "p95_ms": 9.777039987966418
+        },
+        "restore": {
+          "p50_ms": 0.17064705025404692,
+          "p95_ms": 0.2761319628916681
+        },
+        "total": {
+          "p50_ms": 19.69048206228763,
+          "p95_ms": 24.3270710343495
+        }
+      },
+      "cpu_seconds": 1.6199999999999992,
+      "wall_seconds": 1.6365079070092179,
+      "cpu_percent_one_core": 98.99127239541497,
+      "rss_peak_sampled_bytes": 937418752,
+      "throughput_cases_per_second": 42.77400659061143,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 100,
+      "detector_metrics": [
+        {
+          "ner_seconds": 1.1489642210653983,
+          "regex_seconds": 0.02014391520060599,
+          "cache_hits": 550,
+          "ner_units": 228,
+          "characters": 52156
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1207,
+          "database_seconds": 0.10300366656156257
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.0457670859759673,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 4.635613004211336,
+          "p95_ms": 10.139152989722788
+        },
+        "mapping": {
+          "p50_ms": 0.00047800131142139435,
+          "p95_ms": 0.0008069910109043121
+        },
+        "transport": {
+          "p50_ms": 0.0001569860614836216,
+          "p95_ms": 0.0003550085239112377
+        },
+        "output": {
+          "p50_ms": 2.213032974395901,
+          "p95_ms": 9.28435503738001
+        },
+        "restore": {
+          "p50_ms": 0.1495329779572785,
+          "p95_ms": 0.26119500398635864
+        },
+        "total": {
+          "p50_ms": 7.242977968417108,
+          "p95_ms": 14.424912049435079
+        }
+      },
+      "cpu_seconds": 1.209999999999999,
+      "wall_seconds": 1.2236945750191808,
+      "cpu_percent_one_core": 98.88088291811158,
+      "rss_peak_sampled_bytes": 935878656,
+      "throughput_cases_per_second": 57.20381656419682,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 100,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.44792191352462396,
+          "regex_seconds": 0.020040529256220907,
+          "cache_hits": 741,
+          "ner_units": 37,
+          "characters": 29863
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1315,
+          "database_seconds": 0.10090167127782479
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.9374723689979874,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 37.02805796638131,
+          "p95_ms": 101.9587010378018
+        },
+        "mapping": {
+          "p50_ms": 0.000900006853044033,
+          "p95_ms": 0.0011750380508601665
+        },
+        "transport": {
+          "p50_ms": 0.0001500011421740055,
+          "p95_ms": 0.0005410402081906796
+        },
+        "output": {
+          "p50_ms": 63.25001403456554,
+          "p95_ms": 176.98019498493522
+        },
+        "restore": {
+          "p50_ms": 0.20190200302749872,
+          "p95_ms": 0.26595499366521835
+        },
+        "total": {
+          "p50_ms": 97.62358805164695,
+          "p95_ms": 224.04251899570227
+        }
+      },
+      "cpu_seconds": 13.449999999999998,
+      "wall_seconds": 13.325147219991777,
+      "cpu_percent_one_core": 100.93697111144036,
+      "rss_peak_sampled_bytes": 2103980032,
+      "throughput_cases_per_second": 5.253225262305447,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 4,
+      "detector_metrics": [
+        {
+          "ner_seconds": 12.99806672259001,
+          "regex_seconds": 0.018164785637054592,
+          "cache_hits": 292,
+          "ner_units": 124,
+          "characters": 20084
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1165,
+          "database_seconds": 0.09793710266239941
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.9732209740323015,
+      "cases": 35,
+      "samples": 70,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.8061249973252416,
+          "p95_ms": 3.330365987494588
+        },
+        "mapping": {
+          "p50_ms": 0.00034103868529200554,
+          "p95_ms": 0.0006880145519971848
+        },
+        "transport": {
+          "p50_ms": 0.00014901161193847656,
+          "p95_ms": 0.00032299431040883064
+        },
+        "output": {
+          "p50_ms": 0.5644659977406263,
+          "p95_ms": 163.30513096181676
+        },
+        "restore": {
+          "p50_ms": 0.12694101314991713,
+          "p95_ms": 0.35917898640036583
+        },
+        "total": {
+          "p50_ms": 1.5321610262617469,
+          "p95_ms": 164.28931994596496
+        }
+      },
+      "cpu_seconds": 6.449999999999999,
+      "wall_seconds": 6.395168270973954,
+      "cpu_percent_one_core": 100.85739306149162,
+      "rss_peak_sampled_bytes": 2106241024,
+      "throughput_cases_per_second": 10.94576358806886,
+      "roundtrips_exact": 60,
+      "roundtrips_semantic": 70,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 4,
+      "detector_metrics": [
+        {
+          "ner_seconds": 3.624181577411946,
+          "regex_seconds": 0.017895494704134762,
+          "cache_hits": 397,
+          "ner_units": 19,
+          "characters": 5068
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1273,
+          "database_seconds": 0.09212496952386573
+        }
+      ],
+      "environment": {
+        "python": "3.12.4",
+        "os": "Linux",
+        "cpu_count": 28,
+        "cpu_physical_count": 14,
+        "processor": "",
+        "ram_bytes": 16684027904,
+        "packages": {
+          "numpy": "1.26.4",
+          "onnxruntime": "1.19.2",
+          "tokenizers": "0.22.2",
+          "spacy": "3.8.16",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.2.2",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "9ee0bc3dc078166f09cf308325c920fd817bb3d1431dd592cea496ee262e3173"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "native PayloadFilter over system/tool/memory/summary + simulated echo + native output check",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    }
+  ]
+}

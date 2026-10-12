@@ -101,6 +101,15 @@ def character_tally(found, expected):
     return {'tp': len(actual & gold), 'fp': len(actual - gold), 'fn': len(gold - actual)}
 
 
+def equivalent(first, second):
+    if first == second:
+        return True
+    try:
+        return json.loads(first) == json.loads(second)
+    except (ValueError, TypeError):
+        return False
+
+
 def scores(counts):
     tp, fp, fn = (counts[k] for k in ('tp', 'fp', 'fn'))
     return {**counts, 'precision': tp / (tp + fp) if tp + fp else 1.,
@@ -142,7 +151,7 @@ def worker(args):
                 raise ValueError('Missing spaCy language model.')
         load_seconds = time.perf_counter() - started
         first.filter('CSS HTML JSON')  # Warm runtime kernel; exclude from steady timing.
-        cases = corpus(); quality = {}; character_quality = {}; type_counts = {}; roundtrips = 0; leak_cases = 0
+        cases = corpus(); quality = {}; character_quality = {}; type_counts = {}; roundtrips = 0; semantic_roundtrips = 0; leak_cases = 0
         for language, text, gold in cases:
             result = first.filter(text)
             counts = tally([normalized(h) for h in result.detections], gold)
@@ -173,7 +182,7 @@ def worker(args):
                         if args.native:
                             native_guard.PayloadFilter(agent, pipeline_config, False).text(text)
                         else: filt.filter(text)
-                local_samples = []; local_roundtrips = local_leaks = 0
+                local_samples = []; local_roundtrips = local_semantic_roundtrips = local_leaks = 0
                 native_metrics = dict(filt.metrics)
                 try:
                     for _ in range(args.repeats):
@@ -213,11 +222,14 @@ def worker(args):
                             tick = time.perf_counter(); restored = mapping.restore(response)
                             restore_seconds = time.perf_counter() - tick
                             exact = restored == text
+                            semantic = equivalent(restored, text)
                             if args.native:
                                 # Restore text values before JSON escaping, as native display does.
                                 # Restoring a serialized container could inject unescaped quotes.
                                 exact = exact and {k: mapping.restore(str(v)) for k, v in masked_payload.items()} == payload
+                                semantic = semantic and all(equivalent(mapping.restore(str(v)), payload[k]) for k, v in masked_payload.items())
                             local_roundtrips += exact
+                            local_semantic_roundtrips += semantic
                             leak_target = json.dumps(masked_payload) if args.native else masked
                             local_leaks += any(text[a:b] in leak_target for a, b, _ in gold)
                             local_samples.append({'input': detection_seconds, 'mapping': mapping_seconds,
@@ -229,13 +241,13 @@ def worker(args):
                                     for key, value in active_filter.metrics.items(): native_metrics[key] += value
                 finally:
                     cache.clear_scope(filt.scope)
-                return local_samples, local_roundtrips, local_leaks, native_metrics if args.native else dict(filt.metrics), dict(mapping.metrics)
+                return local_samples, local_roundtrips, local_leaks, native_metrics if args.native else dict(filt.metrics), dict(mapping.metrics), local_semantic_roundtrips
             cpu_start = sum(process.cpu_times()[:2]); start = time.perf_counter()
             with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
                 results = list(pool.map(run_task, range(args.concurrency)))
             wall = time.perf_counter() - start; cpu = sum(process.cpu_times()[:2]) - cpu_start
-            for values, trips, leaks, _, _ in results:
-                samples.extend(values); roundtrips += trips; leak_cases += leaks
+            for values, trips, leaks, _, _, semantic_trips in results:
+                samples.extend(values); roundtrips += trips; semantic_roundtrips += semantic_trips; leak_cases += leaks
         packages = {}
         for name in ('numpy', 'onnxruntime', 'tokenizers', 'spacy', 'presidio-analyzer', 'psutil', 'en-core-web-sm', 'de-core-news-sm'):
             try: packages[name] = version(name)
@@ -252,7 +264,7 @@ def worker(args):
             'cpu_seconds': cpu, 'wall_seconds': wall, 'cpu_percent_one_core': 100 * cpu / wall,
             'rss_peak_sampled_bytes': max(rss + [process.memory_info().rss]),
             'throughput_cases_per_second': len(samples) / wall,
-            'roundtrips_exact': roundtrips, 'cases_with_known_value_leak': leak_cases,
+            'roundtrips_exact': roundtrips, 'roundtrips_semantic': semantic_roundtrips, 'cases_with_known_value_leak': leak_cases,
             'output_false_positive_detections': sum(s['output_detections'] for s in samples),
             'detector_metrics': [r[3] for r in results], 'mapping_metrics': [r[4] for r in results],
             'environment': {'python': platform.python_version(), 'os': platform.system(),
@@ -303,6 +315,7 @@ def main():
             for concurrency in args.concurrencies:
                 for cache in ('cold', 'warm'):
                     output = Path(directory) / 'worker.json'
+                    output.unlink(missing_ok=True)
                     command = [sys.executable, __file__, '--worker', '--output', str(output),
                                '--backend', backend, '--concurrency', str(concurrency), '--cache', cache,
                                '--threads', str(args.threads), '--repeats', str(args.repeats),
@@ -319,6 +332,8 @@ def main():
                                                'status': 'failed', 'reason': 'worker timed out'})
                         continue
                     result = json.loads(output.read_text()) if output.exists() else {'status': 'failed'}
+                    if completed.returncode != 0 and result.get('status') == 'ok':
+                        result = {'status': 'failed', 'reason': 'worker exited unsuccessfully'}
                     report['runs'].append({'backend': backend, 'concurrency': concurrency, 'cache': cache, **result})
                     print(backend, concurrency, cache, result['status'], flush=True)
     Path(args.output).write_text(json.dumps(report, indent=2), encoding='utf-8')

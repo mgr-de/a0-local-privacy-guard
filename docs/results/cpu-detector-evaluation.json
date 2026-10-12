@@ -1,0 +1,5763 @@
+{
+  "schema": 1,
+  "runs": [
+    {
+      "backend": "regex",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.002312599972356111,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.02789997961372137,
+          "p95_ms": 0.05740002961829305
+        },
+        "mapping": {
+          "p50_ms": 0.2269999822601676,
+          "p95_ms": 1.8705999827943742
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.03029999788850546,
+          "p95_ms": 0.06490002851933241
+        },
+        "restore": {
+          "p50_ms": 0.23220002185553312,
+          "p95_ms": 0.7745999610051513
+        },
+        "total": {
+          "p50_ms": 0.5207000067457557,
+          "p95_ms": 2.762200019787997
+        }
+      },
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0934766000136733,
+      "cpu_percent_one_core": 83.57706633379075,
+      "rss_peak_sampled_bytes": 31834112,
+      "throughput_cases_per_second": 1123.2757715261478,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 42,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010416900797281414,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.07693079969612882
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "regex",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.0019415000570006669,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.02789997961372137,
+          "p95_ms": 0.053099996875971556
+        },
+        "mapping": {
+          "p50_ms": 0.2367999986745417,
+          "p95_ms": 1.692800025921315
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.029699993319809437,
+          "p95_ms": 0.07070001447573304
+        },
+        "restore": {
+          "p50_ms": 0.24209998082369566,
+          "p95_ms": 0.6616000318899751
+        },
+        "total": {
+          "p50_ms": 0.5368999554775655,
+          "p95_ms": 2.4970999802462757
+        }
+      },
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.08649419998982921,
+      "cpu_percent_one_core": 90.32397549105796,
+      "rss_peak_sampled_bytes": 32194560,
+      "throughput_cases_per_second": 1213.954230599819,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 42,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.011699899914674461,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.06953840010100976
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "regex",
+      "concurrency": 2,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.0020431000157259405,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.029600050766021013,
+          "p95_ms": 0.05500001134350896
+        },
+        "mapping": {
+          "p50_ms": 0.46629999997094274,
+          "p95_ms": 1.9138000207021832
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.032100011594593525,
+          "p95_ms": 0.05299999611452222
+        },
+        "restore": {
+          "p50_ms": 0.35390001721680164,
+          "p95_ms": 0.8046000148169696
+        },
+        "total": {
+          "p50_ms": 0.8668000227771699,
+          "p95_ms": 3.6282999790273607
+        }
+      },
+      "cpu_seconds": 0.203125,
+      "wall_seconds": 0.13519810000434518,
+      "cpu_percent_one_core": 150.24249600657976,
+      "rss_peak_sampled_bytes": 31969280,
+      "throughput_cases_per_second": 1553.276266406486,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 84,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010710000642575324,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010551300016231835,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.09823450027033687
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.09762140031671152
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "regex",
+      "concurrency": 2,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.0018962000031024218,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.029099988751113415,
+          "p95_ms": 0.054100004490464926
+        },
+        "mapping": {
+          "p50_ms": 0.4485999816097319,
+          "p95_ms": 2.2323000011965632
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.031800009310245514,
+          "p95_ms": 0.04329998046159744
+        },
+        "restore": {
+          "p50_ms": 0.3464000183157623,
+          "p95_ms": 0.7392999832518399
+        },
+        "total": {
+          "p50_ms": 0.8406999986618757,
+          "p95_ms": 3.0548000358976424
+        }
+      },
+      "cpu_seconds": 0.140625,
+      "wall_seconds": 0.13889200001722202,
+      "cpu_percent_one_core": 101.24773203824778,
+      "rss_peak_sampled_bytes": 32161792,
+      "throughput_cases_per_second": 1511.9661317711668,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 84,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012082500150427222,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012721200124360621,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.09688120009377599
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.0995079991989769
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "regex",
+      "concurrency": 4,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.001817599986679852,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.029499991796910763,
+          "p95_ms": 0.054500007536262274
+        },
+        "mapping": {
+          "p50_ms": 1.4237999566830695,
+          "p95_ms": 5.246700020506978
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.03220001235604286,
+          "p95_ms": 0.04079996142536402
+        },
+        "restore": {
+          "p50_ms": 0.36420003743842244,
+          "p95_ms": 0.7405999931506813
+        },
+        "total": {
+          "p50_ms": 1.8727999995462596,
+          "p95_ms": 5.912600026931614
+        }
+      },
+      "cpu_seconds": 0.359375,
+      "wall_seconds": 0.2580228000297211,
+      "cpu_percent_one_core": 139.2803271488428,
+      "rss_peak_sampled_bytes": 32231424,
+      "throughput_cases_per_second": 1627.7631277221278,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 168,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010489400243386626,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010369999799877405,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010553400323260576,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.010372899821959436,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.09712760022375733
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.0973564003361389
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.10445549956057221
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.10202400019625202
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "regex",
+      "concurrency": 4,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 0.0018351000035181642,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "en": {
+          "tp": 7,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6363636363636364,
+          "f1": 0.7777777777777778
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 56,
+          "precision": 1.0,
+          "recall": 0.6939890710382514,
+          "f1": 0.8193548387096774
+        },
+        "en": {
+          "tp": 127,
+          "fp": 0,
+          "fn": 52,
+          "precision": 1.0,
+          "recall": 0.7094972067039106,
+          "f1": 0.8300653594771242
+        },
+        "mixed": {
+          "tp": 175,
+          "fp": 0,
+          "fn": 109,
+          "precision": 1.0,
+          "recall": 0.6161971830985915,
+          "f1": 0.7625272331154684
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 16,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.02989999484270811,
+          "p95_ms": 0.054500007536262274
+        },
+        "mapping": {
+          "p50_ms": 1.5355999930761755,
+          "p95_ms": 5.474900011904538
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.03330002073198557,
+          "p95_ms": 0.0447999918833375
+        },
+        "restore": {
+          "p50_ms": 0.38889999268576503,
+          "p95_ms": 0.7611999753862619
+        },
+        "total": {
+          "p50_ms": 1.9994000904262066,
+          "p95_ms": 6.312899990007281
+        }
+      },
+      "cpu_seconds": 0.4375,
+      "wall_seconds": 0.27927480003563687,
+      "cpu_percent_one_core": 156.65573834236844,
+      "rss_peak_sampled_bytes": 32272384,
+      "throughput_cases_per_second": 1503.8950880867371,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 168,
+      "output_false_positive_detections": 0,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012340500019490719,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012117199075873941,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012200400058645755,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        },
+        {
+          "ner_seconds": 0.0,
+          "regex_seconds": 0.012171200884040445,
+          "cache_hits": 0,
+          "ner_units": 0,
+          "characters": 0
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.1126866004196927
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.10884729999816045
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.10795050009619445
+        },
+        {
+          "sql_statements": 640,
+          "database_seconds": 0.10592459992039949
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.420597499993164,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 5.298100004438311,
+          "p95_ms": 6.973499956075102
+        },
+        "mapping": {
+          "p50_ms": 0.3754999488592148,
+          "p95_ms": 1.7977000097744167
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 4.697399970609695,
+          "p95_ms": 6.222099997103214
+        },
+        "restore": {
+          "p50_ms": 0.36130001535639167,
+          "p95_ms": 0.873900018632412
+        },
+        "total": {
+          "p50_ms": 10.925599955953658,
+          "p95_ms": 15.139699971769005
+        }
+      },
+      "cpu_seconds": 1.375,
+      "wall_seconds": 1.5156027000048198,
+      "cpu_percent_one_core": 90.72298432799225,
+      "rss_peak_sampled_bytes": 263536640,
+      "throughput_cases_per_second": 69.27936985046681,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 9,
+      "output_false_positive_detections": 312,
+      "detector_metrics": [
+        {
+          "ner_seconds": 1.3855315003893338,
+          "regex_seconds": 0.012999299797229469,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.10645770048722625
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.1904728999943472,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.6710000452585518,
+          "p95_ms": 0.8197000133804977
+        },
+        "mapping": {
+          "p50_ms": 0.3158000181429088,
+          "p95_ms": 1.7636999837122858
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.6710999878123403,
+          "p95_ms": 5.718800006434321
+        },
+        "restore": {
+          "p50_ms": 0.3185000387020409,
+          "p95_ms": 0.8270000107586384
+        },
+        "total": {
+          "p50_ms": 2.0055000204592943,
+          "p95_ms": 8.808500017039478
+        }
+      },
+      "cpu_seconds": 0.609375,
+      "wall_seconds": 0.6440783000434749,
+      "cpu_percent_one_core": 94.61194391409671,
+      "rss_peak_sampled_bytes": 260587520,
+      "throughput_cases_per_second": 163.0236572058282,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 9,
+      "output_false_positive_detections": 312,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.5223884009756148,
+          "regex_seconds": 0.014706199464853853,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.0969484995584935
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 2,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.2049260000349022,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 10.797100025229156,
+          "p95_ms": 72.03630002913997
+        },
+        "mapping": {
+          "p50_ms": 0.6890000076964498,
+          "p95_ms": 2.5557000190019608
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 8.049700001720339,
+          "p95_ms": 19.324099994264543
+        },
+        "restore": {
+          "p50_ms": 0.5855000345036387,
+          "p95_ms": 1.2274999753572047
+        },
+        "total": {
+          "p50_ms": 21.368299960158765,
+          "p95_ms": 76.31619996391237
+        }
+      },
+      "cpu_seconds": 3.609375,
+      "wall_seconds": 3.2872844000230543,
+      "cpu_percent_one_core": 109.79807527376356,
+      "rss_peak_sampled_bytes": 265228288,
+      "throughput_cases_per_second": 63.88251652291698,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 18,
+      "output_false_positive_detections": 624,
+      "detector_metrics": [
+        {
+          "ner_seconds": 3.086474099953193,
+          "regex_seconds": 0.014755200187209994,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 3.03903810022166,
+          "regex_seconds": 0.013390599633567035,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.17256610008189455
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1752862004796043
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 2,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.193311500013806,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.6748999585397542,
+          "p95_ms": 0.9014999959617853
+        },
+        "mapping": {
+          "p50_ms": 0.38730003871023655,
+          "p95_ms": 2.3444999824278057
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.6841000285930932,
+          "p95_ms": 10.961099993437529
+        },
+        "restore": {
+          "p50_ms": 0.3869999782182276,
+          "p95_ms": 1.040999952238053
+        },
+        "total": {
+          "p50_ms": 2.35730002168566,
+          "p95_ms": 13.85139999911189
+        }
+      },
+      "cpu_seconds": 1.3125,
+      "wall_seconds": 1.1341662000049837,
+      "cpu_percent_one_core": 115.72378016504395,
+      "rss_peak_sampled_bytes": 262373376,
+      "throughput_cases_per_second": 185.15804826407032,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 18,
+      "output_false_positive_detections": 624,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.9746360004646704,
+          "regex_seconds": 0.014588300022296607,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 0.8304694002727047,
+          "regex_seconds": 0.014367999800015241,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.12785549991531298
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.14734599960502237
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 4,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.1736352000152692,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 22.257399978116155,
+          "p95_ms": 130.05430001066998
+        },
+        "mapping": {
+          "p50_ms": 0.6442000158131123,
+          "p95_ms": 2.3875999613665044
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 14.867499994579703,
+          "p95_ms": 48.08360000606626
+        },
+        "restore": {
+          "p50_ms": 0.5451000179164112,
+          "p95_ms": 1.1071999906562269
+        },
+        "total": {
+          "p50_ms": 42.58710000431165,
+          "p95_ms": 199.20620002085343
+        }
+      },
+      "cpu_seconds": 6.421875,
+      "wall_seconds": 6.0465517999837175,
+      "cpu_percent_one_core": 106.20722706811662,
+      "rss_peak_sampled_bytes": 265531392,
+      "throughput_cases_per_second": 69.46107697301642,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 36,
+      "output_false_positive_detections": 1248,
+      "detector_metrics": [
+        {
+          "ner_seconds": 5.858243799710181,
+          "regex_seconds": 0.013268600217998028,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 5.838933400285896,
+          "regex_seconds": 0.0132022998877801,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 5.842132399848197,
+          "regex_seconds": 0.013033199531491846,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 5.695315199845936,
+          "regex_seconds": 0.013828100229147822,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.16329980018781498
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.16386679973220453
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.16931259987177327
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1628293998655863
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "local",
+      "concurrency": 4,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.2117089999956079,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.6861000438220799,
+          "p95_ms": 1.1119000264443457
+        },
+        "mapping": {
+          "p50_ms": 0.4655999946407974,
+          "p95_ms": 2.817199972923845
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.7002000347711146,
+          "p95_ms": 26.417599990963936
+        },
+        "restore": {
+          "p50_ms": 0.4686000174842775,
+          "p95_ms": 1.4361999928951263
+        },
+        "total": {
+          "p50_ms": 2.5883999769575894,
+          "p95_ms": 28.83640001527965
+        }
+      },
+      "cpu_seconds": 2.59375,
+      "wall_seconds": 2.264436600031331,
+      "cpu_percent_one_core": 114.54284036762665,
+      "rss_peak_sampled_bytes": 264126464,
+      "throughput_cases_per_second": 185.47659934227738,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 36,
+      "output_false_positive_detections": 1248,
+      "detector_metrics": [
+        {
+          "ner_seconds": 1.6846043004188687,
+          "regex_seconds": 0.01447049982380122,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 1.5425804007099941,
+          "regex_seconds": 0.014859700051601976,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 1.879959500336554,
+          "regex_seconds": 0.01472699933219701,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 2.0959161008358933,
+          "regex_seconds": 0.016795899893622845,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1695769996731542
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.16453420027391985
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.15905780013417825
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.13366800011135638
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.357131200027652,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 7.964399992488325,
+          "p95_ms": 14.254299981985241
+        },
+        "mapping": {
+          "p50_ms": 0.39010000182315707,
+          "p95_ms": 2.027300011832267
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 6.841599999461323,
+          "p95_ms": 11.074600042775273
+        },
+        "restore": {
+          "p50_ms": 0.3700999659486115,
+          "p95_ms": 0.9931999957188964
+        },
+        "total": {
+          "p50_ms": 15.564000001177192,
+          "p95_ms": 23.34300003712997
+        }
+      },
+      "cpu_seconds": 2.0,
+      "wall_seconds": 2.042711700021755,
+      "cpu_percent_one_core": 97.90906861593342,
+      "rss_peak_sampled_bytes": 277647360,
+      "throughput_cases_per_second": 51.40226102336504,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 9,
+      "output_false_positive_detections": 312,
+      "detector_metrics": [
+        {
+          "ner_seconds": 1.9020002994220704,
+          "regex_seconds": 0.013474300096277148,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.11553449975326657
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.2832955000340007,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.6618000334128737,
+          "p95_ms": 0.8361000218428671
+        },
+        "mapping": {
+          "p50_ms": 0.3133999998681247,
+          "p95_ms": 1.9076999742537737
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.6639999919570982,
+          "p95_ms": 8.109900052659214
+        },
+        "restore": {
+          "p50_ms": 0.318799982778728,
+          "p95_ms": 0.9543000487610698
+        },
+        "total": {
+          "p50_ms": 1.9911000272259116,
+          "p95_ms": 11.585099971853197
+        }
+      },
+      "cpu_seconds": 0.765625,
+      "wall_seconds": 0.7762579999980517,
+      "cpu_percent_one_core": 98.63022345688181,
+      "rss_peak_sampled_bytes": 278159360,
+      "throughput_cases_per_second": 135.2643064551522,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 9,
+      "output_false_positive_detections": 312,
+      "detector_metrics": [
+        {
+          "ner_seconds": 0.6500506995944306,
+          "regex_seconds": 0.01452819985570386,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.10035680007422343
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 2,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.443126400001347,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 15.116899972781539,
+          "p95_ms": 105.39159999461845
+        },
+        "mapping": {
+          "p50_ms": 0.5122000002302229,
+          "p95_ms": 2.832000027410686
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 12.354799953754991,
+          "p95_ms": 26.78459999151528
+        },
+        "restore": {
+          "p50_ms": 0.8022999973036349,
+          "p95_ms": 1.482499996200204
+        },
+        "total": {
+          "p50_ms": 29.421500046737492,
+          "p95_ms": 126.38079997850582
+        }
+      },
+      "cpu_seconds": 4.15625,
+      "wall_seconds": 3.9986449999851175,
+      "cpu_percent_one_core": 103.94146017001933,
+      "rss_peak_sampled_bytes": 278757376,
+      "throughput_cases_per_second": 52.51779040169397,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 18,
+      "output_false_positive_detections": 624,
+      "detector_metrics": [
+        {
+          "ner_seconds": 3.7935705996933393,
+          "regex_seconds": 0.014596600201912224,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 3.719100400165189,
+          "regex_seconds": 0.014042800175957382,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.17753500043181702
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1806761996122077
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 2,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.3075910999905318,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.6834000232629478,
+          "p95_ms": 1.026200014166534
+        },
+        "mapping": {
+          "p50_ms": 0.3829000052064657,
+          "p95_ms": 2.4601000477559865
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.6840000278316438,
+          "p95_ms": 15.524399990681559
+        },
+        "restore": {
+          "p50_ms": 0.36019994877278805,
+          "p95_ms": 1.5287999995052814
+        },
+        "total": {
+          "p50_ms": 2.3092999472282827,
+          "p95_ms": 18.65199999883771
+        }
+      },
+      "cpu_seconds": 1.5,
+      "wall_seconds": 1.3824127000407316,
+      "cpu_percent_one_core": 108.50594760564655,
+      "rss_peak_sampled_bytes": 277913600,
+      "throughput_cases_per_second": 151.90832664790517,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 18,
+      "output_false_positive_detections": 624,
+      "detector_metrics": [
+        {
+          "ner_seconds": 1.0445494995219633,
+          "regex_seconds": 0.0146212003310211,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 1.2266559007111937,
+          "regex_seconds": 0.015325499814935029,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.154008399869781
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1284196000196971
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 4,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.301519599976018,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 32.31939999386668,
+          "p95_ms": 150.0623000320047
+        },
+        "mapping": {
+          "p50_ms": 0.5258000455796719,
+          "p95_ms": 3.022100019734353
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 26.309400040190667,
+          "p95_ms": 99.69709999859333
+        },
+        "restore": {
+          "p50_ms": 0.8475999929942191,
+          "p95_ms": 1.551999943330884
+        },
+        "total": {
+          "p50_ms": 61.68030004482716,
+          "p95_ms": 247.27300001541153
+        }
+      },
+      "cpu_seconds": 8.453125,
+      "wall_seconds": 8.022910700005013,
+      "cpu_percent_one_core": 105.36232193130004,
+      "rss_peak_sampled_bytes": 278724608,
+      "throughput_cases_per_second": 52.350077883795656,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 36,
+      "output_false_positive_detections": 1248,
+      "detector_metrics": [
+        {
+          "ner_seconds": 7.468836700310931,
+          "regex_seconds": 0.013991899730172008,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 7.782295499462634,
+          "regex_seconds": 0.013237200153525919,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 7.733414900256321,
+          "regex_seconds": 0.01366149983368814,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        },
+        {
+          "ner_seconds": 7.8025868001859635,
+          "regex_seconds": 0.014351700316183269,
+          "cache_hits": 96,
+          "ner_units": 348,
+          "characters": 72645
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.18879799987189472
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.18483710015425459
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.18900570063851774
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.19134390039835125
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "presidio",
+      "concurrency": 4,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 1.3893100999994203,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 8,
+          "fp": 4,
+          "fn": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "en": {
+          "tp": 9,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.9,
+          "recall": 0.8181818181818182,
+          "f1": 0.8571428571428571
+        },
+        "mixed": {
+          "tp": 10,
+          "fp": 108,
+          "fn": 6,
+          "precision": 0.0847457627118644,
+          "recall": 0.625,
+          "f1": 0.14925373134328357
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 141,
+          "fp": 46,
+          "fn": 42,
+          "precision": 0.7540106951871658,
+          "recall": 0.7704918032786885,
+          "f1": 0.7621621621621621
+        },
+        "en": {
+          "tp": 153,
+          "fp": 21,
+          "fn": 26,
+          "precision": 0.8793103448275862,
+          "recall": 0.8547486033519553,
+          "f1": 0.8668555240793201
+        },
+        "mixed": {
+          "tp": 202,
+          "fp": 1431,
+          "fn": 82,
+          "precision": 0.12369871402327005,
+          "recall": 0.7112676056338029,
+          "f1": 0.21074595722483047
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 5,
+          "fp": 104,
+          "fn": 11,
+          "precision": 0.045871559633027525,
+          "recall": 0.3125,
+          "f1": 0.08
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ORGANISATION": {
+          "tp": 0,
+          "fp": 9,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.7261999999172986,
+          "p95_ms": 1.3380000018514693
+        },
+        "mapping": {
+          "p50_ms": 0.5956999957561493,
+          "p95_ms": 3.478500002529472
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.7947999984025955,
+          "p95_ms": 42.66749997623265
+        },
+        "restore": {
+          "p50_ms": 0.5600000149570405,
+          "p95_ms": 1.5414999797940254
+        },
+        "total": {
+          "p50_ms": 3.117899992503226,
+          "p95_ms": 47.21280001103878
+        }
+      },
+      "cpu_seconds": 3.296875,
+      "wall_seconds": 2.8624964999617077,
+      "cpu_percent_one_core": 115.17481331572294,
+      "rss_peak_sampled_bytes": 279334912,
+      "throughput_cases_per_second": 146.7250702334897,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 36,
+      "output_false_positive_detections": 1248,
+      "detector_metrics": [
+        {
+          "ner_seconds": 2.278358399635181,
+          "regex_seconds": 0.015254200785420835,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 1.9436697002965957,
+          "regex_seconds": 0.014517700241412967,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 2.4515211994876154,
+          "regex_seconds": 0.017429599654860795,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        },
+        {
+          "ner_seconds": 2.6749198005418293,
+          "regex_seconds": 0.01532809977652505,
+          "cache_hits": 425,
+          "ner_units": 96,
+          "characters": 23435
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1829194994061254
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.17175060010049492
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.20767130033345893
+        },
+        {
+          "sql_statements": 1046,
+          "database_seconds": 0.1492459997534752
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": null,
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 1,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.4170520999468863,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 43.10710000572726,
+          "p95_ms": 118.06070001330227
+        },
+        "mapping": {
+          "p50_ms": 0.4363999469205737,
+          "p95_ms": 2.2461999906226993
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 93.05480000330135,
+          "p95_ms": 235.5781000223942
+        },
+        "restore": {
+          "p50_ms": 0.4186999867670238,
+          "p95_ms": 1.0914999875240028
+        },
+        "total": {
+          "p50_ms": 156.83370002079755,
+          "p95_ms": 292.89119999157265
+        }
+      },
+      "cpu_seconds": 24.796875,
+      "wall_seconds": 25.143987799994648,
+      "cpu_percent_one_core": 98.61949980744613,
+      "rss_peak_sampled_bytes": 848691200,
+      "throughput_cases_per_second": 4.175948574077114,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 6,
+      "detector_metrics": [
+        {
+          "ner_seconds": 25.00134410051396,
+          "regex_seconds": 0.012195499730296433,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12039359996560961
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 1,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.3194403999950737,
+      "cases": 35,
+      "samples": 105,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.043199979700148106,
+          "p95_ms": 0.08139997953549027
+        },
+        "mapping": {
+          "p50_ms": 0.24399999529123306,
+          "p95_ms": 1.7593000084161758
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.043199979700148106,
+          "p95_ms": 180.67099998006597
+        },
+        "restore": {
+          "p50_ms": 0.2416000352241099,
+          "p95_ms": 1.0494000161997974
+        },
+        "total": {
+          "p50_ms": 0.5860999808646739,
+          "p95_ms": 183.63919999683276
+        }
+      },
+      "cpu_seconds": 8.09375,
+      "wall_seconds": 8.225319400022272,
+      "cpu_percent_one_core": 98.40043415187117,
+      "rss_peak_sampled_bytes": 848666624,
+      "throughput_cases_per_second": 12.765461727810314,
+      "roundtrips_exact": 105,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 6,
+      "detector_metrics": [
+        {
+          "ner_seconds": 8.119616200623568,
+          "regex_seconds": 0.013243399444036186,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.08520699973450974
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 2,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.332454399962444,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 93.88349996879697,
+          "p95_ms": 402.27379999123514
+        },
+        "mapping": {
+          "p50_ms": 0.4643000429496169,
+          "p95_ms": 2.211800019722432
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 166.6084000025876,
+          "p95_ms": 423.87820000294596
+        },
+        "restore": {
+          "p50_ms": 0.4333000397309661,
+          "p95_ms": 1.090699981432408
+        },
+        "total": {
+          "p50_ms": 302.019199996721,
+          "p95_ms": 684.5179999945685
+        }
+      },
+      "cpu_seconds": 49.59375,
+      "wall_seconds": 49.98960560001433,
+      "cpu_percent_one_core": 99.20812417849079,
+      "rss_peak_sampled_bytes": 849338368,
+      "throughput_cases_per_second": 4.200873311149705,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 12,
+      "detector_metrics": [
+        {
+          "ner_seconds": 49.79302349942736,
+          "regex_seconds": 0.012212900503072888,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        },
+        {
+          "ner_seconds": 49.83508849982172,
+          "regex_seconds": 0.013313500094227493,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12900549970800057
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.1300271999789402
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 2,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.3609538999735378,
+      "cases": 35,
+      "samples": 210,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.0467000063508749,
+          "p95_ms": 0.08229998638853431
+        },
+        "mapping": {
+          "p50_ms": 0.26350002735853195,
+          "p95_ms": 2.149400010239333
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.04859996261075139,
+          "p95_ms": 357.91050002444535
+        },
+        "restore": {
+          "p50_ms": 0.26130001060664654,
+          "p95_ms": 1.0560000082477927
+        },
+        "total": {
+          "p50_ms": 0.6229000282473862,
+          "p95_ms": 358.92000002786517
+        }
+      },
+      "cpu_seconds": 15.359375,
+      "wall_seconds": 15.658922700036783,
+      "cpu_percent_one_core": 98.08704783991251,
+      "rss_peak_sampled_bytes": 848773120,
+      "throughput_cases_per_second": 13.410884262140634,
+      "roundtrips_exact": 210,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 12,
+      "detector_metrics": [
+        {
+          "ner_seconds": 13.659270999836735,
+          "regex_seconds": 0.014767500688321888,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        },
+        {
+          "ner_seconds": 15.54525970009854,
+          "regex_seconds": 0.014464800071436912,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.09818229998927563
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.09086419933009893
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 4,
+      "cache": "cold",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.3801305000088178,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 209.73940001567826,
+          "p95_ms": 1948.1170999933966
+        },
+        "mapping": {
+          "p50_ms": 0.4585999995470047,
+          "p95_ms": 2.3044999688863754
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 256.57270004739985,
+          "p95_ms": 764.9945000302978
+        },
+        "restore": {
+          "p50_ms": 0.4323000321164727,
+          "p95_ms": 1.0668000322766602
+        },
+        "total": {
+          "p50_ms": 648.0508000240661,
+          "p95_ms": 1949.6738000307232
+        }
+      },
+      "cpu_seconds": 97.5,
+      "wall_seconds": 98.89152050000848,
+      "cpu_percent_one_core": 98.5928818841365,
+      "rss_peak_sampled_bytes": 850493440,
+      "throughput_cases_per_second": 4.247077988855111,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 24,
+      "detector_metrics": [
+        {
+          "ner_seconds": 98.58754179993412,
+          "regex_seconds": 0.01310609991196543,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        },
+        {
+          "ner_seconds": 98.68900710047456,
+          "regex_seconds": 0.01297039957717061,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        },
+        {
+          "ner_seconds": 98.63933969970094,
+          "regex_seconds": 0.013546400412451476,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        },
+        {
+          "ner_seconds": 98.74117970024236,
+          "regex_seconds": 0.01266479940386489,
+          "cache_hits": 51,
+          "ner_units": 180,
+          "characters": 31326
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12939920037752017
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12941020086873323
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12913709983695298
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.12503739987732843
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    },
+    {
+      "backend": "nym",
+      "concurrency": 4,
+      "cache": "warm",
+      "status": "ok",
+      "presidio_variant": "B",
+      "threads": 1,
+      "threshold": 0.5,
+      "load_seconds": 2.3487102999933995,
+      "cases": 35,
+      "samples": 420,
+      "quality_exact_typed_spans": {
+        "de": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 4,
+          "precision": 0.6363636363636364,
+          "recall": 0.6363636363636364,
+          "f1": 0.6363636363636364
+        },
+        "en": {
+          "tp": 7,
+          "fp": 8,
+          "fn": 4,
+          "precision": 0.4666666666666667,
+          "recall": 0.6363636363636364,
+          "f1": 0.5384615384615384
+        },
+        "mixed": {
+          "tp": 8,
+          "fp": 9,
+          "fn": 8,
+          "precision": 0.47058823529411764,
+          "recall": 0.5,
+          "f1": 0.48484848484848486
+        }
+      },
+      "quality_typed_characters": {
+        "de": {
+          "tp": 147,
+          "fp": 2,
+          "fn": 36,
+          "precision": 0.9865771812080537,
+          "recall": 0.8032786885245902,
+          "f1": 0.8855421686746988
+        },
+        "en": {
+          "tp": 179,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.988950276243094,
+          "recall": 1.0,
+          "f1": 0.9944444444444445
+        },
+        "mixed": {
+          "tp": 223,
+          "fp": 7,
+          "fn": 61,
+          "precision": 0.9695652173913043,
+          "recall": 0.7852112676056338,
+          "f1": 0.867704280155642
+        }
+      },
+      "quality_by_type": {
+        "EMAIL": {
+          "tp": 12,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "PERSON": {
+          "tp": 0,
+          "fp": 21,
+          "fn": 16,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "TELEFON": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "ADRESSE": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IBAN": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "DATUM": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "IP": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "UUID": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "latency": {
+        "input": {
+          "p50_ms": 0.046600005589425564,
+          "p95_ms": 0.09450002107769251
+        },
+        "mapping": {
+          "p50_ms": 0.27379998937249184,
+          "p95_ms": 1.9233000348322093
+        },
+        "transport": {
+          "p50_ms": 0.000100000761449337,
+          "p95_ms": 0.000100000761449337
+        },
+        "output": {
+          "p50_ms": 0.049400026910007,
+          "p95_ms": 763.814200006891
+        },
+        "restore": {
+          "p50_ms": 0.2820999943651259,
+          "p95_ms": 1.0402000043541193
+        },
+        "total": {
+          "p50_ms": 0.6726999999955297,
+          "p95_ms": 765.4367000213824
+        }
+      },
+      "cpu_seconds": 31.90625,
+      "wall_seconds": 31.926017399993725,
+      "cpu_percent_one_core": 99.93808372730597,
+      "rss_peak_sampled_bytes": 849645568,
+      "throughput_cases_per_second": 13.155414743339787,
+      "roundtrips_exact": 420,
+      "cases_with_known_value_leak": 0,
+      "output_false_positive_detections": 24,
+      "detector_metrics": [
+        {
+          "ner_seconds": 27.43698880035663,
+          "regex_seconds": 0.015956500137690455,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        },
+        {
+          "ner_seconds": 25.58620860025985,
+          "regex_seconds": 0.013170900056138635,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        },
+        {
+          "ner_seconds": 31.800768900604453,
+          "regex_seconds": 0.01420809974661097,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        },
+        {
+          "ner_seconds": 29.444427100708708,
+          "regex_seconds": 0.013176400330848992,
+          "cache_hits": 220,
+          "ner_units": 50,
+          "characters": 10052
+        }
+      ],
+      "mapping_metrics": [
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.1071641996386461
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.09472459997050464
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.10178309975890443
+        },
+        {
+          "sql_statements": 723,
+          "database_seconds": 0.09764200012432411
+        }
+      ],
+      "environment": {
+        "python": "3.13.5",
+        "os": "Windows",
+        "cpu_count": 28,
+        "cpu_physical_count": 20,
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "ram_bytes": 34197991424,
+        "packages": {
+          "numpy": "2.2.6",
+          "onnxruntime": "1.23.2",
+          "tokenizers": "0.22.1",
+          "spacy": "3.8.7",
+          "presidio-analyzer": "2.2.358",
+          "psutil": "7.1.0",
+          "en-core-web-sm": "3.8.0",
+          "de-core-news-sm": "3.8.0"
+        }
+      },
+      "implementation_sha256": {
+        "helpers/pii_detector.py": "7096fcf4588dfa847ee7632d4fb94bff76188ccf567769f736555691c291c788",
+        "helpers/nym_backend.py": "659f5d0b64634355c179004b0662be47d0a8b693e8bb2a9bfceda30ef7e9d57f",
+        "helpers/presidio_backend.py": "f8c6a261b5b35258db3771614f91dd0adedda349720d6e55d3f0359ade565b76",
+        "helpers/model_guard.py": "1637231d82b2658dd469aee7cbb2b712f676f2a80a8d9ec2d2cd7d2f9576e06e",
+        "helpers/mapping.py": "1a7cfa6a070d1d34abbbb099697b6746e86328071a2615f8f86835a733f868dd",
+        "tools/privacy_benchmark/cpu_evaluation.py": "c13e7d95bbcc814d8c54ce456286441d1b1543c0a5123683c8202fee4aef1d1f"
+      },
+      "inference_settings": {
+        "languages": [
+          "de",
+          "en"
+        ],
+        "use_regex": true,
+        "nym_max_tokens": 512,
+        "nym_stride": 64
+      },
+      "artifact": {
+        "repository": "Wismut/nym-pii-multilingual",
+        "revision": "0ed0242d67a30ca6a83e5f118506ff1e1daf83ca",
+        "variant": "int8",
+        "files": {
+          "model.onnx": "07267f6072539bbf3ba67e4653274139fd2219f598befb5c48f237585cf876e3",
+          "tokenizer.json": "c299144e68dfec1dc536204a7ae3712710c5c6cade9269a83f5042250d47d8de",
+          "config.json": "f283bae16ce8051136612ad081d7cf429530a1a1ac51f85f0a67659f97a6a5dc"
+        }
+      },
+      "corpus_sha256": "acd7b496cee14a18a7584f28c12742e71c041d36a6f4a616845c8ca48ab8c664",
+      "llm_calls": 0,
+      "pipeline": "detector + production Mapping + simulated echo + output detector; not native gateway",
+      "timing_note": "native input includes mapping; mapping stage is only standalone. CPU/wall include task setup and warmup."
+    }
+  ]
+}

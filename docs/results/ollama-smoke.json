@@ -1,0 +1,123 @@
+{
+  "transport": "local Ollama through real native PrivacyWrapper",
+  "requesty_calls": 0,
+  "runs": [
+    {
+      "backend": "local",
+      "model": "granite4:tiny-h",
+      "cases": 3,
+      "input_known_value_leaks": 0,
+      "output_known_value_leaks": 0,
+      "exact_echo_after_restore": 3,
+      "end_to_end_ms": [
+        14499.976176011842,
+        198.80102999741212,
+        235.97679799422622
+      ],
+      "ollama_metrics": [
+        {
+          "total_duration": 13444399900,
+          "load_duration": 7647128900,
+          "prompt_eval_count": 46,
+          "prompt_eval_duration": 5651787000,
+          "eval_count": 23,
+          "eval_duration": 137716000
+        },
+        {
+          "total_duration": 177445500,
+          "load_duration": 7685500,
+          "prompt_eval_count": 42,
+          "prompt_eval_duration": 58541000,
+          "eval_count": 19,
+          "eval_duration": 80766000
+        },
+        {
+          "total_duration": 215584200,
+          "load_duration": 4279300,
+          "prompt_eval_count": 48,
+          "prompt_eval_duration": 62966000,
+          "eval_count": 25,
+          "eval_duration": 107000000
+        }
+      ]
+    },
+    {
+      "backend": "presidio",
+      "model": "granite4:tiny-h",
+      "cases": 3,
+      "input_known_value_leaks": 0,
+      "output_known_value_leaks": 0,
+      "exact_echo_after_restore": 3,
+      "end_to_end_ms": [
+        239.96840801555663,
+        193.393372988794,
+        222.9378719930537
+      ],
+      "ollama_metrics": [
+        {
+          "total_duration": 202606100,
+          "load_duration": 4132300,
+          "prompt_eval_count": 46,
+          "prompt_eval_duration": 55912000,
+          "eval_count": 23,
+          "eval_duration": 91468000
+        },
+        {
+          "total_duration": 171069100,
+          "load_duration": 4499500,
+          "prompt_eval_count": 42,
+          "prompt_eval_duration": 49963000,
+          "eval_count": 19,
+          "eval_duration": 76381000
+        },
+        {
+          "total_duration": 202051200,
+          "load_duration": 4200500,
+          "prompt_eval_count": 48,
+          "prompt_eval_duration": 54709000,
+          "eval_count": 25,
+          "eval_duration": 100152000
+        }
+      ]
+    },
+    {
+      "backend": "nym",
+      "model": "granite4:tiny-h",
+      "cases": 3,
+      "input_known_value_leaks": 0,
+      "output_known_value_leaks": 0,
+      "exact_echo_after_restore": 3,
+      "end_to_end_ms": [
+        379.85944998217747,
+        279.711056035012,
+        308.09873196994886
+      ],
+      "ollama_metrics": [
+        {
+          "total_duration": 225110500,
+          "load_duration": 3603700,
+          "prompt_eval_count": 48,
+          "prompt_eval_duration": 62289000,
+          "eval_count": 25,
+          "eval_duration": 102569000
+        },
+        {
+          "total_duration": 183263700,
+          "load_duration": 4356200,
+          "prompt_eval_count": 44,
+          "prompt_eval_duration": 52406000,
+          "eval_count": 21,
+          "eval_duration": 85615000
+        },
+        {
+          "total_duration": 194356600,
+          "load_duration": 3581200,
+          "prompt_eval_count": 50,
+          "prompt_eval_duration": 49248000,
+          "eval_count": 27,
+          "eval_duration": 103963000
+        }
+      ]
+    }
+  ]
+}
