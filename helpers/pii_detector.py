@@ -10,11 +10,18 @@ Additional languages can be enabled in plugin settings.
 """
 
 import re
+import time
+import threading
+try:
+    from .detection_cache import spans, fingerprint, configuration
+except ImportError:
+    from detection_cache import spans, fingerprint, configuration
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 
 # spaCy models are loaded lazily to reduce startup cost when plugin is disabled
 _nlp_models: Dict[str, object] = {}
+_nlp_lock = threading.RLock()
 
 # spaCy model names per language
 # English (en) is ALWAYS loaded as the base language
@@ -383,7 +390,7 @@ class PIIFilter:
         "iban", "ready", "okay", "confirm", "summarize", "bestätige",
         "geschäftspartner", "partner", "partnership", "contacts",
         "user", "assistant", "agent", "agent zero", "response", "tool", "tools",
-        "json", "vision_load", "code_execution_tool", "call_subordinate", "english", "german",
+        "css", "html", "javascript", "playwright", "json", "vision_load", "code_execution_tool", "call_subordinate", "english", "german",
         "browser", "skills_tool", "memory_load", "memory_save", "memory_delete",
         "text_editor", "text_editor_remote", "a0", "workdir", "paths", "query",
         "action", "text", "selector", "ref", "browser_id", "value", "type",
@@ -393,6 +400,12 @@ class PIIFilter:
 
     def __init__(self, config: dict = None):
         self.config = config or {}
+        self.scope = self.config.get('_cache_scope', 'standalone')
+        self.backend = self.config.get('backend', 'local')
+        if self.backend not in {'local', 'presidio'}:
+            raise ValueError('Unknown local detection backend.')
+        self.signature = configuration({k:v for k,v in self.config.items() if not k.startswith('_')})
+        self.metrics = {'ner_seconds':0.0,'regex_seconds':0.0,'cache_hits':0,'ner_units':0,'characters':0}
         self.use_regex = self.config.get("use_regex", True)
         self.use_ner = self.config.get("use_ner", True)
         self.action = self.config.get("action", "redact")
@@ -406,6 +419,9 @@ class PIIFilter:
         if BASE_LANGUAGE not in ner_languages:
             ner_languages = [BASE_LANGUAGE] + list(ner_languages)
         self.ner_languages = ner_languages
+        if self.backend=='presidio':
+            from .presidio_backend import validate
+            validate(self.ner_languages)
         self.skip_words = set(self.NER_SKIP_WORDS)
         if self.use_ner:
             import importlib
@@ -470,55 +486,59 @@ class PIIFilter:
         if not self.use_ner:
             return []
 
-        all_detections: List[PIIDetection] = []
-        seen_spans = set()  # Prevent duplicates across languages
-
-        # Do not run German NER over clearly English technical instructions
-        # (and vice versa). Neutral names retain both recognizers. Work per
-        # paragraph so mixed messages can still use different language models.
+        started=time.perf_counter()
+        paragraphs=list(re.finditer(r'[^\n]+',text))
+        jobs={};results={}
         de_words=set('der die das und ist sind mit für von nicht schuldet verheiratet personen bleibt unverändert beziehungen geschäftspartner telefon'.split())
         en_words=set('the and is are with for from not owes married people unchanged relationships return only to of'.split())
-        if len(text.strip())<=1:return [] # Single-letter role IDs are never NER identities.
-        paragraphs=list(re.finditer(r'[^\n]+',text))
-        for paragraph in paragraphs:
+        for i,paragraph in enumerate(paragraphs):
+            unit=paragraph.group()
+            if len(unit.strip())<=1:continue
             languages=self.ner_languages
             if set(languages)=={'en','de'}:
-                words=re.findall(r'\w+',paragraph.group().casefold())
-                german=sum(word in de_words for word in words);english=sum(word in en_words for word in words)
+                words=re.findall(r'\w+',unit.casefold())
+                german=sum(w in de_words for w in words);english=sum(w in en_words for w in words)
                 if german>=2 and german>=english:languages=['de']
                 elif english>=2 and english>german:languages=['en']
             for lang in languages:
-                nlp = _get_nlp(lang)
-                if nlp is None:
-                    continue
-                label_map = LABEL_MAPS.get(lang, {**LABEL_MAPS[BASE_LANGUAGE], 'PER':'PERSON',
-                    'persName':'PERSON','orgName':'ORGANISATION','placeName':'ORT','geogName':'ORT',
-                    'date':'DATUM','time':'DATUM'})
-                doc = nlp(paragraph.group())
-                for ent in doc.ents:
-                    if not self.ner_entity_types and ent.label_ not in label_map:
-                        continue  # Quantities/MISC are not a blanket PII category.
-                    if len(ent.text.strip())==1 and ent.text.strip().isalpha():continue
-                    span_key = (ent.start_char+paragraph.start(), ent.end_char+paragraph.start(), ent.text.lower())
-                    if span_key in seen_spans:
-                        continue
-                    seen_spans.add(span_key)
-
-                    pii_type = label_map.get(ent.label_, ent.label_)
-                    if self.ner_entity_types and ent.label_ not in self.ner_entity_types:
-                        continue
-                    placeholder = self._format_placeholder(pii_type, f"<{pii_type}>")
-                    all_detections.append(PIIDetection(
-                        pii_type=pii_type,
-                        original=ent.text,
-                        start=ent.start_char+paragraph.start(),
-                        end=ent.end_char+paragraph.start(),
-                        replacement=placeholder,
-                        source="ner",
-                        confidence=0.85,
-                        language=lang
-                    ))
-        return all_detections
+                nlp=_get_nlp(lang)
+                if nlp is None:continue
+                # Paragraphs are fixed independent recognition units. No outside
+                # context is supplied to either backend. Model identity/version
+                # and the complete recognizer configuration invalidate reuse.
+                model=configuration({'name':SPACY_MODEL_NAMES.get(lang),'meta':getattr(nlp,'meta',{}),'instance':id(nlp)})
+                key=(self.scope,self.signature,self.backend,lang,model,fingerprint(unit),'paragraph-v1')
+                cached=spans.get(key)
+                if cached is not None:
+                    self.metrics['cache_hits']+=1;results[(i,lang)]=cached
+                else:jobs.setdefault(lang,[]).append((i,unit,key,nlp))
+        for lang,work in jobs.items():
+            with _nlp_lock:
+                if self.backend=='presidio':
+                    from .presidio_backend import detect_batch
+                    batches=detect_batch([w[1] for w in work],lang,work[0][3],self)
+                else:
+                    nlp=work[0][3]
+                    docs=nlp.pipe([w[1] for w in work],batch_size=32) if hasattr(nlp,'pipe') else (nlp(w[1]) for w in work)
+                    label_map=LABEL_MAPS.get(lang,{**LABEL_MAPS[BASE_LANGUAGE],'PER':'PERSON','persName':'PERSON','orgName':'ORGANISATION','placeName':'ORT','geogName':'ORT','date':'DATUM','time':'DATUM'})
+                    batches=([ (ent.start_char,ent.end_char,label_map.get(ent.label_,ent.label_),'ner',0.85,lang)
+                        for ent in doc.ents if (ent.label_ in self.ner_entity_types if self.ner_entity_types else ent.label_ in label_map)
+                        and not (len(ent.text.strip())==1 and ent.text.strip().isalpha()) ] for doc in docs)
+                for (i,unit,key,_),hits in zip(work,batches,strict=True):
+                    hits=tuple(hits);spans.put(key,hits);results[(i,lang)]=hits
+                    self.metrics['ner_units']+=1;self.metrics['characters']+=len(unit)
+        detections=[];seen=set()
+        # Restore original paragraph/language priority, independent of batching.
+        for i,paragraph in enumerate(paragraphs):
+            for lang in self.ner_languages:
+                for start,end,kind,source,score,language in results.get((i,lang),()):
+                    original=paragraph.group()[start:end]
+                    key=(start+paragraph.start(),end+paragraph.start(),original.lower())
+                    if key in seen:continue
+                    seen.add(key)
+                    detections.append(PIIDetection(kind,original,key[0],key[1],self._format_placeholder(kind,f'<{kind}>'),source,score,language))
+        self.metrics['ner_seconds']+=time.perf_counter()-started
+        return detections
 
     def _merge_detections(self, detections: List[PIIDetection]) -> List[PIIDetection]:
         """Merge detections. Regex ALWAYS wins over NER on overlap."""
@@ -536,7 +556,7 @@ class PIIFilter:
 
         # Filter NER false positives: skip single known non-PII words
         ner_dets = [d for d in ner_dets if not (
-            d.original.lower().strip() in self.skip_words and len(d.original.split()) == 1
+            d.original.lower().strip() in self.skip_words
         )]
 
         # Remove NER detections that overlap with regex detections
@@ -561,7 +581,9 @@ class PIIFilter:
         all_detections: List[PIIDetection] = []
 
         if self.use_regex:
+            started=time.perf_counter()
             all_detections.extend(self._detect_regex(text))
+            self.metrics['regex_seconds']+=time.perf_counter()-started
         if self.use_ner:
             all_detections.extend(self._detect_ner(text))
 

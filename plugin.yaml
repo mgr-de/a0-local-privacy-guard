@@ -1,7 +1,7 @@
 name: local_privacy_guard
 title: Local Privacy Guard
 description: Replaces detected personal details in supported model calls, configures local memory embeddings, and checks configuration. Detection runs locally but can miss details; external models may still receive conversation and recalled memory text.
-version: 1.5.2
+version: 1.6.0
 settings_sections:
   - agent
 per_project_config: true

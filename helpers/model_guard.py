@@ -5,6 +5,8 @@ delegates to the original provider wrapper, retaining Requesty's live checks.
 """
 from copy import deepcopy
 import inspect
+import time
+from usr.plugins.local_privacy_guard.helpers.detection_cache import fingerprint, configuration
 import re
 import weakref
 import json
@@ -106,6 +108,15 @@ def inspect_control_options(pipeline,options):
             check(json.dumps({key:value},ensure_ascii=False,default=str),pipeline.known_secrets)
 
 
+_seal=object()
+class _CheckedText(str):
+    """Only internally produced strings carry proof; serialization removes it."""
+    def __new__(cls,value,scope,signature):
+        obj=str.__new__(cls,value)
+        obj._proof=(_seal,scope,signature,fingerprint(value))
+        return obj
+    def __getnewargs__(self):return (str(self),self._proof[1],self._proof[2])
+
 class PayloadFilter:
     def __init__(self, agent, config, external):
         self.agent = agent
@@ -114,8 +125,15 @@ class PayloadFilter:
         if self.settings.get('action','redact') not in {'redact','block','log_only'}:
             raise ValueError('Invalid text filter action. Choose replacement, blocking or logging only in privacy settings.')
         self.detected_count=0
-        self.filter = PIIFilter(self.settings if self.settings.get('enabled',True) else {'use_regex':False,'use_ner':False})
+        self.started=time.perf_counter()
         self.mapping = mapping_for(agent)
+        self.snapshot = self.mapping.snapshot()
+        self.signature=configuration(self.settings)
+        detector_settings=dict(self.settings if self.settings.get('enabled',True) else {'use_regex':False,'use_ner':False})
+        detector_settings['_cache_scope']=self.mapping.namespace
+        self.filter = PIIFilter(detector_settings)
+        self._patterns={}
+        self.blocks=0
         if external and self.settings.get("enabled", True) and self.settings.get("use_ner", True):
             missing = set(self.filter.ner_languages) - set(self.filter.get_loaded_languages())
             if missing:
@@ -128,14 +146,16 @@ class PayloadFilter:
             pass
 
     def log_summary(self,phase):
-        if not self.detected_count or not self.settings.get('log_detections',False):return
+        if not self.settings.get('log_detections',False):return
         action=self.settings.get('action','redact')
         description='detected; contents unchanged' if action=='log_only' else 'masked locally'
         self.agent.context.log.log(type='info',heading='Local Privacy Guard',
-            content=f'{phase}: {self.detected_count} text values {description}. Detection can miss details.')
+            content=f'{phase}: {self.detected_count} replacements across the full model context ({description}); repeated occurrences are counted. Preparation {time.perf_counter()-self.started:.3f}s; NER {self.filter.metrics["ner_seconds"]:.3f}s, regex {self.filter.metrics["regex_seconds"]:.3f}s; cached units {self.filter.metrics["cache_hits"]}, new units {self.filter.metrics["ner_units"]}; database {self.mapping.metrics["database_seconds"]:.3f}s / {self.mapping.metrics["sql_statements"]} statements; {self.blocks} text blocks. Detection can miss details.')
 
     def text(self, text):
+        self.blocks+=1
         check(text, self.known_secrets)
+        trusted=isinstance(text,_CheckedText) and getattr(text,'_proof',None)==(_seal,self.mapping.namespace,self.signature,fingerprint(text))
         if not self.settings.get("enabled", True):
             return text
         fenced=re.fullmatch(r'(\s*```(?:json)?\s*\n)(.*?)(\n```\s*)',text,re.DOTALL)
@@ -155,7 +175,7 @@ class PayloadFilter:
         scan = TOKEN.sub(lambda m: " " * len(m.group()), text)
         if not scan.strip():return text
         known = []
-        entries = self.mapping.entries()
+        entries = self.snapshot[1]
         aliases = {}
         for token, kind, original in entries:
             if original.casefold().strip() in self.filter.skip_words:
@@ -168,7 +188,10 @@ class PayloadFilter:
                 family=re.sub(r"_V\d+(?=\])", "", token)
                 aliases.setdefault(original.split()[0].casefold(), []).append((family, original))
             for value in values:
-                for match in re.finditer(r"(?<!\w)" + re.escape(value) + r"(?!\w)", scan, re.IGNORECASE):
+                pattern=self._patterns.get(value)
+                if pattern is None:
+                    pattern=re.compile(r"(?<!\w)"+re.escape(value)+r"(?!\w)",re.IGNORECASE);self._patterns[value]=pattern
+                for match in pattern.finditer(scan):
                     known.append(PIIDetection(kind, match.group(), match.start(), match.end(), token, "known"))
         for alias, people in aliases.items():
             if len(set(token for token, _ in people)) == 1:
@@ -177,7 +200,7 @@ class PayloadFilter:
         # A complete known value cannot contain a larger new overlapping
         # identity. Reuse its mapping instead of rerunning NER on every repeat.
         complete_known=any(hit.start==0 and hit.end==len(scan) for hit in known)
-        detected = [] if complete_known else self.filter.filter(scan).detections
+        detected = [] if complete_known or trusted else self.filter.filter(scan).detections
         def larger_complete_value(detection,known_hit):
             if detection.start>known_hit.start or detection.end<known_hit.end or detection.end-detection.start<=known_hit.end-known_hit.start:
                 return False
@@ -206,11 +229,15 @@ class PayloadFilter:
             raise ValueError("Local Privacy Guard blocked a model request containing personal details.")
         if action == "log_only":
             return text
-        for hit in sorted(selected, key=lambda h: h.start, reverse=True):
-            kind=hit.pii_type if hit.pii_type in SAFE_KINDS else 'CUSTOM'
-            token = self.mapping.token(kind, text[hit.start:hit.end], canonical=hit.replacement if hit.source=="known" else None)
-            text = text[:hit.start] + token + text[hit.end:]
-        return text
+        ordered=sorted(selected,key=lambda h:h.start,reverse=True)
+        requests=[(h.pii_type if h.pii_type in SAFE_KINDS else 'CUSTOM',text[h.start:h.end],h.replacement if h.source=='known' else None) for h in ordered]
+        lookup={(kind,original):token for token,kind,original in self.snapshot[1]}
+        missing=list(dict.fromkeys(r for r in requests if (r[0],r[1]) not in lookup))
+        if missing:
+            for request,token in zip(missing,self.mapping.token_many(missing),strict=True):lookup[request[:2]]=token
+        for hit,request in zip(ordered,requests,strict=True):
+            text=text[:hit.start]+lookup[request[:2]]+text[hit.end:]
+        return _CheckedText(text,self.mapping.namespace,self.signature)
 
     def value(self, value):
         if isinstance(value, str):
@@ -280,7 +307,7 @@ def prepare(wrapper, args, kwargs, method):
             if key in bound.arguments:
                 bound.arguments[key] = pipeline.value(bound.arguments[key])
         messages=bound.arguments.get("messages")
-        if messages and any("_V" in token for token,_,_ in pipeline.mapping.entries()):
+        if messages and any("_V" in token for token,_,_ in pipeline.snapshot[1]):
             from langchain_core.messages import SystemMessage
             messages.insert(0,SystemMessage(content="Privacy placeholder tokens sharing a namespace, type and numeric ID denote the same identity. A trailing _V number only preserves a spelling or short-name variant. Preserve exact tokens in replies."))
         extras = bound.arguments.get("kwargs", {})
@@ -313,7 +340,17 @@ class PrivacyWrapper(LiteLLMChatWrapper):
         return pipeline
 
     async def buffered_call(self, method, args, kwargs):
+        agent=self._privacy_agent()
+        progress=None
+        def status(message):
+            nonlocal progress
+            if agent is None:return
+            if progress is None:progress=agent.context.log.log(type='info',heading='Local Privacy Guard',content=message)
+            elif hasattr(progress,'update'):progress.update(content=message)
+        status('Checking model input locally.')
         args, kwargs = prepare(self, args, kwargs, method)
+        status('Input checked. The selected model is processing the request.')
+        model_started=time.perf_counter()
         callbacks={key:kwargs.get(key) for key in ("response_callback","reasoning_callback")}
         async def buffer(*unused):return None
         # Avoid committing partial original values or broken tokens to logs.
@@ -327,6 +364,8 @@ class PrivacyWrapper(LiteLLMChatWrapper):
         marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
         try:result=await getattr(self._privacy_inner,method)(*args,**kwargs)
         finally:filtered_call.reset(marker)
+        model_seconds=time.perf_counter()-model_started
+        status(f'Model processing finished ({model_seconds:.3f}s). Checking the response locally.')
         pipeline=self.output_filter()
         if method=="unified_call":
             response,reasoning=result
@@ -340,6 +379,7 @@ class PrivacyWrapper(LiteLLMChatWrapper):
             result.raw=pipeline.value(result.raw)
             response,reasoning=result.response,result.reasoning
         pipeline.log_summary('Model output')
+        status(f'Input and response checked locally. Model processing {model_seconds:.3f}s; output preparation {time.perf_counter()-pipeline.started:.3f}s.')
         if callbacks['reasoning_callback'] and reasoning:
             await callbacks['reasoning_callback'](reasoning,reasoning)
         if callbacks['response_callback'] and response:
