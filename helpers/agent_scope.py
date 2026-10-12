@@ -23,13 +23,18 @@ def configuration(agent):
     if agent is None:
         return None
     from agent import AgentContext
+    from plugins._agent_editor.helpers.editor import EditorAgent
+    editing=isinstance(agent,EditorAgent)
     visited=set()
     ancestor=agent
     while True:
-        identity=ancestor.context.id
+        if editing:break
+        identity=getattr(ancestor.context,'id',None)
+        if not identity:break # Native EditorAgent has no live chat context.
         if identity in visited:raise ValueError('Cyclic subordinate privacy context.')
         visited.add(identity)
-        parent_id=ancestor.context.get_output_data('parent_context_id')
+        getter=getattr(ancestor.context,'get_output_data',None)
+        parent_id=getter('parent_context_id') if getter else None
         if not parent_id:break
         parent=AgentContext.get(parent_id)
         if parent is None or parent.agent0 is None:
@@ -38,7 +43,7 @@ def configuration(agent):
     if ancestor is not agent:
         inherited=configuration(ancestor)
         if inherited and inherited.get('enabled'):return inherited
-    root = getattr(agent.context, "agent0", None)
+    root = None if editing else getattr(agent.context, "agent0", None)
     if root is not None and root is not agent:
         inherited = configuration(root)
         if inherited and inherited.get("enabled"):
