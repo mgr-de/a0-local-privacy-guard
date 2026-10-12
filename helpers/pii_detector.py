@@ -380,6 +380,15 @@ class PIIFilter:
         "telefon", "phone", "date", "call", "fax", "ip", "web", "key", "api",
         "herr", "frau", "dr", "prof", "monsieur", "madame", "mme", "mr",
         "señor", "señora", "sr", "sra", "signore", "signora", "sig",
+        "iban", "ready", "okay", "confirm", "summarize", "bestätige",
+        "geschäftspartner", "partner", "partnership", "contacts",
+        "user", "assistant", "agent", "agent zero", "response", "tool", "tools",
+        "json", "vision_load", "code_execution_tool", "call_subordinate", "english", "german",
+        "browser", "skills_tool", "memory_load", "memory_save", "memory_delete",
+        "text_editor", "text_editor_remote", "a0", "workdir", "paths", "query",
+        "action", "text", "selector", "ref", "browser_id", "value", "type",
+        "content", "state", "url", "submit", "metadata", "parameters",
+        "boolean", "bool", "number", "integer", "float", "string", "str", "null", "object", "array",
     }
 
     def __init__(self, config: dict = None):
@@ -397,6 +406,14 @@ class PIIFilter:
         if BASE_LANGUAGE not in ner_languages:
             ner_languages = [BASE_LANGUAGE] + list(ner_languages)
         self.ner_languages = ner_languages
+        self.skip_words = set(self.NER_SKIP_WORDS)
+        if self.use_ner:
+            import importlib
+            for language in ner_languages:
+                try:
+                    self.skip_words.update(importlib.import_module(f"spacy.lang.{language}.stop_words").STOP_WORDS)
+                except ImportError:
+                    pass
         # Primary language for language-specific regex patterns
         self.primary_language = ner_languages[0] if ner_languages else BASE_LANGUAGE
 
@@ -418,9 +435,11 @@ class PIIFilter:
             for name, (pattern, replacement) in all_patterns.items():
                 try:
                     compiled = re.compile(pattern, re.IGNORECASE)
+                    if compiled.match(''):
+                        raise ValueError('A local filter pattern matches empty text. Correct the custom pattern before continuing.')
                     self.compiled_patterns.append((name, compiled, replacement))
                 except re.error:
-                    pass
+                    raise ValueError('A local filter pattern is invalid. Correct custom pattern syntax before continuing.') from None
 
     def _format_placeholder(self, pii_type: str, replacement: str) -> str:
         """Format the placeholder for a detection."""
@@ -454,43 +473,70 @@ class PIIFilter:
         all_detections: List[PIIDetection] = []
         seen_spans = set()  # Prevent duplicates across languages
 
-        for lang in self.ner_languages:
-            nlp = _get_nlp(lang)
-            if nlp is None:
-                continue
-            label_map = LABEL_MAPS.get(lang, LABEL_MAPS[BASE_LANGUAGE])
-            doc = nlp(text)
-            for ent in doc.ents:
-                span_key = (ent.start_char, ent.end_char, ent.text.lower())
-                if span_key in seen_spans:
+        # Do not run German NER over clearly English technical instructions
+        # (and vice versa). Neutral names retain both recognizers. Work per
+        # paragraph so mixed messages can still use different language models.
+        de_words=set('der die das und ist sind mit für von nicht schuldet verheiratet personen bleibt unverändert beziehungen geschäftspartner telefon'.split())
+        en_words=set('the and is are with for from not owes married people unchanged relationships return only to of'.split())
+        if len(text.strip())<=1:return [] # Single-letter role IDs are never NER identities.
+        paragraphs=list(re.finditer(r'[^\n]+',text))
+        for paragraph in paragraphs:
+            languages=self.ner_languages
+            if set(languages)=={'en','de'}:
+                words=re.findall(r'\w+',paragraph.group().casefold())
+                german=sum(word in de_words for word in words);english=sum(word in en_words for word in words)
+                if german>=2 and german>=english:languages=['de']
+                elif english>=2 and english>german:languages=['en']
+            for lang in languages:
+                nlp = _get_nlp(lang)
+                if nlp is None:
                     continue
-                seen_spans.add(span_key)
+                label_map = LABEL_MAPS.get(lang, {**LABEL_MAPS[BASE_LANGUAGE], 'PER':'PERSON',
+                    'persName':'PERSON','orgName':'ORGANISATION','placeName':'ORT','geogName':'ORT',
+                    'date':'DATUM','time':'DATUM'})
+                doc = nlp(paragraph.group())
+                for ent in doc.ents:
+                    if not self.ner_entity_types and ent.label_ not in label_map:
+                        continue  # Quantities/MISC are not a blanket PII category.
+                    if len(ent.text.strip())==1 and ent.text.strip().isalpha():continue
+                    span_key = (ent.start_char+paragraph.start(), ent.end_char+paragraph.start(), ent.text.lower())
+                    if span_key in seen_spans:
+                        continue
+                    seen_spans.add(span_key)
 
-                pii_type = label_map.get(ent.label_, ent.label_)
-                if self.ner_entity_types and ent.label_ not in self.ner_entity_types:
-                    continue
-                placeholder = self._format_placeholder(pii_type, f"<{pii_type}>")
-                all_detections.append(PIIDetection(
-                    pii_type=pii_type,
-                    original=ent.text,
-                    start=ent.start_char,
-                    end=ent.end_char,
-                    replacement=placeholder,
-                    source="ner",
-                    confidence=0.85,
-                    language=lang
-                ))
+                    pii_type = label_map.get(ent.label_, ent.label_)
+                    if self.ner_entity_types and ent.label_ not in self.ner_entity_types:
+                        continue
+                    placeholder = self._format_placeholder(pii_type, f"<{pii_type}>")
+                    all_detections.append(PIIDetection(
+                        pii_type=pii_type,
+                        original=ent.text,
+                        start=ent.start_char+paragraph.start(),
+                        end=ent.end_char+paragraph.start(),
+                        replacement=placeholder,
+                        source="ner",
+                        confidence=0.85,
+                        language=lang
+                    ))
         return all_detections
 
     def _merge_detections(self, detections: List[PIIDetection]) -> List[PIIDetection]:
         """Merge detections. Regex ALWAYS wins over NER on overlap."""
-        regex_dets = [d for d in detections if d.source == "regex"]
-        regex_dets.sort(key=lambda d: d.start)
+        # Select whole structured values first, then non-overlapping names.
+        # Never apply two replacements to overlapping original offsets.
+        priority = {"IBAN_DE": 0, "IBAN": 0, "EMAIL": 1, "KREDITKARTE": 2}
+        regex_dets = sorted((d for d in detections if d.source == "regex"),
+                            key=lambda d: (priority.get(d.pii_type, 3), -(d.end-d.start), d.start))
+        selected_regex = []
+        for det in regex_dets:
+            if not any(det.start < other.end and other.start < det.end for other in selected_regex):
+                selected_regex.append(det)
+        regex_dets = selected_regex
         ner_dets = [d for d in detections if d.source == "ner"]
 
         # Filter NER false positives: skip single known non-PII words
         ner_dets = [d for d in ner_dets if not (
-            d.original.lower().strip() in self.NER_SKIP_WORDS and len(d.original.split()) == 1
+            d.original.lower().strip() in self.skip_words and len(d.original.split()) == 1
         )]
 
         # Remove NER detections that overlap with regex detections
@@ -500,7 +546,11 @@ class PIIFilter:
             if not overlaps:
                 filtered_ner.append(ner)
 
-        merged = sorted(regex_dets + filtered_ner, key=lambda d: d.start)
+        selected_ner = []
+        for det in sorted(filtered_ner, key=lambda d: (-(d.end-d.start), -d.confidence, d.start)):
+            if not any(det.start < other.end and other.start < det.end for other in selected_ner):
+                selected_ner.append(det)
+        merged = sorted(regex_dets + selected_ner, key=lambda d: d.start)
         return merged
 
     def filter(self, text: str) -> FilterResult:

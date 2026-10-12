@@ -1,3 +1,11 @@
+## Profile isolation regression coverage
+
+The current version requires explicit profile ownership. See [profile scope review](PROFILE-SCOPE-REVIEW.md) for the current acceptance criteria and validation results. Tests run inside an isolated Agent Zero v2.13 instance with actual native extension discovery. Two profiles are exercised independently, using temporary profile storage and synthetic model/catalog results. No paid network calls are required.
+
+The new coverage includes native settings display (which otherwise bypasses config hooks), profile-only model/key/policy setup, no shared preset writes, separate Memory folders, per-profile filters, ownership-bound validation tickets, stale replies, existing wrappers after deactivation/extension removal, chat gate credential status without exposing keys, and path containment. Legacy generation-safe preset backup tests remain for deliberate manual recovery helpers, which are no longer called by startup or uninstall.
+
+The following historical strategy describes earlier version behavior; global preset creation/cleanup and global credentials are superseded by the profile setup in the current version.
+
 # Test Strategy — Local Privacy Guard
 
 ## Goals
@@ -72,3 +80,19 @@ python -m pytest tests/ -q
 Requirements: `pytest`, `pyyaml` (no spaCy, no sentence-transformers, no
 network needed; NER-dependent paths degrade gracefully and are covered by
 the manual checklist).
+
+## Settings redesign 1.2.0
+
+`tests/test_ui_diagnostics.py` checks the fixed synthetic example using real built-in regex logic, redact/block/log-only modes, disabled detection, invalid input and missing name models. It confirms that arbitrary custom patterns and mapping persistence are not used in the UI example. `node --test tests/test_privacy_store.mjs` checks changed settings, persistent errors and late results after closing.
+
+The HTML convention test permits one external store module and continues to reject inline scripts and raw fetch calls. The example API inherits Agent Zero authentication and CSRF requirements. It does not modify presets or configuration.
+
+In an isolated Agent Zero v2.13 instance, verify the real settings dialog, save/scope behavior and the example API. At 390px viewport width, check all language labels and controls; with keyboard navigation check focus visibility and expanded details. Successful regex output must not hide unavailable spaCy models. A browser example is not a provider privacy audit or an active-chat protection check.
+
+## Completed opt-in privacy integration tests (2026-10-11)
+
+The subsequent real-model comparison used synthetic data, local Ollama and eight authorized live Requesty calls. It is separate from the earlier mocked release validation above. See [results and limitations](PII-TEST-RESULTS.md).
+
+Acceptance requires separate results for detection, exact input roundtrip, identity continuity, current relationships/debts, strict response format, outgoing payloads, reasoning/final answers, streaming, context compaction, real memory retrieval, restart and profile ownership. Original values in the browser are expected; original values in external requests are the privacy finding. Null known-value matches do not establish general PII freedom.
+
+The reproducible opt-in harness is in [Local Privacy Guard's integration tools](https://github.com/mgr-de/a0-local-privacy-guard/tree/ux/private-user-setup/tools/privacy_benchmark). It is not collected by the ordinary offline test suite. Hosted Requesty PII scanner accuracy is not covered by these model-routing tests.

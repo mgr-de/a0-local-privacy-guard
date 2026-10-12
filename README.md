@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/icon.svg" width="150" alt="Local Privacy Guard Logo" />
   <h1>🛡️ Local Privacy Guard</h1>
-  <p><b>Comprehensive local privacy protection for Agent Zero</b></p>
+  <p><b>Local personal-detail filtering and memory embeddings for Agent Zero</b></p>
 </div>
 
 [![Agent Zero Plugin](https://img.shields.io/badge/Agent%20Zero-Plugin-blue)](https://github.com/agent0ai/agent-zero)
@@ -11,21 +11,57 @@
 
 ## What does this plugin do?
 
-Local Privacy Guard protects your personal data when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
+### Standardschutz in 1.5.0
+
+Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
+
+Mit aktivem Requesty-Schutz müssen externe Modelle dessen Anforderungen erfüllen. Native lokale Modellrouten bleiben zulässig. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Es wird keine dienstspezifische Integration für den lokalen Entwicklungs-Testserver eingebaut; Tesseract bleibt optional.
+
+Redact-Modus verwendet eindeutige, persistente Tokenfamilien pro Schutzprofil und Chat. Schreibweisen und eindeutige Kurzformen können Varianten derselben Familie erhalten. Zuordnungen enthalten Originaldaten und liegen unter `usr/privacy-mappings` mit eingeschränkten Dateirechten. Die historische Option `store_mapping` bleibt lesbar, steuert aber nicht mehr die verbindliche Runtime-Zuordnung. Alte mehrdeutige Typ-Platzhalter werden nicht importiert.
+
+Antworten und Denktext bleiben kanonisch maskiert. Die WebUI übersetzt für die Anzeige lokal zurück; native Werkzeugargumente werden ebenfalls lokal zurückübersetzt. Werkzeuge können diese Daten anschließend selbst an Webseiten oder andere Empfänger senden. Streaming-Ausgaben werden zunächst gepuffert und geprüft, wodurch die Anzeige später erscheint. Eine sichere verschlüsselte Ablage oder vollständige Anonymisierung wird nicht zugesagt.
+
+Bilder dürfen über zugelassene Modelle verarbeitet werden. Ihr Inhalt wird nicht durch die Textmaskierung geschützt. Der Chat zeigt bei externen Bildaufrufen einen Hinweis mit der erfassten Modellroute. Optionales lokales OCR mit installiertem Tesseract liest Text aus einer ausgewählten Datei, verändert aber das Originalbild nicht. Browser, Formulare, Uploads und Dateibearbeitung erhalten keine neuen allgemeinen Einschränkungen.
+
+Siehe [Standardschutz und gehärteter Ausblick](docs/STANDARD-AND-HARDENED-PLAN.md). Die historischen Abschnitte zu 1.2/1.3 und Screenshots beschreiben ältere Entwicklungsstände; die obigen Angaben sind für die aktuelle Modellprüfung maßgeblich.
+
+Local Privacy Guard reduces the disclosure of detected personal details when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
 
 | Feature | Description |
 |---------|-------------|
-| 🔒 **PII Filter** | Detects and anonymizes personally identifiable information (emails, phones, IBANs, addresses, names, etc.) **before** any message leaves your machine — with **multi-language support** |
-| 🧠 **Local Embedding** | Forces memory embeddings to run 100% locally using sentence-transformers — no memory content is sent to external APIs |
-| ✅ **Privacy Verification** | Checks on agent start that all privacy-relevant components are configured for local-only operation |
+| 🔒 **PII Filter** | Replaces detected personal details in supported chat and utility model calls, with multilingual detection. Detection can miss details. |
+| 🧠 **Local Embedding** | Configures local sentence-transformers calculations for memory search. Helper models can still receive recalled memory text. |
+| ✅ **Privacy Verification** | Checks selected configuration components on agent initialization; it does not audit all external data paths. |
 
 ### Related plugin
 
-This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard), from the same authors. Local Privacy Guard anonymizes **what** is sent to your LLM (PII filtering before every model call, local embeddings); Requesty Privacy Guard controls **where** your traffic is routed (EU router, provider ZDR, no training) for Agent Zero models using Requesty. Use both together for end-to-end data protection.
+This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard). Local Privacy Guard replaces detected details in supported model calls and configures local embeddings. Requesty Privacy Guard checks selected routing and provider data requirements against catalog metadata. Neither plugin independently audits provider practices or protects every tool, image or third-party data path.
 
-### Why is this needed?
+### Settings in version 1.2.0
 
-Many LLM gateway providers (like Requesty) offer strong compliance features (EU-only routing, Zero Data Retention, No Training), but **PII scanning is often Enterprise-only**. This plugin compensates by anonymizing PII **locally** before data ever reaches the provider.
+The settings page separates everyday choices from advanced detection and startup options. Its summary describes the selected project/profile configuration, not verified protection of an active chat. Save changes and restart after changing languages or the embedding model.
+
+**Run local example** uses the real built-in filter on a fixed artificial email example. It makes no external model requests, downloads no models, saves no settings and creates no placeholder mapping. Results reflect the settings in the form, including unsaved changes; changed settings invalidate the displayed result. Missing name-detection models are reported separately. Install the needed spaCy models before relying on name detection. This example does not test custom patterns, embeddings or complete detection.
+
+The original screenshots below predate the 1.2.0 settings redesign. See [the UI review](docs/UI-REVIEW.md) for the design rationale and acceptance criteria.
+
+### Profile isolation in 1.3.0
+
+Save configuration for one explicit Agent profile, optionally within a project. Settings inherited from a global or project-only installation cannot activate protection. The profile selection and disabled global form are visible in the settings page.
+
+Local embedding settings are applied to the resolved configuration at runtime; startup never writes shared model presets. PII filter instances are owned by the actual Agent object and recreated after configuration changes. Weak references prevent a recycled object identifier from reusing another agent’s filter.
+
+Protected profiles use a separate Memory folder, identified by project/profile and local embedding settings. Existing shared memories are preserved and are not copied automatically. Conflicting chat model overrides are rejected before an external embedding can be used. Startup checks describe this profile only.
+
+Uninstall never restores shared presets automatically. Legacy backup journals remain available for deliberate manual recovery. Installation of Python/spaCy models is shared instance administration and may download model packages; runtime detection is local. Native global toggles and uninstall affect the entire instance. Use the profile toolbar toggle for a profile-only change. Native uninstall/ZIP replacement can remove scoped config files; back up configuration first.
+
+Agent Zero profiles are not process or filesystem security sandboxes. These changes prevent this plugin from accidentally rewriting another profile’s configuration or memory index; they cannot restrict arbitrary third-party tools or an administrator. See [profile scope review](docs/PROFILE-SCOPE-REVIEW.md).
+
+## Why is this needed?
+
+Gateway-side PII scanning takes place after the original request reaches the gateway. Local filtering instead replaces detected details on your device before supported requests are sent. This reduces disclosure risk; it does not guarantee complete anonymization. Regex and name detection can miss short names, aliases, spelling changes and indirectly identifying context.
+
+Requesty now documents Fast and model-based ML PII scanners for standard and Enterprise plans. Report forwards content unchanged; Mask replaces detected values before the model provider receives them. Its hosted scanner is an optional additional layer, not a substitute for local filtering. A claim of higher accuracy needs comparative tests. See [Requesty Guardrails](https://docs.requesty.ai/features/guardrails).
 
 Similarly, Agent Zero's default memory embedding configuration may use external API endpoints. This plugin ensures embeddings are computed entirely on your machine.
 
@@ -60,6 +96,8 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 
 ## How it works
 
+The historical diagram illustrates detected-detail replacement and local embedding calculations. Version 1.4 also filters system texts and recalled memory in supported native model requests. Tools, original images and independent third-party model clients remain outside text masking. Replaced details do not make the remaining text necessarily anonymous.
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    YOUR LOCAL MACHINE                        │
@@ -67,7 +105,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 │  │              Agent Zero (Docker Container)           │    │
 │  │                                                      │    │
 │  │  ┌─────────────┐    ┌──────────────┐    ┌────────┐  │    │
-│  │  │ PII Filter  │───▶│  Anonymized  │───▶│ Memory │  │    │
+│  │  │ PII Filter  │───▶│   Filtered   │───▶│ Memory │  │    │
 │  │  │(regex+NER)  │    │    Text      │    │ (FAISS)│  │    │
 │  │  └─────────────┘    └──────────────┘    └────────┘  │    │
 │  │         │                                    ▲       │    │
@@ -79,7 +117,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 │  │         │                            └──────────────┘│    │
 │  │         ▼                                           │    │
 │  │  ┌─────────────────────────────────────────────┐    │    │
-│  │  │     ONLY anonymized data leaves the machine  │    │    │
+│  │  │      Detected details replaced in text      │    │    │
 │  │  │    "<PERSON>", "<EMAIL>" instead of real PII   │    │    │
 │  │  └─────────────────────────────────────────────┘    │    │
 │  └─────────────────────────────────────────────────────┘    │
@@ -133,7 +171,7 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 | `action` | `redact` | What to do: `redact` (replace), `block` (stop message), `log_only` (just log) |
 | `languages` | `["de"]` | **List of languages** to load. English (`en`) is **always included automatically** |
 | `log_detections` | `true` | Log detected PII to agent log |
-| `store_mapping` | `false` | Store placeholder→original mapping in memory (session only) |
+| `store_mapping` | `true` | Legacy compatibility key; runtime redact mode always persists chat-owned mappings for local display |
 
 ### Local Embedding Settings
 
@@ -141,12 +179,12 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 |---------|---------|-------------|
 | `enabled` | `true` | Configure local embeddings |
 | `model` | `paraphrase-multilingual-MiniLM-L12-v2` | sentence-transformers model (multilingual, 384 dims) |
-| `auto_configure` | `true` | Automatically update presets.yaml on agent start |
+| `auto_configure` | `true` | Apply local embedding settings to this profile at runtime; shared presets are unchanged |
 | `verify_local` | `true` | Verify embedding runs locally |
 
 ### Detected PII Types
 
-The plugin detects and anonymizes:
+The plugin attempts to detect these categories and replaces detected values in redact mode:
 
 | Category | Types |
 |----------|-------|
@@ -162,14 +200,16 @@ The plugin detects and anonymizes:
 
 ## Usage
 
-Once installed and enabled, the plugin works **automatically**:
+Choose an explicit Agent profile in the settings toolbar, enable protection and save settings for it. Global/project-only settings do not activate protection. Once configured for that profile, the plugin works **automatically**:
 
-1. **Before every LLM call**, messages are scanned for PII (in all selected languages)
-2. **Detected PII is replaced** with placeholders like `<EMAIL>`, `<PERSON>`, `<TELEFON>`
-3. **Only anonymized text** is sent to the LLM provider
-4. **Memory embeddings** are computed locally — no memory content leaves your machine
+1. On **supported native model calls**, all text blocks, system messages and tool results are scanned using the configured local detection methods
+2. In **redact mode**, detected details receive unique chat-owned tokens; block mode stops detected requests, and log-only mode sends details unchanged
+3. Text with **detected details replaced** is sent on supported calls in redact mode; missed details can remain
+4. **Memory embeddings** are computed locally when configured successfully; recalled memory text can still be sent to a helper model
 
 ### Example
+
+Original details remain readable in the local browser. The relevant privacy boundary is the outgoing model request. Version 1.4 uses persistent unique placeholders and restores replies for local display. Model replies can still invent identities, damage placeholders or confuse relationships; detection is imperfect. The older type-token example below is illustrative only. See [current test results](docs/STANDARD-TEST-RESULTS.md) and [the historical comparison](docs/PII-TEST-RESULTS.md).
 
 **You type:**
 > "Mein Name ist Anna Müller, meine E-Mail ist anna@example.com und meine IBAN ist DE89 3704 0044 0532 0130 00"
@@ -195,7 +235,7 @@ Once installed and enabled, the plugin works **automatically**:
 - ✅ **No telemetry** — the plugin does not phone home
 - 🔌 **No external API calls** — all detection and embedding is done locally
 - ✅ **Open source** — audit the code yourself
-- ⚠️ **store_mapping** — if enabled, PII is stored in memory during the session (disable for maximum privacy).
+- ⚠️ **Local mappings** — redact mode stores original details in chat-owned mapping files. Protect and back up local storage; the legacy `store_mapping` flag does not disable runtime persistence.
 
 ---
 
@@ -208,7 +248,7 @@ Once installed and enabled, the plugin works **automatically**:
 ```
 
 ### Embedding still uses external API
-Check `/a0/usr/plugins/_model_config/presets.yaml` — the embedding model name must start with `sentence-transformers/`. The plugin configures this automatically.
+Check this profile’s plugin settings. Runtime embedding resolution uses its configured `sentence-transformers/` model without rewriting shared presets. Conflicting per-chat embedding overrides are blocked; clear the override or select matching local embeddings.
 
 ### Plugin not loading
 1. Check Agent Zero logs for errors
@@ -239,3 +279,20 @@ To add support for a new language:
 3. Create language-specific patterns (e.g., `FRENCH_PATTERNS`) and add to `LANGUAGE_PATTERNS`
 4. Add the spaCy model to `hooks.py` for auto-installation
 5. Add the language checkbox to `webui/config.html`
+
+## Current standard-protection validation
+
+See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Local models remain native Agent Zero choices; no local-server metadata or weight checks are performed by these plugins. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.
+
+See [the 12 October correction](docs/KORREKTUR-2026-10-12.md): effective Requesty model labels replace misleading shared-default labels in protected chats, without changing presets. Provider-specific local-server probes were removed.
+
+See [test environment and settings entry](docs/TEST-ENVIRONMENT.md) for the fixed Privacy Test profile, temporary isolation fixtures, and choosing an explicit profile before editing Requesty.
+
+
+## Zuordnungen, Sprachprüfung und gemeinsamer Privacy Agent
+
+Endgültige Chatlöschung über Agent Zeros `/api/chat_remove` entfernt die zugehörigen Zuordnungen und SQLite-Nebendateien. Archivierung behält sie. Config bietet außerdem eine ausdrücklich bestätigte Löschung nur der Zuordnungen; alte Platzhalter lassen sich danach nicht zurückübersetzen. Chattexte, Speicher, Sicherungen und externe Logs werden dadurch nicht entfernt.
+
+Der synthetische [Sprachkorpus](tests/fixtures/multilingual_sessions.json) umfasst DE, EN, FR, ES, IT, NL, PL und gemischte Sitzungen mit vier Personen über 40 und 100 Nachrichten. [Der lokale Runner](tools/privacy_benchmark/language_sessions.py) bewertet Erkennung, Rückübersetzung, Tokenkontinuität, Kontextkürzung und Wiederöffnung von Zuordnungen. Er ist kein Test generierter Modellantworten und kein allgemeiner PII-Erkennungsnachweis. Erforderliche spaCy-Sprachmodelle müssen vorhanden sein; es wird kein lokaler Chat-LLM vorausgesetzt.
+
+[Requesty Privacy Agent](https://github.com/mgr-de/a0-requesty-privacy-agent) nutzt dieses Plugin für installationsweite Mindestregeln. Ohne aktivierten Manager bleibt die bestehende profilbezogene Nutzung erhalten. [Aktuelle Einführung und Grenzen](docs/INSTANCE-PRIVACY-PLAN.md).

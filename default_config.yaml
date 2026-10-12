@@ -11,7 +11,9 @@ pii_filter:
   use_ner: true
   action: redact
   log_detections: true
-  store_mapping: false
+  # Legacy key retained for configuration compatibility. Runtime redact mode
+  # always uses persistent, chat-owned mappings for local display restoration.
+  store_mapping: true
   placeholder_format: "<{type}>"
   
   # Languages to load for NER detection

@@ -12,8 +12,9 @@ def test_config_html_uses_store_gate_pattern():
     html = (ROOT / "webui" / "config.html").read_text(encoding="utf-8")
     assert '<div x-data>' in html
     assert html.count('<template x-if="config') >= 1
-    # no inline scripts, no fetch calls, no self-registered Alpine components
-    assert '<script' not in html
+    # Framework store gate and external module, no inline scripts or raw fetch.
+    assert '<script type="module" src="/plugins/local_privacy_guard/webui/privacy-store.js"></script>' in html
+    assert not re.search(r'<script[^>]*>(?!</script>)', html)
     assert 'fetch(' not in html
     assert 'pluginSettingsPage' not in html
     assert 'window.' not in html
@@ -61,9 +62,9 @@ def test_license_at_root():
     assert (ROOT / "LICENSE").exists()
 
 
-def test_hooks_restore_result_contract():
-    """uninstall() must tolerate the new restore result shape."""
+def test_uninstall_never_restores_shared_presets():
     import ast
     src = (ROOT / "hooks.py").read_text(encoding="utf-8")
     tree = ast.parse(src)
-    assert "restore_embedding_backup" in src
+    uninstall = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "uninstall")
+    assert "restore_embedding_backup" not in ast.unparse(uninstall)

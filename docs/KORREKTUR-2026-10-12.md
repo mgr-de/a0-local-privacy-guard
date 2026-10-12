@@ -1,0 +1,9 @@
+# Korrektur am 12.10.2026
+
+Die irreführende Modellbeschriftung des nativen Umschalters zeigte den gemeinsamen Default-Preset mit GPT-6.1-Sol. Die aufgezeichneten Browseranfragen verwenden dagegen 14-mal `tensorx/deepseek-v4.1-flash` und dreimal `azure/gpt-6-luna@germanywestcentral` als Utility-Modell. In dieser Aufzeichnung gibt es keinen GPT-6.1-Sol-Aufruf. Die Anzeige war kein zuverlässiger Nachweis der verwendeten Route.
+
+Die Beschriftung des Umschalters zeigt jetzt bei aktiven Requesty-Profilen das wirksame Main-Modell. Die profilbezogene Statusantwort liefert die Main-/Utility-Konfiguration; die Liste der gemeinsamen Presetoptionen bleibt erhalten. Gemeinsame Presetdefinitionen, gespeicherte Auswahl und unabhängige Chats bleiben erhalten. Verzögerte Antworten eines anderen Chats ändern die Anzeige nicht. Der provisorische lokale Override des eigenen Foto/Formular-Testchats wurde entfernt; dessen bestehendes Requesty-Profil verwendet wieder DeepSeek Flash als Main. Der historische letzte lokale Aufruf bleibt im Verlauf als solcher aufgezeichnet.
+
+Die zusätzlich eingeführten Ollama-spezifischen `/api/show`-Abfragen, Cloud-Alias- und Modellgewichtsprüfung sowie zugehörige Produkt-Tests wurden entfernt. Es gibt keine Ollama-spezifische Runtime-Erweiterung. Bereits vorhandene native lokale Modellrouten bleiben nutzbar; die kostenlosen Entwicklungs-Testprogramme dokumentieren weiterhin den tatsächlich verwendeten lokalen Testserver. Aus dessen Verfügbarkeit entsteht keine Voraussetzung für die Plugins.
+
+87 Local- und 71 Requesty-Python-Tests plus 32 Unterprüfungen sind bestanden, ebenso 20 Frontend-Prüfungen einschließlich des neuen Beschriftungs- und Chatwechseltests. Die zwölf Tests der zurückgenommenen Ollama-Prüfung entfallen. Diese Korrektur und die Prüfung der Profilkonfiguration verursachen keine neuen bezahlten LLM-Aufrufe. Die frühere kumulative Budgetreservierung bleibt unverändert.

@@ -26,7 +26,7 @@ def verify_pii_filter(config: Dict[str, Any]) -> Dict[str, Any]:
     if pii_cfg.get("action") == "log_only":
         issues.append("PII filter is in log_only mode - PII is sent unmodified")
     if pii_cfg.get("store_mapping", False):
-        issues.append("store_mapping is enabled - PII is stored in memory (session only)")
+        issues.append("store_mapping is enabled - chat-owned mappings contain PII in local storage")
     return {
         "component": "pii_filter",
         "ok": len(issues) == 0,
@@ -135,7 +135,7 @@ def verify_requesty() -> Dict[str, Any]:
     }
 
 
-def run_verification(config: Dict[str, Any], components: List[str] | None = None) -> Dict[str, Any]:
+def run_verification(config: Dict[str, Any], components: List[str] | None = None, agent=None) -> Dict[str, Any]:
     """Run privacy verification for the given components.
 
     Returns a report dict with per-component results and an overall status.
@@ -146,6 +146,23 @@ def run_verification(config: Dict[str, Any], components: List[str] | None = None
         "memory": verify_memory,
         "requesty": verify_requesty,
     }
+    if agent is not None:
+        from plugins._model_config.helpers import model_config as mc
+        from plugins._memory.helpers import memory
+        def profile_embedding():
+            effective = mc.get_embedding_model_config(agent)
+            local = effective.get("provider") == "huggingface" and str(effective.get("name", "")).startswith("sentence-transformers/")
+            return {"component":"embedding", "ok":local, "model":effective.get("name", ""),
+                    "issues":[] if local else ["This profile does not resolve to a local sentence-transformers embedding."]}
+        def profile_memory():
+            return {"component":"memory", "ok":True, "storage":memory.get_agent_memory_subdir(agent), "issues":[]}
+        def profile_requesty():
+            providers = [getattr(agent.get_chat_model().a0_model_conf, "provider", ""),
+                         getattr(agent.get_utility_model().a0_model_conf, "provider", "")]
+            external = any("requesty" in str(provider).lower() for provider in providers)
+            return {"component":"requesty", "ok":not external,
+                    "issues":["This profile uses the external Requesty gateway."] if external else []}
+        checkers.update(embedding=profile_embedding, memory=profile_memory, requesty=profile_requesty)
     wanted = [c for c in (components or list(checkers.keys())) if c]
 
     results = []

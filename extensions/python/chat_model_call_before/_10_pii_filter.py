@@ -11,11 +11,13 @@ LLM provider.
 
 from helpers.extension import Extension
 from helpers import plugins
+import json
+from weakref import WeakKeyDictionary
 
 PLUGIN_NAME = "local_privacy_guard"
 
 # Cache filter instances per agent context
-_filter_cache: dict = {}
+_filter_cache = WeakKeyDictionary()
 
 
 def _get_config(agent) -> dict:
@@ -35,12 +37,12 @@ def _get_config(agent) -> dict:
 
 def _get_filter(agent, config: dict):
     """Get or create a PIIFilter instance for this agent."""
-    ctx_id = getattr(getattr(agent, "context", None), "id", "default") if agent else "default"
-    cache_key = f"{ctx_id}_{id(agent)}"
-    if cache_key not in _filter_cache:
+    fingerprint = json.dumps(config, sort_keys=True)
+    cached = _filter_cache.get(agent)
+    if cached is None or cached[0] != fingerprint:
         from usr.plugins.local_privacy_guard.helpers.pii_detector import create_filter
-        _filter_cache[cache_key] = create_filter(config)
-    return _filter_cache[cache_key]
+        _filter_cache[agent] = (fingerprint, create_filter(config))
+    return _filter_cache[agent][1]
 
 
 def _safe_log(agent, level: str, message: str):
@@ -122,6 +124,8 @@ class LocalPrivacyPIIFilterExtension(Extension):
             return
         if not self.agent:
             return
+        if getattr(self.agent, "data", {}).get("_local_privacy_wrapped"):
+            return  # Every text block is handled by the owner-bound wrapper.
 
         config = _get_config(self.agent)
 
@@ -173,10 +177,7 @@ class LocalPrivacyPIIFilterExtension(Extension):
                 _safe_log(self.agent, "warning", 
                     f"[Local Privacy Guard] BLOCKED message with {result.pii_count} PII items"
                 )
-                _set_message_content(
-                    message,
-                    "[Message blocked by Local Privacy Guard due to PII detection]"
-                )
+                raise ValueError("Local Privacy Guard blocked this profile's model request because personal details were detected.")
             # log_only: do nothing, message passes through unmodified
 
         if total_detections > 0:

@@ -16,6 +16,11 @@ if str(PROJECT_ROOT) not in sys.path:
 
 
 def _install_framework_stubs() -> None:
+    try:
+        import helpers.extension
+        return
+    except ImportError:
+        pass
     if "helpers" in sys.modules and hasattr(sys.modules["helpers"], "extension"):
         return  # already stubbed (or the real framework is importable)
 

@@ -1,7 +1,7 @@
 name: local_privacy_guard
 title: Local Privacy Guard
-description: Comprehensive local privacy protection for Agent Zero. Anonymizes PII before external API calls, configures local embeddings for memory, and verifies privacy settings. 100% local processing - no data leaves your machine for detection or embedding.
-version: 1.1.0
+description: Replaces detected personal details in supported model calls, configures local memory embeddings, and checks configuration. Detection runs locally but can miss details; external models may still receive conversation and recalled memory text.
+version: 1.5.0
 settings_sections:
   - agent
 per_project_config: true

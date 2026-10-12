@@ -80,6 +80,8 @@ def install() -> dict:
     English (en) is ALWAYS installed. Additional languages are read from config.
     """
     result = {"spacy_models": [], "errors": [], "languages": []}
+    from usr.plugins.local_privacy_guard.helpers.inherited_bridge import manage
+    result.update(manage(Path(__file__).parent))
 
     languages = _get_configured_languages()
     result["languages"] = languages
@@ -120,22 +122,48 @@ def uninstall() -> dict:
     """
     Clean up on uninstall.
 
-    - Restores presets.yaml from the pre-plugin backup (embedding config),
-      so no configuration written by this plugin survives it.
+    - Stops profile runtime overrides without writing shared presets.
+      Legacy embedding backups remain available for manual recovery.
     - spaCy models are preserved: they are shared packages that other
       plugins or agents may use.
     """
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    if manager() is not None:
+        raise ValueError('Deactivate Privacy Agent centrally before uninstalling a required component.')
     result = {
         "status": "ok",
         "note": "spaCy models preserved (may be used by other plugins)",
         "embedding_restore": None,
     }
-    try:
-        module = _load_embedding_config_module()
-        result["embedding_restore"] = module.restore_embedding_backup()
-        if result["embedding_restore"].get("restored"):
-            result["note"] += "; embedding presets restored from backup"
-    except Exception as exc:
-        result["status"] = "partial"
-        result["note"] += f"; embedding restore unavailable: {exc}"
+    result["note"] += "; shared presets and legacy backups preserved; profile runtime overrides stop when uninstalled"
+    import importlib.util
+    source=Path(__file__).parent/'helpers'/'inherited_bridge.py'
+    if source.exists():
+        spec=importlib.util.spec_from_file_location('_lpg_inherited_bridge',source)
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        result.update(module.manage(Path(__file__).parent,remove=True))
     return result
+
+
+def save_plugin_config(settings=None, project_name="", agent_profile="", **kwargs):
+    from usr.plugins.local_privacy_guard.helpers.agent_scope import selected_path, embedding
+    selected_path(project_name, agent_profile)
+    if not isinstance(settings, dict):
+        raise ValueError("Privacy settings must be an object.")
+    embedding(settings)
+    return settings
+
+
+def get_plugin_config(default=None, agent=None, project_name="", agent_profile="", **kwargs):
+    if agent is None:
+        from helpers import plugins
+        defaults = plugins.get_default_plugin_config("local_privacy_guard")
+        if agent_profile:
+            from usr.plugins.local_privacy_guard.helpers.agent_scope import selected_path
+            import json
+            path = selected_path(project_name or "", agent_profile)
+            if path.exists():
+                return json.loads(path.read_text(encoding="utf-8"))
+        return defaults
+    from usr.plugins.local_privacy_guard.helpers.agent_scope import configuration
+    return configuration(agent) or {**(default or {}), "enabled": False}

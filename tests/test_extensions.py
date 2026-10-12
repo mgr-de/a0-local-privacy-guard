@@ -5,6 +5,7 @@ import asyncio
 import inspect
 import types
 import yaml
+import pytest
 
 import usr.plugins.local_privacy_guard.extensions.python.agent_init._10_privacy_init as init_ext
 import usr.plugins.local_privacy_guard.extensions.python.chat_model_call_before._10_pii_filter as chat_ext
@@ -56,60 +57,21 @@ def test_agent_init_execute_is_sync(monkeypatch):
     assert inspect.iscoroutinefunction(init_ext.LocalPrivacyGuardInitExtension.execute) is False
 
 
-def test_agent_init_runs_once_per_context(monkeypatch, tmp_path):
-    p = tmp_path / "presets.yaml"
-    p.write_text(yaml.safe_dump([
-        {"name": "Default", "embedding": {"provider": "openai", "name": "old"}}
-    ]), encoding="utf-8")
-
+def test_agent_init_never_writes_shared_presets(monkeypatch, tmp_path):
     import usr.plugins.local_privacy_guard.helpers.embedding_config as ec
+    p = tmp_path / "presets.yaml"
+    p.write_text("shared sentinel", encoding="utf-8")
     monkeypatch.setattr(ec, "get_presets_path", lambda: p)
-    _install_config(monkeypatch, _config())
-    init_ext._initialized_contexts.clear()
+    monkeypatch.setattr(ec, "configure_local_embedding", lambda *a, **k: (_ for _ in ()).throw(AssertionError("global mutation")))
+    _install_config(monkeypatch, _config(verify=False))
+    init_ext.LocalPrivacyGuardInitExtension(agent=FakeAgent()).execute()
+    assert p.read_text() == "shared sentinel"
 
-    agent = FakeAgent()
-    ext = init_ext.LocalPrivacyGuardInitExtension(agent=agent)
-    ext.execute()
-    first_log = list(agent.log.lines)
-
-    # second agent in the same context: must not re-run the config pass
-    agent2 = FakeAgent()
-    ext2 = init_ext.LocalPrivacyGuardInitExtension(agent=agent2)
-    ext2.execute()
-    assert agent2.log.lines == []
-
-    # presets were rewritten to local once
-    data = yaml.safe_load(p.read_text(encoding="utf-8"))
-    assert data[0]["embedding"]["name"] == "sentence-transformers/X"
-    assert any("Configured local embedding" in m for _, m in first_log)
-
-
-def test_agent_init_disabled_plugin_noop(monkeypatch, tmp_path):
+def test_agent_init_disabled_plugin_noop(monkeypatch):
     _install_config(monkeypatch, _config(enabled=False))
-    init_ext._initialized_contexts.clear()
-    agent = FakeAgent()
-    ext = init_ext.LocalPrivacyGuardInitExtension(agent=agent)
-    ext.execute()
-    assert any("disabled" in m for _, m in agent.log.lines)
-
-
-def test_agent_init_respects_auto_configure_off(monkeypatch, tmp_path):
-    p = tmp_path / "presets.yaml"
-    p.write_text(yaml.safe_dump([
-        {"name": "Default", "embedding": {"provider": "openai", "name": "old"}}
-    ]), encoding="utf-8")
-
-    import usr.plugins.local_privacy_guard.helpers.embedding_config as ec
-    monkeypatch.setattr(ec, "get_presets_path", lambda: p)
-    _install_config(monkeypatch, _config(auto=False))
-    init_ext._initialized_contexts.clear()
-
-    ext = init_ext.LocalPrivacyGuardInitExtension(agent=FakeAgent())
-    ext.execute()
-
-    data = yaml.safe_load(p.read_text(encoding="utf-8"))
-    assert data[0]["embedding"]["name"] == "old"  # untouched
-
+    agent=FakeAgent()
+    init_ext.LocalPrivacyGuardInitExtension(agent=agent).execute()
+    assert agent.log.lines == []
 
 def _run(coro):
     return asyncio.new_event_loop().run_until_complete(coro)
@@ -181,8 +143,21 @@ def test_util_filter_block_mode(monkeypatch):
 
     call_data = {"message": "Email me at a@b.com"}
     ext = util_ext.LocalPrivacyPIIUtilFilterExtension(agent=agent)
-    _run(ext.execute(call_data=call_data))
-    assert "Blocked" in call_data["message"]
+    with pytest.raises(ValueError,match="blocked this profile"):
+        _run(ext.execute(call_data=call_data))
+
+
+def test_chat_block_stops_only_protected_agent_call(monkeypatch):
+    alpha=FakeAgent();beta=FakeAgent()
+    protected={"enabled":True,"pii_filter":{"enabled":True,"action":"block","use_regex":True,"use_ner":False,"languages":["en"]}}
+    monkeypatch.setattr("helpers.plugins.get_plugin_config",lambda name,agent=None:protected if agent is alpha else {"enabled":False})
+    class HumanMessage:
+        def __init__(self):self.content="synthetic@example.com"
+    with pytest.raises(ValueError,match="blocked this profile"):
+        _run(chat_ext.LocalPrivacyPIIFilterExtension(agent=alpha).execute(call_data={"messages":[HumanMessage()]}))
+    other=HumanMessage()
+    _run(chat_ext.LocalPrivacyPIIFilterExtension(agent=beta).execute(call_data={"messages":[other]}))
+    assert other.content=="synthetic@example.com"
 
 
 def test_filters_share_cache(monkeypatch):
@@ -198,5 +173,5 @@ def test_filters_share_cache(monkeypatch):
         def __init__(self, c): self.content = c
 
     f1 = _run(chat_ext.LocalPrivacyPIIFilterExtension(agent=agent).execute(call_data={"messages": [Msg("hi there x@y.com")]}))
-    f2 = util_ext._get_filter(agent, {})
+    f2 = util_ext._get_filter(agent, chat_ext._get_config(agent))
     assert len(chat_ext._filter_cache) == 1

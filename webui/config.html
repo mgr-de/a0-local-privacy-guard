@@ -1,197 +1,111 @@
-<!--
-  Local Privacy Guard - Plugin Settings
-  Multi-language PII filtering, embedding enforcement & startup verification.
-  Binds to the framework-provided `config` scope; load/save is handled by the
-  plugin settings modal (store gate pattern via <template x-if>).
--->
 <html>
 <head>
-    <title>Local Privacy Guard</title>
+  <title>Local Privacy Guard</title>
+  <link rel="stylesheet" href="/plugins/local_privacy_guard/webui/privacy-settings.css">
+  <script type="module" src="/plugins/local_privacy_guard/webui/privacy-store.js"></script>
 </head>
-
 <body>
-    <div x-data>
-        <template x-if="config">
-            <div class="section">
-
-                <div class="section-title">Local Privacy Guard</div>
-                <div class="section-description">
-                    PII filtering, local embeddings &amp; startup verification.
-                    Restart Agent Zero after changing languages or the embedding model.
-                </div>
-
-                <!-- Master toggle -->
-                <div class="field">
-                    <div class="field-label">
-                        <div class="field-title">Enable Privacy Guard</div>
-                        <div class="field-description">Master switch for all privacy features</div>
-                    </div>
-                    <div class="field-control">
-                        <input type="checkbox" x-model="config.enabled" />
-                    </div>
-                </div>
-
-                <!-- PII Filter -->
-                <template x-if="config.pii_filter">
-                    <div class="section">
-                        <div class="section-title">PII Filter</div>
-                        <div class="section-description">Anonymize personal data before it is sent to any model provider.</div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Enable PII filtering</div>
-                                <div class="field-description">Applies to chat and utility model calls</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.pii_filter.enabled" />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Action on detection</div>
-                                <div class="field-description">What happens when PII is detected</div>
-                            </div>
-                            <div class="field-control">
-                                <select x-model="config.pii_filter.action">
-                                    <option value="redact">Redact - replace with placeholder</option>
-                                    <option value="block">Block - reject message</option>
-                                    <option value="log_only">Log only - do not modify</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Detection methods</div>
-                                <div class="field-description">Regex patterns and spaCy NER (names &amp; addresses)</div>
-                            </div>
-                            <div class="field-control">
-                                <label><input type="checkbox" x-model="config.pii_filter.use_regex" /> Regex patterns</label>
-                                <label><input type="checkbox" x-model="config.pii_filter.use_ner" /> AI detection (spaCy)</label>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Languages</div>
-                                <div class="field-description">English is always loaded. Each additional language requires its spaCy model (~50 MB), installed automatically on restart.</div>
-                            </div>
-                            <div class="field-control">
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('de')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('de') ? (config.pii_filter.languages || []).filter(x => x !== 'de') : [...(config.pii_filter.languages || []), 'de'])" /> Deutsch</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('fr')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('fr') ? (config.pii_filter.languages || []).filter(x => x !== 'fr') : [...(config.pii_filter.languages || []), 'fr'])" /> Francais</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('es')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('es') ? (config.pii_filter.languages || []).filter(x => x !== 'es') : [...(config.pii_filter.languages || []), 'es'])" /> Espanol</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('it')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('it') ? (config.pii_filter.languages || []).filter(x => x !== 'it') : [...(config.pii_filter.languages || []), 'it'])" /> Italiano</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('nl')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('nl') ? (config.pii_filter.languages || []).filter(x => x !== 'nl') : [...(config.pii_filter.languages || []), 'nl'])" /> Nederlands</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('pt')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('pt') ? (config.pii_filter.languages || []).filter(x => x !== 'pt') : [...(config.pii_filter.languages || []), 'pt'])" /> Portugues</label>
-                                <label><input type="checkbox" :checked="(config.pii_filter.languages || []).includes('pl')" @change="config.pii_filter.languages = ((config.pii_filter.languages || []).includes('pl') ? (config.pii_filter.languages || []).filter(x => x !== 'pl') : [...(config.pii_filter.languages || []), 'pl'])" /> Polski</label>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Options</div>
-                                <div class="field-description">Detection logging and placeholder mapping</div>
-                            </div>
-                            <div class="field-control">
-                                <label><input type="checkbox" x-model="config.pii_filter.log_detections" /> Log detections</label>
-                                <label><input type="checkbox" x-model="config.pii_filter.store_mapping" /> Store mapping (enables re-identification)</label>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Local Embedding -->
-                <template x-if="config.local_embedding">
-                    <div class="section">
-                        <div class="section-title">Local Embedding</div>
-                        <div class="section-description">Memory embeddings run 100% locally via sentence-transformers.</div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Enforce local embeddings</div>
-                                <div class="field-description">Replaces external embedding providers in presets.yaml</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.local_embedding.enabled" />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Embedding model</div>
-                                <div class="field-description">Must start with sentence-transformers/ for local execution</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="text" x-model="config.local_embedding.model" placeholder="sentence-transformers/..." />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Auto-configure</div>
-                                <div class="field-description">Apply the local embedding model to presets when the agent starts</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.local_embedding.auto_configure" />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Verify on startup</div>
-                                <div class="field-description">Check local embedding configuration after each start</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.local_embedding.verify_local" />
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Verification -->
-                <template x-if="config.verification">
-                    <div class="section">
-                        <div class="section-title">Startup Verification</div>
-                        <div class="section-description">Verify privacy configuration when the agent starts.</div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Run startup checks</div>
-                                <div class="field-description">Verify privacy configuration on agent start</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.verification.enabled" />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Check components</div>
-                                <div class="field-description">Which components to verify</div>
-                            </div>
-                            <div class="field-control">
-                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('embedding')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('embedding') ? (config.verification.check_components || []).filter(x => x !== 'embedding') : [...(config.verification.check_components || []), 'embedding'])" /> Embedding (local)</label>
-                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('memory')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('memory') ? (config.verification.check_components || []).filter(x => x !== 'memory') : [...(config.verification.check_components || []), 'memory'])" /> Memory (local)</label>
-                                <label><input type="checkbox" :checked="(config.verification.check_components || []).includes('requesty')" @change="config.verification.check_components = ((config.verification.check_components || []).includes('requesty') ? (config.verification.check_components || []).filter(x => x !== 'requesty') : [...(config.verification.check_components || []), 'requesty'])" /> Requesty (gateway)</label>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="field-label">
-                                <div class="field-title">Warn on external access</div>
-                                <div class="field-description">Log warnings when components use external APIs</div>
-                            </div>
-                            <div class="field-control">
-                                <input type="checkbox" x-model="config.verification.warn_on_external" />
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-            </div>
-        </template>
-    </div>
+<div x-data>
+<template x-if="config && config.pii_filter && config.local_embedding && config.verification && $store.localPrivacy">
+<div class="privacy-settings" x-init="$store.localPrivacy.cleanup()" x-destroy="$store.localPrivacy.cleanup()">
+  <h2 class="section-title">Protect personal details</h2>
+  <p>If Requesty Privacy Agent protects this installation, its minimum rules also apply here. Profile switches and weaker settings do not disable those rules; use the central manager to change the installation-wide setup.</p>
+  <details class="privacy-card"><summary>Delete mappings for the current chat</summary>
+    <p>Original personal details are stored locally to restore names in this browser. Archiving retains these mappings. Final deletion through Agent Zero's chat removal API removes them.</p>
+    <p>Deleting mappings alone permanently prevents restoring old placeholders. It does not delete chat messages, memories, provider logs or backups.</p>
+    <label><input type="checkbox" x-model="$store.localPrivacy.confirmMappingDeletion"> I understand that old placeholders in the current chat can no longer be restored.</label>
+    <button class="btn" type="button" @click="$store.localPrivacy.deleteMappings()" :disabled="$store.localPrivacy.busy || !$store.localPrivacy.confirmMappingDeletion">Delete current chat mappings</button>
+  </details>
+  <aside class="privacy-note"><strong>Protection belongs to one agent profile.</strong><p>Choose an Agent profile in the toolbar, enable protection and save settings for it. Global or project-only settings do not activate protection. Other profiles keep their own settings.</p><p x-text="context.agentProfileKey ? 'Selected profile: ' + context.agentProfileKey : 'Choose a profile before saving.'"></p></aside>
+  <fieldset :disabled="!context.agentProfileKey"><legend>Profile privacy settings</legend>
+  <p>Replace detected personal details before supported conversation and helper-model calls, and calculate memory embeddings locally.</p>
+  <aside class="privacy-note"><strong>What stays local?</strong>
+    <p>Detection and local embedding calculations happen on your device. The remaining conversation text, including recalled memory, can still go to an external model. Detection can miss details and does not cover every tool, image or third-party data path.</p>
+    <p>Your original details can remain visible in your local chat. The protection check concerns outgoing model requests, not names shown in the browser. Masking reduces disclosure risk; it does not guarantee complete anonymization.</p>
+  </aside>
+  <div class="privacy-status" role="status" aria-live="polite">
+    <strong>Settings summary</strong>
+    <p x-text="!context.agentProfileKey ? 'Choose one profile before saving.' : context.loadedAgentProfile !== context.agentProfileKey ? 'Defaults for this profile. Save to create its own configuration.' : context.hasUnsavedChanges ? 'Unsaved changes in the selected project/profile scope.' : 'Settings match the saved configuration for the selected scope.'"></p>
+    <p x-text="!config.enabled ? 'Protection is switched off in these settings.' : !config.pii_filter.enabled ? 'Personal-detail filtering is switched off.' : config.pii_filter.action === 'log_only' ? 'Logging only: personal details are sent unchanged.' : !config.pii_filter.use_regex && !config.pii_filter.use_ner ? 'No detection methods selected: details will not be detected.' : config.pii_filter.action === 'block' ? 'Detected details will block supported requests.' : 'Detected details will be replaced in supported requests.'"></p>
+    <p>This summary describes settings, not a verified active chat. The plugin must also be enabled in the scope toolbar above. Save changes; restart Agent Zero after changing languages or the embedding model.</p>
+  </div>
+  <section class="privacy-card" aria-labelledby="local-filter-title">
+    <h3 id="local-filter-title" class="section-title">1. Personal-detail filtering</h3>
+    <div class="field"><div class="field-label"><label class="field-title" for="local-switch-1">Use Local Privacy Guard in this scope</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.enabled" id="local-switch-1"><span class="toggler" aria-hidden="true"></span></label></div></div>
+    <fieldset :disabled="!config.enabled"><legend>Filter settings</legend>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-2">Detect personal details before supported model calls</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.enabled" id="local-switch-2"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <fieldset :disabled="!config.pii_filter.enabled"><legend>When details are detected</legend>
+        <div class="field"><div class="field-label"><label class="field-title" for="local-action">Action</label></div><div class="field-control"><select id="local-action" x-model="config.pii_filter.action"><option value="redact">Replace detected details with placeholders</option><option value="block">Block the request</option><option value="log_only">Only log detections — send details unchanged</option></select></div></div>
+        <p class="privacy-error" x-show="config.pii_filter.action === 'log_only'">Logging does not remove personal details from outgoing requests.</p>
+        <p><strong>Text languages</strong></p>
+        <p class="field-description privacy-help">English is always included. Additional name-detection models must be installed; selecting a language alone does not confirm it is available. Restart after changes.</p>
+        <div class="privacy-languages">
+          <span class="privacy-choice">English · always included</span>
+          <template x-for="language in [{code:'de',name:'Deutsch'},{code:'fr',name:'Français'},{code:'es',name:'Español'},{code:'it',name:'Italiano'},{code:'nl',name:'Nederlands'},{code:'pt',name:'Português'},{code:'pl',name:'Polski'}]" :key="language.code">
+            <label class="privacy-choice"><input type="checkbox" :checked="(config.pii_filter.languages || []).includes(language.code)" @change="config.pii_filter.languages = $event.target.checked ? [...new Set([...(config.pii_filter.languages || []), language.code])] : (config.pii_filter.languages || []).filter(code => code !== language.code)"> <span x-text="language.name"></span></label>
+          </template>
+        </div>
+      </fieldset>
+    </fieldset>
+  </section>
+  <section class="privacy-card" aria-labelledby="local-memory-title">
+    <h3 id="local-memory-title" class="section-title">2. Local memory search</h3>
+    <fieldset :disabled="!config.enabled"><legend>Embedding calculation</legend>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-3">Use local embeddings for this profile’s memory search</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.local_embedding.enabled" id="local-switch-3"><span class="toggler" aria-hidden="true"></span></label></div></div>
+    </fieldset>
+    <p>Embeddings are the calculations used to find relevant memories. Local calculations do not prevent a helper model from receiving recalled memory text. Protected profiles use a separate memory folder; existing shared memories are preserved and are not automatically copied. No shared model presets are rewritten. Conflicting chat embedding overrides are blocked.</p>
+  </section>
+  <section class="privacy-card" aria-labelledby="local-example-title">
+    <h3 id="local-example-title" class="section-title">3. Try a local example</h3>
+    <p>Runs the built-in filter rules on a fixed artificial email example using the settings above, including unsaved changes. No chat content, external model requests or model downloads are used.</p>
+    <button type="button" class="btn" @click="$store.localPrivacy.runExample(config)" :disabled="$store.localPrivacy.busy" x-text="$store.localPrivacy.busy ? 'Checking locally…' : 'Run local example'"></button>
+    <p class="privacy-error" role="alert" x-show="$store.localPrivacy.error" x-text="$store.localPrivacy.error"></p>
+    <template x-if="$store.localPrivacy.result">
+      <div role="status" aria-live="polite">
+        <p class="privacy-note" x-show="!$store.localPrivacy.current(config)">Settings changed. Run the example again; the previous result no longer describes these settings.</p>
+        <div x-show="$store.localPrivacy.current(config)">
+          <p x-text="'Local example checked: ' + $store.localPrivacy.checkedAt"></p>
+          <strong>Artificial input</strong><pre x-text="$store.localPrivacy.result.sample"></pre>
+          <strong>Result for this example</strong><pre x-text="$store.localPrivacy.result.blocked ? 'Request blocked: detected personal details.' : $store.localPrivacy.result.output"></pre>
+          <p x-text="'Detected items: ' + $store.localPrivacy.result.detected"></p>
+          <p class="privacy-error" x-show="$store.localPrivacy.result.missing_languages.length" x-text="'Name detection models unavailable: ' + $store.localPrivacy.result.missing_languages.join(', ') + '. Install the required spaCy models before relying on name detection.'"></p>
+          <p>This checks only one example and available name-detection models. It does not verify an active chat, custom patterns, embedding execution or complete detection.</p>
+        </div>
+      </div>
+    </template>
+  </section>
+  <details class="privacy-card"><summary>Advanced settings and startup checks</summary>
+    <fieldset :disabled="!config.enabled"><legend>Detection methods</legend>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-4">Pattern matching (Regex): email, numbers and other formats</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.use_regex" id="local-switch-4"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-5">Local name and address detection (spaCy NER)</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.use_ner" id="local-switch-5"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-6">Record detections in the local agent log</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.log_detections" id="local-switch-6"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <p>Local logs are separate from provider retention settings. Review who can access them.</p>
+      <p>Redact mode keeps unique per-chat mappings locally so replies can show your original details. Mappings survive restarts and contain personal data; protect your local Agent Zero storage. Legacy session-only mappings are not imported.</p>
+      <p class="field-description privacy-help">Secrets in model content are blocked locally. Short names, aliases and identifying context can still be missed by automatic detection. Missing required name models block external text requests.</p>
+      <h3 class="section-title">Local embedding configuration</h3>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-embedding-model">Embedding model</label></div><div class="field-control"><input id="local-embedding-model" type="text" x-model="config.local_embedding.model" :disabled="!config.local_embedding.enabled" aria-describedby="local-embedding-help"></div></div>
+      <p id="local-embedding-help">Use a sentence-transformers/ model. Changing models can affect existing memory search; restart after saving.</p>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-8">Apply local embeddings to this profile at runtime</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.local_embedding.auto_configure" :disabled="!config.local_embedding.enabled" id="local-switch-8"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-9">Check local embedding configuration at startup</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.local_embedding.verify_local" :disabled="!config.local_embedding.enabled" id="local-switch-9"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <h3 class="section-title">Startup configuration checks</h3>
+      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-10">Run configuration checks when the agent starts</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.verification.enabled" id="local-switch-10"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      <fieldset :disabled="!config.verification.enabled"><legend>Components to check</legend>
+        <template x-for="component in [{code:'embedding',name:'Profile embedding configuration'},{code:'memory',name:'Profile memory folder'},{code:'requesty',name:'Requesty use by this profile'}]" :key="component.code"><label class="privacy-choice"><input type="checkbox" :checked="(config.verification.check_components || []).includes(component.code)" @change="config.verification.check_components = $event.target.checked ? [...new Set([...(config.verification.check_components || []), component.code])] : (config.verification.check_components || []).filter(code => code !== component.code)"> <span x-text="component.name"></span></label></template>
+        <div class="field"><div class="field-label"><label class="field-title" for="local-switch-11">Log warnings about external API configuration</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.verification.warn_on_external" id="local-switch-11"><span class="toggler" aria-hidden="true"></span></label></div></div>
+      </fieldset>
+      <p>Startup results appear in the agent log. These configuration checks do not audit provider practices or block every external data path.</p>
+    </fieldset>
+  </details>
+  <details class="privacy-card"><summary>Optional local text extraction from an image</summary>
+    <p>Read text with installed Tesseract. No external model call is made. This does not sanitize the original image or guarantee complete recognition.</p>
+    <div class="field"><div class="field-label"><label class="field-title" for="local-ocr-path">Local image path</label><p class="field-description privacy-help">Choose a file below /a0/usr (maximum 32 MB).</p></div><div class="field-control"><input id="local-ocr-path" type="text" x-model="$store.localPrivacy.ocrPath"></div></div>
+    <button class="btn" type="button" @click="$store.localPrivacy.runOcr()" :disabled="$store.localPrivacy.ocrBusy || !$store.localPrivacy.ocrPath.trim()">Extract text locally</button>
+    <p role="alert" x-show="$store.localPrivacy.ocrError" x-text="$store.localPrivacy.ocrError"></p>
+    <pre x-show="$store.localPrivacy.ocrText" x-text="$store.localPrivacy.ocrText" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+  </details>
+  <p>Use the standard Save button to save settings for the scope selected above. Existing values are retained when protection is switched off.</p>
+</div>
+</template>
+</div>
 </body>
-
 </html>

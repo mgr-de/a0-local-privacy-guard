@@ -21,3 +21,4 @@ Thumbs.db
 
 # Test cache
 .pytest_cache/
+inherited-bridge.json
