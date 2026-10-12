@@ -477,3 +477,47 @@ def test_native_disabled_child_plugins_still_enforce_parent_without_changing_ind
         assert 'clara@example.com' not in str(result)
         assert getattr(local,'_requesty_scope',None) is None
     cache.clear(extension._CLASSES_CACHE_AREA);cache.clear(extension._EXTENSIONS_CACHE_AREA)
+
+
+def test_negative_cache_still_uses_new_known_name(environment,monkeypatch):
+    guard,agent,config=environment
+    config['pii_filter']['use_ner']=True
+    from usr.plugins.local_privacy_guard.helpers import pii_detector as pd
+    nlp=SimpleNamespace(meta={},pipe=lambda texts,batch_size=32:(SimpleNamespace(ents=[]) for t in texts))
+    monkeypatch.setattr(pd,'_get_nlp',lambda lang:nlp)
+    pipeline=guard.PayloadFilter(agent,config,False)
+    assert pipeline.text('Tell Anna Weber about it')=='Tell Anna Weber about it'
+    pipeline.mapping.token('PERSON','Anna Weber')
+    assert 'Anna Weber' not in pipeline.text('Tell Anna Weber about it')
+
+def test_internal_proof_cannot_be_forged_by_placeholder(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    checked=pipeline.text('Contact anna@example.com today')
+    calls=[]
+    original=pipeline.filter.filter
+    monkeypatch.setattr(pipeline.filter,'filter',lambda text:(calls.append(text),original(text))[1])
+    pipeline.text(checked)
+    assert calls==[]
+    pipeline.text(str(checked))
+    assert len(calls)==1
+    pipeline.text(checked+' and ben@example.com')
+    assert len(calls)==2
+    assert 'ben@example.com' not in pipeline.text(checked+' and ben@example.com')
+
+def test_proof_never_bypasses_secret_check(environment):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    checked=pipeline.text('harmless synthetic credential')
+    pipeline.known_secrets=['synthetic credential']
+    with pytest.raises(ValueError):pipeline.text(checked)
+
+
+def test_detector_error_never_echoes_original(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    def broken(text):raise RuntimeError('sensitive original '+text)
+    monkeypatch.setattr(pipeline.filter,'filter',broken)
+    with pytest.raises(ValueError) as error:pipeline.text('Synthetic Private Name')
+    assert 'Synthetic Private Name' not in str(error.value)
+    assert 'No model content was sent' in str(error.value)

@@ -29,5 +29,7 @@ def remove_chat(chat,root=None):
         if any(target.is_symlink() for target in targets):raise ValueError('A privacy mapping sidecar is unsafe.')
         for target in targets:
             if target.exists():target.unlink()
+        from usr.plugins.local_privacy_guard.helpers.detection_cache import spans
+        spans.clear_scope(path.stem)
         removed+=1
     return removed
