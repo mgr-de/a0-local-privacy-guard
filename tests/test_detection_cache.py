@@ -75,3 +75,9 @@ def test_cross_process_revision_refresh(tmp_path):
     subprocess.run([sys.executable,'-c',"import sqlite3;d=sqlite3.connect(__import__('sys').argv[1]);d.execute(\"INSERT INTO mapping VALUES ('synthetic','PERSON','Anna Weber')\");d.commit()",str(mapping.path)],check=True)
     assert old[1]==[]
     assert mapping.snapshot()[1][0][0]=='synthetic'
+
+
+@pytest.mark.parametrize('street',['Hauptstr 1','Hauptstr. 1','Hauptstraße 1'])
+def test_abbreviated_german_street_is_complete(street):
+    f=pd.PIIFilter({'use_ner':False,'languages':['de']})
+    assert any(h.original==street and h.pii_type=='ADRESSE' for h in f.filter('Ich wohne in der '+street).detections)

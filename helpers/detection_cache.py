@@ -14,7 +14,7 @@ def configuration(value):
 class SpanCache:
     def __init__(self, limit=32*1024*1024, ttl=900, clock=time.monotonic):
         self.limit,self.ttl,self.clock=limit,ttl,clock
-        self.items=OrderedDict();self.bytes=0;self.lock=threading.RLock()
+        self.items=OrderedDict();self.bytes=0;self.generation=0;self.lock=threading.RLock()
     def get(self,key):
         with self.lock:
             entry=self.items.get(key)
@@ -35,6 +35,7 @@ class SpanCache:
                 _,(_,_,removed)=self.items.popitem(last=False);self.bytes-=removed
     def clear_scope(self,scope):
         with self.lock:
+            self.generation+=1
             for key in list(self.items):
                 if key[0]==scope:self.bytes-=self.items.pop(key)[2]
 spans=SpanCache()

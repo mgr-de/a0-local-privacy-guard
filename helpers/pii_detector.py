@@ -244,7 +244,7 @@ GERMAN_PATTERNS: Dict[str, Tuple[str, str]] = {
 
     # German addresses (street + number) - includes ß in straße
     "ADRESSE": (
-        r"\b(?:\w*[Ss]tra[ßSs]e|[Ss]trasse|[Ss]tr\.|[Ww]eg|[Pp]latz|[Aa]llee|[Gg]asse|[Rr]ing|[Dd]amm|[Uu]fer|[Cc]haussee|[Pp]romenade)\s+\d+[a-zA-Z]?\b",
+        r"\b(?:\w*[Ss]tra[ßSs]e|[Ss]trasse|\w*[Ss]tr\.?|[Ww]eg|[Pp]latz|[Aa]llee|[Gg]asse|[Rr]ing|[Dd]amm|[Uu]fer|[Cc]haussee|[Pp]romenade)\s+\d+[a-zA-Z]?\b",
         "<ADRESSE>"
     ),
 }

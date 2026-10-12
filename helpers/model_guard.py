@@ -6,7 +6,7 @@ delegates to the original provider wrapper, retaining Requesty's live checks.
 from copy import deepcopy
 import inspect
 import time
-from usr.plugins.local_privacy_guard.helpers.detection_cache import fingerprint, configuration
+from usr.plugins.local_privacy_guard.helpers.detection_cache import fingerprint, configuration, spans
 import re
 import weakref
 import json
@@ -128,7 +128,6 @@ class PayloadFilter:
         self.started=time.perf_counter()
         self.mapping = mapping_for(agent)
         self.snapshot = self.mapping.snapshot()
-        self.signature=configuration(self.settings)
         detector_settings=dict(self.settings if self.settings.get('enabled',True) else {'use_regex':False,'use_ner':False})
         detector_settings['_cache_scope']=self.mapping.namespace
         self.filter = PIIFilter(detector_settings)
@@ -138,6 +137,13 @@ class PayloadFilter:
             missing = set(self.filter.ner_languages) - set(self.filter.get_loaded_languages())
             if missing:
                 raise ValueError("Name detection unavailable for " + ", ".join(sorted(missing)) + ". Install the selected spaCy models in Agent Zero's Python environment or select local processing.")
+        from usr.plugins.local_privacy_guard.helpers import pii_detector
+        model_identity={}
+        if self.filter.use_ner:
+            for language in self.filter.ner_languages:
+                model=pii_detector._get_nlp(language)
+                model_identity[language]={'identity':id(model),'meta':getattr(model,'meta',{})}
+        self.signature=configuration({'settings':self.settings,'models':model_identity,'cache_generation':spans.generation})
         self.known_secrets = []
         try:
             from usr.plugins.requesty.helpers import scope
@@ -200,7 +206,10 @@ class PayloadFilter:
         # A complete known value cannot contain a larger new overlapping
         # identity. Reuse its mapping instead of rerunning NER on every repeat.
         complete_known=any(hit.start==0 and hit.end==len(scan) for hit in known)
-        detected = [] if complete_known or trusted else self.filter.filter(scan).detections
+        try:
+            detected = [] if complete_known or trusted else self.filter.filter(scan).detections
+        except Exception:
+            raise ValueError('Local text detection failed. No model content was sent. Check the selected engine and installed models.') from None
         def larger_complete_value(detection,known_hit):
             if detection.start>known_hit.start or detection.end<known_hit.end or detection.end-detection.start<=known_hit.end-known_hit.start:
                 return False

@@ -511,3 +511,13 @@ def test_proof_never_bypasses_secret_check(environment):
     checked=pipeline.text('harmless synthetic credential')
     pipeline.known_secrets=['synthetic credential']
     with pytest.raises(ValueError):pipeline.text(checked)
+
+
+def test_detector_error_never_echoes_original(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    def broken(text):raise RuntimeError('sensitive original '+text)
+    monkeypatch.setattr(pipeline.filter,'filter',broken)
+    with pytest.raises(ValueError) as error:pipeline.text('Synthetic Private Name')
+    assert 'Synthetic Private Name' not in str(error.value)
+    assert 'No model content was sent' in str(error.value)
