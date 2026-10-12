@@ -18,6 +18,27 @@ def configuration(agent):
     from helpers import projects
     if agent is None:
         return None
+    from agent import AgentContext
+    visited=set()
+    ancestor=agent
+    while True:
+        identity=ancestor.context.id
+        if identity in visited:raise ValueError('Cyclic subordinate privacy context.')
+        visited.add(identity)
+        parent_id=ancestor.context.get_output_data('parent_context_id')
+        if not parent_id:break
+        parent=AgentContext.get(parent_id)
+        if parent is None or parent.agent0 is None:
+            raise ValueError('The parent privacy context is unavailable. Restore the parent chat before continuing this subordinate.')
+        ancestor=parent.agent0
+    if ancestor is not agent:
+        inherited=configuration(ancestor)
+        if inherited and inherited.get('enabled'):return inherited
+    root = getattr(agent.context, "agent0", None)
+    if root is not None and root is not agent:
+        inherited = configuration(root)
+        if inherited and inherited.get("enabled"):
+            return inherited
     project = projects.get_context_project_name(agent.context) or ""
     path = selected_path(project, agent.config.profile)
     if not path.exists():

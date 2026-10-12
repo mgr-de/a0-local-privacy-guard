@@ -80,6 +80,8 @@ def install() -> dict:
     English (en) is ALWAYS installed. Additional languages are read from config.
     """
     result = {"spacy_models": [], "errors": [], "languages": []}
+    from usr.plugins.local_privacy_guard.helpers.inherited_bridge import manage
+    result.update(manage(Path(__file__).parent))
 
     languages = _get_configured_languages()
     result["languages"] = languages
@@ -131,6 +133,12 @@ def uninstall() -> dict:
         "embedding_restore": None,
     }
     result["note"] += "; shared presets and legacy backups preserved; profile runtime overrides stop when uninstalled"
+    import importlib.util
+    source=Path(__file__).parent/'helpers'/'inherited_bridge.py'
+    if source.exists():
+        spec=importlib.util.spec_from_file_location('_lpg_inherited_bridge',source)
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        result.update(module.manage(Path(__file__).parent,remove=True))
     return result
 
 

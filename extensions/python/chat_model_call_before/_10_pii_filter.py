@@ -124,6 +124,8 @@ class LocalPrivacyPIIFilterExtension(Extension):
             return
         if not self.agent:
             return
+        if getattr(self.agent, "data", {}).get("_local_privacy_wrapped"):
+            return  # Every text block is handled by the owner-bound wrapper.
 
         config = _get_config(self.agent)
 

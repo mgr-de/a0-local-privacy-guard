@@ -63,6 +63,8 @@ class LocalPrivacyPIIUtilFilterExtension(Extension):
             return
         if not self.agent:
             return
+        if getattr(self.agent, "data", {}).get("_local_privacy_wrapped"):
+            return
 
         config = _get_config(self.agent)
         if not config.get("enabled", False):

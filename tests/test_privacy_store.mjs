@@ -16,3 +16,13 @@ test('closing or changing settings while checking ignores late responses',async(
   s.cleanup();resolve({ok:true,output:'late'});await p;assert.equal(s.result,null);
   const next=s.runExample(c);c.enabled=false;resolve({ok:true,output:'late'});await next;assert.equal(s.result,null);
 });
+test('OCR is local, reports failures and discards results after close',async()=>{
+  let request;
+  const s=setup(async(path,body)=>{request={path,body};return {ok:true,text:'Fictional contact'};});
+  s.ocrPath='/a0/usr/workdir/fictional.png';await s.runOcr();
+  assert.equal(request.path,'plugins/local_privacy_guard/ocr');
+  assert.equal(s.ocrText,'Fictional contact');assert.equal(s.ocrBusy,false);
+  let resolve;const late=setup(()=>new Promise(r=>resolve=r));late.ocrPath=s.ocrPath;
+  const pending=late.runOcr();late.cleanup();resolve({ok:true,text:'late'});await pending;
+  assert.equal(late.ocrText,'');assert.equal(late.ocrBusy,false);
+});

@@ -11,6 +11,20 @@
 
 ## What does this plugin do?
 
+### Standardschutz in 1.4.0
+
+Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
+
+Ollama ist keine Nutzungsvoraussetzung. Ein geschütztes Profil kann ausschließlich zugelassene Requesty-Modelle verwenden. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Ollama dient hier nur als optionale Modellroute und als vorhandene Entwicklungs-Testumgebung; Tesseract ist ebenfalls optional.
+
+Redact-Modus verwendet eindeutige, persistente Tokenfamilien pro Schutzprofil und Chat. Schreibweisen und eindeutige Kurzformen können Varianten derselben Familie erhalten. Zuordnungen enthalten Originaldaten und liegen unter `usr/privacy-mappings` mit eingeschränkten Dateirechten. Die historische Option `store_mapping` bleibt lesbar, steuert aber nicht mehr die verbindliche Runtime-Zuordnung. Alte mehrdeutige Typ-Platzhalter werden nicht importiert.
+
+Antworten und Denktext bleiben kanonisch maskiert. Die WebUI übersetzt für die Anzeige lokal zurück; native Werkzeugargumente werden ebenfalls lokal zurückübersetzt. Werkzeuge können diese Daten anschließend selbst an Webseiten oder andere Empfänger senden. Streaming-Ausgaben werden zunächst gepuffert und geprüft, wodurch die Anzeige später erscheint. Eine sichere verschlüsselte Ablage oder vollständige Anonymisierung wird nicht zugesagt.
+
+Bilder dürfen über zugelassene Modelle verarbeitet werden. Ihr Inhalt wird nicht durch die Textmaskierung geschützt. Der Chat zeigt bei externen Bildaufrufen einen Hinweis mit der erfassten Modellroute. Optionales lokales OCR mit installiertem Tesseract liest Text aus einer ausgewählten Datei, verändert aber das Originalbild nicht. Browser, Formulare, Uploads und Dateibearbeitung erhalten keine neuen allgemeinen Einschränkungen.
+
+Siehe [Standardschutz und gehärteter Ausblick](docs/STANDARD-AND-HARDENED-PLAN.md). Die historischen Abschnitte zu 1.2/1.3 und Screenshots beschreiben ältere Entwicklungsstände; die obigen Angaben sind für die aktuelle Modellprüfung maßgeblich.
+
 Local Privacy Guard reduces the disclosure of detected personal details when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
 
 | Feature | Description |
@@ -82,7 +96,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 
 ## How it works
 
-The diagram illustrates detected-detail replacement and local embedding calculations. It does not show every external path: helper models may receive recalled memory text, system messages can be skipped, and tools or independent third-party model clients are outside these hooks. Replaced details do not make the remaining text necessarily anonymous.
+The historical diagram illustrates detected-detail replacement and local embedding calculations. Version 1.4 also filters system texts and recalled memory in supported native model requests. Tools, original images and independent third-party model clients remain outside text masking. Replaced details do not make the remaining text necessarily anonymous.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -157,7 +171,7 @@ Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
 | `action` | `redact` | What to do: `redact` (replace), `block` (stop message), `log_only` (just log) |
 | `languages` | `["de"]` | **List of languages** to load. English (`en`) is **always included automatically** |
 | `log_detections` | `true` | Log detected PII to agent log |
-| `store_mapping` | `false` | Store placeholder→original mapping in memory (session only) |
+| `store_mapping` | `true` | Legacy compatibility key; runtime redact mode always persists chat-owned mappings for local display |
 
 ### Local Embedding Settings
 
@@ -188,14 +202,14 @@ The plugin attempts to detect these categories and replaces detected values in r
 
 Choose an explicit Agent profile in the settings toolbar, enable protection and save settings for it. Global/project-only settings do not activate protection. Once configured for that profile, the plugin works **automatically**:
 
-1. On **supported chat and utility model calls**, eligible text messages are scanned using available detection methods and models; system messages are skipped by default
-2. In **redact mode**, detected details are replaced with placeholders like `<EMAIL>`, `<PERSON>`, `<TELEFON>`; block mode stops detected requests, and log-only mode sends details unchanged
+1. On **supported native model calls**, all text blocks, system messages and tool results are scanned using the configured local detection methods
+2. In **redact mode**, detected details receive unique chat-owned tokens; block mode stops detected requests, and log-only mode sends details unchanged
 3. Text with **detected details replaced** is sent on supported calls in redact mode; missed details can remain
 4. **Memory embeddings** are computed locally when configured successfully; recalled memory text can still be sent to a helper model
 
 ### Example
 
-Original details in the local browser are expected to remain readable. The relevant privacy boundary is the outgoing model request. The target design uses unique placeholders in model history and restores replies only for local display. The current session-only mapping is not a complete implementation of that design and cannot guarantee correct person identities or reply restoration in long conversations. See [the measured limitations and next steps](docs/PII-TEST-RESULTS.md).
+Original details remain readable in the local browser. The relevant privacy boundary is the outgoing model request. Version 1.4 uses persistent unique placeholders and restores replies for local display. Model replies can still invent identities, damage placeholders or confuse relationships; detection is imperfect. The older type-token example below is illustrative only. See [current test results](docs/STANDARD-TEST-RESULTS.md) and [the historical comparison](docs/PII-TEST-RESULTS.md).
 
 **You type:**
 > "Mein Name ist Anna Müller, meine E-Mail ist anna@example.com und meine IBAN ist DE89 3704 0044 0532 0130 00"
@@ -221,7 +235,7 @@ Original details in the local browser are expected to remain readable. The relev
 - ✅ **No telemetry** — the plugin does not phone home
 - 🔌 **No external API calls** — all detection and embedding is done locally
 - ✅ **Open source** — audit the code yourself
-- ⚠️ **store_mapping** — if enabled, PII is stored in memory during the session (disable for maximum privacy).
+- ⚠️ **Local mappings** — redact mode stores original details in chat-owned mapping files. Protect and back up local storage; the legacy `store_mapping` flag does not disable runtime persistence.
 
 ---
 
@@ -265,3 +279,7 @@ To add support for a new language:
 3. Create language-specific patterns (e.g., `FRENCH_PATTERNS`) and add to `LANGUAGE_PATTERNS`
 4. Add the spaCy model to `hooks.py` for auto-installation
 5. Add the language checkbox to `webui/config.html`
+
+## Current standard-protection validation
+
+See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Ollama is optional and checked for actual local weights only when selected; Requesty-only use needs no Ollama server. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.

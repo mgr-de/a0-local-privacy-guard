@@ -73,9 +73,8 @@
       <div class="field"><div class="field-label"><label class="field-title" for="local-switch-5">Local name and address detection (spaCy NER)</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.use_ner" id="local-switch-5"><span class="toggler" aria-hidden="true"></span></label></div></div>
       <div class="field"><div class="field-label"><label class="field-title" for="local-switch-6">Record detections in the local agent log</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.log_detections" id="local-switch-6"><span class="toggler" aria-hidden="true"></span></label></div></div>
       <p>Local logs are separate from provider retention settings. Review who can access them.</p>
-      <div class="field"><div class="field-label"><label class="field-title" for="local-switch-7">Keep a session mapping from placeholders to original details</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.store_mapping" id="local-switch-7"><span class="toggler" aria-hidden="true"></span></label></div></div>
-      <p x-show="config.pii_filter.store_mapping" class="privacy-note">Original details remain in session memory when mapping is enabled.</p>
-      <p class="field-description privacy-help">A session mapping does not guarantee correct restoration of replies. Persistent, unique person mappings and local reply restoration are still required for reliable long conversations. Short names, aliases and identifying context can be missed.</p>
+      <p>Redact mode keeps unique per-chat mappings locally so replies can show your original details. Mappings survive restarts and contain personal data; protect your local Agent Zero storage. Legacy session-only mappings are not imported.</p>
+      <p class="field-description privacy-help">Secrets in model content are blocked locally. Short names, aliases and identifying context can still be missed by automatic detection. Missing required name models block external text requests.</p>
       <h3 class="section-title">Local embedding configuration</h3>
       <div class="field"><div class="field-label"><label class="field-title" for="local-embedding-model">Embedding model</label></div><div class="field-control"><input id="local-embedding-model" type="text" x-model="config.local_embedding.model" :disabled="!config.local_embedding.enabled" aria-describedby="local-embedding-help"></div></div>
       <p id="local-embedding-help">Use a sentence-transformers/ model. Changing models can affect existing memory search; restart after saving.</p>
@@ -89,6 +88,13 @@
       </fieldset>
       <p>Startup results appear in the agent log. These configuration checks do not audit provider practices or block every external data path.</p>
     </fieldset>
+  </details>
+  <details class="privacy-card"><summary>Optional local text extraction from an image</summary>
+    <p>Read text with installed Tesseract. No external model call is made. This does not sanitize the original image or guarantee complete recognition.</p>
+    <div class="field"><div class="field-label"><label class="field-title" for="local-ocr-path">Local image path</label><p class="field-description privacy-help">Choose a file below /a0/usr (maximum 32 MB).</p></div><div class="field-control"><input id="local-ocr-path" type="text" x-model="$store.localPrivacy.ocrPath"></div></div>
+    <button class="btn" type="button" @click="$store.localPrivacy.runOcr()" :disabled="$store.localPrivacy.ocrBusy || !$store.localPrivacy.ocrPath.trim()">Extract text locally</button>
+    <p role="alert" x-show="$store.localPrivacy.ocrError" x-text="$store.localPrivacy.ocrError"></p>
+    <pre x-show="$store.localPrivacy.ocrText" x-text="$store.localPrivacy.ocrText" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
   </details>
   <p>Use the standard Save button to save settings for the scope selected above. Existing values are retained when protection is switched off.</p>
 </div>

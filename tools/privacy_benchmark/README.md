@@ -1,12 +1,22 @@
 # Opt-in integration harness — experimental, synthetic data only
 
-These programs are comparison and diagnostic tools, not plugin runtime code. They require a disposable Agent Zero v2.13 Docker test instance and existing Ollama models. Copy this directory to `/tmp/privacy-benchmark` in that instance. Do not run the prepare scripts in a production installation: they create test profiles/chats and diagnostic files. The browser capture extension must be installed only in its named test profile. Server restarts are manual test-instance actions.
+These programs are comparison and diagnostic tools, not plugin runtime code. They require a disposable Agent Zero v2.13 Docker test instance. Local LLM comparisons use the developer's existing Ollama models; **Ollama is never a plugin usage prerequisite**. Requesty-only tests use an explicitly authorized profile/key and shared budget. Copy this directory to `/tmp/privacy-benchmark` in that instance. Do not run prepare scripts in production: they create test profiles/chats and diagnostic files. Server restarts are manual test-instance actions.
 
 The scripts use environment-specific paths and Python 3.12. The benchmark environment used Presidio 2.2.358, spaCy 3.8.16 with English/German 3.8 models and LLM Guard 0.3.16. LLM Guard runs in a separate environment because of native dependency conflicts. It uses cached models offline. Environment setup is not automated; language model availability must be checked in the actual server environment as well as the benchmark environment.
 
-The Presidio adapter is experimental and keeps original values in mapping files. It is not an encrypted vault or production integration. Native session mappings may lose identity continuity on restart. Existing directory paths and profile names must be adapted for independent repeats.
+The Presidio adapter is experimental and keeps original values in mapping files. It is not an encrypted vault or production integration. Historical pre-1.4 session mappings can lose identity continuity; the current production mapping has a separate process-restart test. Existing paths and profile names must be adapted for independent repeats.
 
-`requesty_live_test.py` is the only paid external test: it uses the configured `agent0` profile and requires explicit API-budget authorization. It does not enable hosted Guardrails. Preserve its budget ledger; do not reset it between repeated paid calls. The local model tests reject external model routes, but these scripts are not a network sandbox for arbitrary tools.
+`requesty_live_test.py`, `standard_requesty_test.py` and the native Requesty browser test make paid external calls and require explicit API-budget authorization. They do not enable hosted Guardrails. Preserve the same budget ledger across all tests; never reset its existing reservations. Local model tests reject external model routes; these programs are not a network sandbox for arbitrary tools.
+
+## Production 1.4 integration tests
+
+`standard_runtime_test.py` captures the final native model transport, including all system/tool/message text blocks. It records exact input restoration and known full synthetic value leaks separately from model answers and reasoning. Run with `--turns 40` or `--turns 100`, `--languages de,en,mixed`. `standard_graph_test.py` evaluates four relationship/debt fields against deterministic updates over 40 or 100 turns; model/schema errors are failures, never proof of successful reasoning.
+
+`standard_mapping_restart.py prepare` followed by `resume` in a separate process tests the production SQLite mapping. `memory_profile_test.py` uses real isolated FAISS indices and persisted chat restoration; `compaction_profile_probe.py` captures native context compaction.
+
+`prepare_requesty_browser.py` explicitly clones the existing test-account setup into its own disposable profile, including a separately owned local credential file. It never changes the source profile. Before opening the prepared chat, install `browser_budget.py` as `_ZZ_test_budget.py` under BOTH `usr/extensions/python/_functions/models/LiteLLMChatWrapper/{unified_call,unified_turn}/start`, restart only the test UI server, and verify `BrowserTestBudget` is present in each extension list. It applies only to the named test profile. Preserve `/tmp/privacy-benchmark/requesty-live/budget.sqlite`. Every paid attempt reserves a conservative upper bound; missing prices or an exceeded 5 EUR total stop the call. The capture contains synthetic message/image content, never transport credentials. Remove test-only hooks after testing, keeping the ledger.
+
+`form_fixture.py` serves a disposable contact form and creates a fictional contact-card image. Drive the actual Agent Zero chat/browser UI for the photo-to-form test. Record original image processing independently of text leak checks; OCR and text masking do not sanitize pixels. The installed-plugin tests require en/de spaCy models in the actual `/opt/venv-a0` server environment, not just a benchmark environment.
 
 # Wiederholung der Tests
 

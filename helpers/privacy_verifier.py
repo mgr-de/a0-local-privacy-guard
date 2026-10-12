@@ -26,7 +26,7 @@ def verify_pii_filter(config: Dict[str, Any]) -> Dict[str, Any]:
     if pii_cfg.get("action") == "log_only":
         issues.append("PII filter is in log_only mode - PII is sent unmodified")
     if pii_cfg.get("store_mapping", False):
-        issues.append("store_mapping is enabled - PII is stored in memory (session only)")
+        issues.append("store_mapping is enabled - chat-owned mappings contain PII in local storage")
     return {
         "component": "pii_filter",
         "ok": len(issues) == 0,
