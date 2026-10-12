@@ -177,8 +177,9 @@ class PayloadFilter:
         if isinstance(structured,(dict,list)):
             return json.dumps(self.value(structured),ensure_ascii=False)
         # Exclude existing tokens from detection; keep offsets unchanged.
-        existing=list(TOKEN.finditer(text))
-        scan = TOKEN.sub(lambda m: " " * len(m.group()), text)
+        registered={token for token,_,_ in self.snapshot[1]}
+        existing=[match for match in TOKEN.finditer(text) if match.group() in registered]
+        scan = TOKEN.sub(lambda m: " "*len(m.group()) if m.group() in registered else m.group(),text)
         if not scan.strip():return text
         known = []
         entries = self.snapshot[1]

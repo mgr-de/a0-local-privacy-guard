@@ -20,7 +20,7 @@ def example(config):
         raise ValueError("Unknown detection language.")
     # Never execute arbitrary user regexes or persist mappings during this UI test.
     settings = {"use_regex": raw.get("use_regex", True), "use_ner": raw.get("use_ner", True),
-                "languages": list(dict.fromkeys(languages)), "store_mapping": False}
+                "languages": list(dict.fromkeys(languages)), "store_mapping": False, "backend": raw.get("backend", "local")}
     enabled = config.get("enabled", False) and raw.get("enabled", False)
     filt = PIIFilter(settings)
     result = filt.filter(SAMPLE) if enabled else None
