@@ -10,6 +10,7 @@ Additional languages can be enabled in plugin settings.
 """
 
 import re
+import os
 import time
 import threading
 try:
@@ -400,7 +401,7 @@ class PIIFilter:
 
     def __init__(self, config: dict = None):
         self.config = config or {}
-        self.scope = self.config.get('_cache_scope', 'standalone')
+        self.scope = self.config.get('_cache_scope') or os.urandom(16)
         self.backend = self.config.get('backend', 'local')
         if self.backend not in {'local', 'presidio'}:
             raise ValueError('Unknown local detection backend.')

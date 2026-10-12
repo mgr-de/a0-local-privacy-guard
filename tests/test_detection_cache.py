@@ -81,3 +81,12 @@ def test_cross_process_revision_refresh(tmp_path):
 def test_abbreviated_german_street_is_complete(street):
     f=pd.PIIFilter({'use_ner':False,'languages':['de']})
     assert any(h.original==street and h.pii_type=='ADRESSE' for h in f.filter('Ich wohne in der '+street).detections)
+
+
+def test_standalone_detectors_do_not_share_inspection_cache(monkeypatch):
+    nlp=NLP();monkeypatch.setattr(pd,'_get_nlp',lambda lang:nlp)
+    a=pd.PIIFilter({'use_regex':False,'languages':['en']})
+    b=pd.PIIFilter({'use_regex':False,'languages':['en']})
+    assert a.scope!=b.scope
+    a.filter('Anna Weber');b.filter('Anna Weber')
+    assert nlp.calls==['Anna Weber','Anna Weber']
