@@ -77,6 +77,12 @@ def apply(data, agent):
     local = embedding(config)
     result = deepcopy(data["result"])
     if name == "_model_config" and local:
+        from usr.plugins.local_privacy_guard.helpers.instance import manager
+        instance=manager()
+        if instance is not None and instance.read('setup.json',{}).get('native_presets'):
+            candidate=result.get('embedding_model',{})
+            if any(candidate.get(key)!=local.get(key) for key in ('provider','name')) or candidate.get('kwargs') not in (None,{}) or any(candidate.get(field) for field in ('api_base','api_key','base_url')):
+                raise ValueError('This native preset conflicts with the required local embeddings. Edit its embedding model before using it.')
         # Named chat presets are resolved after this hook by the framework.
         # Reject a conflicting override rather than permit a remote embedding.
         override = agent.context.get_data("chat_model_override")
