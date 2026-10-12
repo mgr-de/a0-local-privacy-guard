@@ -11,3 +11,17 @@ Only internally produced string objects may carry process-local inspection proof
 Native calls expose input preparation, model processing and output preparation separately. Diagnostics contain counts and durations, never content or fingerprints. Replacement counts cover repeated occurrences throughout the full model context, not unique people.
 
 No Ollama runtime, additional service, new model route or image/browser restriction is introduced. Presidio remains a separate optional second phase.
+
+## Measured phase-1 result (12 October 2026)
+
+Private 37,119-character system-context replay; 20 samples per scenario, sequential baseline/candidate processes, no profiler and no LLM calls. Text remains inside the test container. Shared development hardware is not a controlled performance lab.
+
+| Scenario | Baseline p50 / p95 | Optimized p50 / p95 |
+|---|---:|---:|
+| Unchanged context | 3.025 / 3.216 s | 0.200 / 0.204 s |
+| Known context plus new message | 3.052 / 3.144 s | 0.212 / 0.218 s |
+| New large text | 5.202 / 6.147 s | 2.445 / 3.330 s |
+
+Warm p95 improved 93.7%; a new message ran one new recognition unit and reused 1,095. New-text p95 improved 45.8%. These results exclude model/provider time. Optimized model loading was measured separately at 1.055 s; baseline preload was outside its recorded interval and is not a comparable cold-load measurement.
+
+All 16 production language replays passed: 1,120 exact restorations and stable full-name families, no tested complete contact values or full names in captured text. This deterministic corpus does not establish free-answer quality, general PII-freedom or sanitized images.
