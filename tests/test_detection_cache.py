@@ -90,3 +90,11 @@ def test_standalone_detectors_do_not_share_inspection_cache(monkeypatch):
     assert a.scope!=b.scope
     a.filter('Anna Weber');b.filter('Anna Weber')
     assert nlp.calls==['Anna Weber','Anna Weber']
+
+
+def test_intro_phrases_are_not_people_but_real_names_remain():
+    f=pd.PIIFilter({'use_ner':False})
+    hits=[pd.PIIDetection('PERSON',value,0,len(value),'<PERSON>','ner') for value in ['ich bin Herr','Max Mustermann','Will May']]
+    assert f._merge_detections([hits[0]])==[]
+    assert f._merge_detections([hits[1]])==[hits[1]]
+    assert f._merge_detections([hits[2]])==[hits[2]]

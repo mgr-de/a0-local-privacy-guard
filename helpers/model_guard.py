@@ -185,7 +185,7 @@ class PayloadFilter:
         entries = self.snapshot[1]
         aliases = {}
         for token, kind, original in entries:
-            if original.casefold().strip() in self.filter.skip_words:
+            if self.filter.is_non_entity(original):
                 continue
             values = [original]
             words=original.split()

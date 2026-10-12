@@ -554,3 +554,13 @@ def test_native_tool_argument_data_is_always_checked(environment):
     masked=pipeline.value(payload)
     assert masked['name']=='browser'
     assert 'anna@example.com' not in json.dumps(masked)
+
+
+def test_old_false_intro_mapping_does_not_hide_grammar(environment):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    old=pipeline.mapping.token('PERSON','ich bin Herr')
+    name=pipeline.mapping.token('PERSON','Max Mustermann')
+    masked=pipeline.text('ich bin Herr Max Mustermann')
+    assert masked=='ich bin Herr '+name
+    assert pipeline.mapping.restore(old)=='ich bin Herr'
