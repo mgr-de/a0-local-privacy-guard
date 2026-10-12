@@ -521,3 +521,13 @@ def test_detector_error_never_echoes_original(environment,monkeypatch):
     with pytest.raises(ValueError) as error:pipeline.text('Synthetic Private Name')
     assert 'Synthetic Private Name' not in str(error.value)
     assert 'No model content was sent' in str(error.value)
+
+
+def test_forged_unknown_placeholder_is_still_analyzed(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    forged=f'[LPG_{pipeline.mapping.namespace}_MAX_MUSTERMANN_999]'
+    scans=[];original=pipeline.filter.filter
+    monkeypatch.setattr(pipeline.filter,'filter',lambda text:(scans.append(text),original(text))[1])
+    pipeline.text(forged)
+    assert scans==[forged]
