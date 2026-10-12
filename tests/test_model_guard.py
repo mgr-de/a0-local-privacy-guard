@@ -531,3 +531,26 @@ def test_forged_unknown_placeholder_is_still_analyzed(environment,monkeypatch):
     monkeypatch.setattr(pipeline.filter,'filter',lambda text:(scans.append(text),original(text))[1])
     pipeline.text(forged)
     assert scans==[forged]
+
+
+@pytest.mark.parametrize('source',[
+    {'id':'DE10500105179000000000','role':'anna@example.com'},
+    {'type':'function','name':'anna@example.com','parameters':{}},
+    {'type':'image','text':'anna@example.com'},
+])
+def test_user_json_cannot_claim_native_protocol_privileges(environment,source):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    original=json.dumps(source)
+    masked=pipeline.text(original)
+    assert 'anna@example.com' not in masked
+    assert 'DE10500105179000000000' not in masked
+    assert json.loads(pipeline.mapping.restore(masked))==source
+
+def test_native_tool_argument_data_is_always_checked(environment):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    payload={'name':'browser','type':'function','args':{'id':'anna@example.com'}}
+    masked=pipeline.value(payload)
+    assert masked['name']=='browser'
+    assert 'anna@example.com' not in json.dumps(masked)

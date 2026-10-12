@@ -169,13 +169,13 @@ class PayloadFilter:
             try:structured=json.loads(fenced[2])
             except ValueError:structured=None
             if isinstance(structured,(dict,list)):
-                return fenced[1]+json.dumps(self.value(structured),ensure_ascii=False)+fenced[3]
+                return fenced[1]+json.dumps(self.value(structured,_data=True),ensure_ascii=False)+fenced[3]
         # Preserve the native JSON tool envelope; inspect its payload fields.
         try:
             structured=json.loads(text)
         except (ValueError,TypeError):structured=None
         if isinstance(structured,(dict,list)):
-            return json.dumps(self.value(structured),ensure_ascii=False)
+            return json.dumps(self.value(structured,_data=True),ensure_ascii=False)
         # Exclude existing tokens from detection; keep offsets unchanged.
         registered={token for token,_,_ in self.snapshot[1]}
         existing=[match for match in TOKEN.finditer(text) if match.group() in registered]
@@ -249,15 +249,22 @@ class PayloadFilter:
             text=text[:hit.start]+lookup[request[:2]]+text[hit.end:]
         return _CheckedText(text,self.mapping.namespace,self.signature)
 
-    def value(self, value):
+    def _native_tool_id(self,value):
+        if not isinstance(value,str) or not re.fullmatch(r'[a-z][a-z0-9_]*',value):return False
+        try:
+            from helpers import subagents
+            return bool(subagents.get_paths(self.agent,'tools',value+'.py'))
+        except (ImportError,AttributeError,ValueError):return False
+
+    def value(self, value, *, _data=False):
         if isinstance(value, str):
             return self.text(value)
         if isinstance(value, list):
-            return [self.value(part) for part in value]
+            return [self.value(part,_data=_data) for part in value]
         if isinstance(value, dict):
             kind = value.get("type", "")
             # Never pretend that image bytes/URLs were protected by text scanning.
-            if kind in {"image_url", "input_image", "image", "file", "input_file"}:
+            if not _data and kind in {"image_url", "input_image", "image", "file", "input_file"}:
                 def scan_media_urls(item):
                     if isinstance(item,str) and not item.startswith('data:'):
                         check(item,self.known_secrets)
@@ -274,13 +281,18 @@ class PayloadFilter:
             identifiers={"type","role","id","tool_call_id","tool_name"}
             if value.get("type") in {"function","function_call"} or "parameters" in value:
                 identifiers.add("name")
-            result={key if not isinstance(key,str) or re.fullmatch(r'[a-z_][A-Za-z0-9_]*',key) else self.text(key):
-                    deepcopy(item) if key in identifiers else self.value(item) for key, item in value.items()}
-            # Recover tool IDs copied from old, overmasked prompt examples.
-            # These identifiers are native protocol, never user-visible PII.
+            # Protocol privileges come from the adapter, never from JSON
+            # entered as text. Only registered tool IDs retain routing semantics.
+            result={}
+            for key,item in value.items():
+                safe_key=key if not isinstance(key,str) or re.fullmatch(r'[a-z_][A-Za-z0-9_]*',key) else self.text(key)
+                if (not _data and key in identifiers) or (key=='tool_name' and self._native_tool_id(item)):
+                    result[safe_key]=deepcopy(item)
+                else:
+                    result[safe_key]=self.value(item,_data=_data or key in {'args','arguments','output'})
             if isinstance(result.get('tool_name'),str):
                 candidate=self.mapping.restore(result['tool_name'])
-                if re.fullmatch(r'[a-z][a-z0-9_.:-]*',candidate):result['tool_name']=candidate
+                if self._native_tool_id(candidate):result['tool_name']=candidate
             return result
         if hasattr(value, "content"):
             result = deepcopy(value)
