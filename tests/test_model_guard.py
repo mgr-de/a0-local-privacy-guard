@@ -385,7 +385,20 @@ def test_credentials_in_media_urls_are_blocked_without_claiming_pixel_scanning(e
     assert pipeline.value(original)==original
 
 
-def test_native_disabled_child_plugins_still_enforce_parent_without_changing_independent_chat(monkeypatch):
+@pytest.fixture
+def native_test_profiles(monkeypatch,tmp_path):
+    from tempfile import TemporaryDirectory
+    from helpers import files
+    from usr.plugins.local_privacy_guard.helpers import model_guard
+    root=Path(files.get_abs_path('usr','agents'))
+    root.mkdir(parents=True,exist_ok=True)
+    mapping=model_guard.Mapping
+    monkeypatch.setattr(model_guard,'Mapping',lambda owner,chat:mapping(owner,chat,root=tmp_path/'mappings'))
+    with TemporaryDirectory(prefix='privacy-unit-parent-',dir=root) as parent, TemporaryDirectory(prefix='privacy-unit-child-',dir=root) as child:
+        yield Path(parent).name,Path(child).name
+
+
+def test_native_disabled_child_plugins_still_enforce_parent_without_changing_independent_chat(monkeypatch,native_test_profiles):
     from agent import Agent,AgentConfig
     from helpers import plugins,extension,cache
     from usr.plugins.local_privacy_guard.helpers import inherited_bridge as local_bridge
@@ -393,7 +406,7 @@ def test_native_disabled_child_plugins_still_enforce_parent_without_changing_ind
     from usr.plugins.requesty.helpers import scope
     from usr.plugins.requesty.helpers.policy import PolicyError
     from usr.plugins.local_privacy_guard.helpers.model_guard import PrivacyWrapper
-    parent_profile='privacy_inherited_native_parent_unit';child_profile='privacy_inherited_native_child_unit'
+    parent_profile,child_profile=native_test_profiles
     for name in ('requesty','local_privacy_guard'):
         plugins.toggle_plugin(name,True,agent_profile=parent_profile)
         plugins.toggle_plugin(name,False,agent_profile=child_profile)
