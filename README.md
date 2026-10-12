@@ -11,11 +11,11 @@
 
 ## What does this plugin do?
 
-### Standardschutz in 1.4.2
+### Standardschutz in 1.5.0
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
-Ein geschütztes Profil kann ausschließlich zugelassene Requesty-Modelle verwenden. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Es wird keine dienstspezifische Integration für den lokalen Entwicklungs-Testserver eingebaut; Tesseract bleibt optional.
+Mit aktivem Requesty-Schutz müssen externe Modelle dessen Anforderungen erfüllen. Native lokale Modellrouten bleiben zulässig. Lokale Textfilter und sentence-transformers-Embeddings benötigen keinen lokalen Chat-LLM. Es wird keine dienstspezifische Integration für den lokalen Entwicklungs-Testserver eingebaut; Tesseract bleibt optional.
 
 Redact-Modus verwendet eindeutige, persistente Tokenfamilien pro Schutzprofil und Chat. Schreibweisen und eindeutige Kurzformen können Varianten derselben Familie erhalten. Zuordnungen enthalten Originaldaten und liegen unter `usr/privacy-mappings` mit eingeschränkten Dateirechten. Die historische Option `store_mapping` bleibt lesbar, steuert aber nicht mehr die verbindliche Runtime-Zuordnung. Alte mehrdeutige Typ-Platzhalter werden nicht importiert.
 
@@ -287,3 +287,12 @@ See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, m
 See [the 12 October correction](docs/KORREKTUR-2026-10-12.md): effective Requesty model labels replace misleading shared-default labels in protected chats, without changing presets. Provider-specific local-server probes were removed.
 
 See [test environment and settings entry](docs/TEST-ENVIRONMENT.md) for the fixed Privacy Test profile, temporary isolation fixtures, and choosing an explicit profile before editing Requesty.
+
+
+## Zuordnungen, Sprachprüfung und gemeinsamer Privacy Agent
+
+Endgültige Chatlöschung über Agent Zeros `/api/chat_remove` entfernt die zugehörigen Zuordnungen und SQLite-Nebendateien. Archivierung behält sie. Config bietet außerdem eine ausdrücklich bestätigte Löschung nur der Zuordnungen; alte Platzhalter lassen sich danach nicht zurückübersetzen. Chattexte, Speicher, Sicherungen und externe Logs werden dadurch nicht entfernt.
+
+Der synthetische [Sprachkorpus](tests/fixtures/multilingual_sessions.json) umfasst DE, EN, FR, ES, IT, NL, PL und gemischte Sitzungen mit vier Personen über 40 und 100 Nachrichten. [Der lokale Runner](tools/privacy_benchmark/language_sessions.py) bewertet Erkennung, Rückübersetzung, Tokenkontinuität, Kontextkürzung und Wiederöffnung von Zuordnungen. Er ist kein Test generierter Modellantworten und kein allgemeiner PII-Erkennungsnachweis. Erforderliche spaCy-Sprachmodelle müssen vorhanden sein; es wird kein lokaler Chat-LLM vorausgesetzt.
+
+[Requesty Privacy Agent](https://github.com/mgr-de/a0-requesty-privacy-agent) nutzt dieses Plugin für installationsweite Mindestregeln. Ohne aktivierten Manager bleibt die bestehende profilbezogene Nutzung erhalten. [Aktuelle Einführung und Grenzen](docs/INSTANCE-PRIVACY-PLAN.md).

@@ -478,6 +478,7 @@ class PIIFilter:
         # paragraph so mixed messages can still use different language models.
         de_words=set('der die das und ist sind mit für von nicht schuldet verheiratet personen bleibt unverändert beziehungen geschäftspartner telefon'.split())
         en_words=set('the and is are with for from not owes married people unchanged relationships return only to of'.split())
+        if len(text.strip())<=1:return [] # Single-letter role IDs are never NER identities.
         paragraphs=list(re.finditer(r'[^\n]+',text))
         for paragraph in paragraphs:
             languages=self.ner_languages

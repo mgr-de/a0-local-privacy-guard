@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "languages": {
+    "de": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Anna Weber",
+          "email": "person-de-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Ben Fischer",
+          "email": "person-de-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Clara Neumann",
+          "email": "person-de-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniel Wagner",
+          "email": "person-de-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} kennt {b}. {c} schuldet {d} {amount} EUR.",
+        "Die Beziehung zwischen {a} und {b} endet. {c} zahlt {amount} EUR an {d}."
+      ],
+      "collision_name": "Anna Beispiel"
+    },
+    "en": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Alice Turner",
+          "email": "person-en-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Ben Walker",
+          "email": "person-en-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Clara Wilson",
+          "email": "person-en-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniel Harris",
+          "email": "person-en-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} knows {b}. {c} owes {d} {amount} EUR.",
+        "The relationship between {a} and {b} ends. {c} pays {amount} EUR to {d}."
+      ],
+      "collision_name": "Alice Beispiel"
+    },
+    "fr": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Anne Martin",
+          "email": "person-fr-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Benoît Bernard",
+          "email": "person-fr-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Claire Dubois",
+          "email": "person-fr-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniel Laurent",
+          "email": "person-fr-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} connaît {b}. {c} doit {amount} EUR à {d}.",
+        "La relation entre {a} et {b} se termine. {c} paie {amount} EUR à {d}."
+      ],
+      "collision_name": "Anne Beispiel"
+    },
+    "es": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Ana García",
+          "email": "person-es-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Benito López",
+          "email": "person-es-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Clara Martínez",
+          "email": "person-es-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniel Sánchez",
+          "email": "person-es-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} conoce a {b}. {c} debe {amount} EUR a {d}.",
+        "La relación entre {a} y {b} termina. {c} paga {amount} EUR a {d}."
+      ],
+      "collision_name": "Ana Beispiel"
+    },
+    "it": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Anna Rossi",
+          "email": "person-it-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Benito Bianchi",
+          "email": "person-it-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Clara Romano",
+          "email": "person-it-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniele Conti",
+          "email": "person-it-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} conosce {b}. {c} deve {amount} EUR a {d}.",
+        "La relazione tra {a} e {b} finisce. {c} paga {amount} EUR a {d}."
+      ],
+      "collision_name": "Anna Beispiel"
+    },
+    "nl": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Anna de Vries",
+          "email": "person-nl-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Bram Jansen",
+          "email": "person-nl-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Clara Bakker",
+          "email": "person-nl-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daan Visser",
+          "email": "person-nl-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} kent {b}. {c} is {d} {amount} EUR verschuldigd.",
+        "De relatie tussen {a} en {b} eindigt. {c} betaalt {amount} EUR aan {d}."
+      ],
+      "collision_name": "Anna Beispiel"
+    },
+    "pl": {
+      "persons": [
+        {
+          "id": "A",
+          "name": "Anna Kowalska",
+          "email": "person-pl-0@example.invalid",
+          "phone": "+49 30 55501001",
+          "iban": "DE10500105179000000000"
+        },
+        {
+          "id": "B",
+          "name": "Bartosz Nowak",
+          "email": "person-pl-1@example.invalid",
+          "phone": "+49 30 55501002",
+          "iban": "DE10500105179000000001"
+        },
+        {
+          "id": "C",
+          "name": "Klara Wiśniewska",
+          "email": "person-pl-2@example.invalid",
+          "phone": "+49 30 55501003",
+          "iban": "DE10500105179000000002"
+        },
+        {
+          "id": "D",
+          "name": "Daniel Wójcik",
+          "email": "person-pl-3@example.invalid",
+          "phone": "+49 30 55501004",
+          "iban": "DE10500105179000000003"
+        }
+      ],
+      "templates": [
+        "{a} zna {b}. {c} jest winien {d} {amount} EUR.",
+        "Relacja między {a} i {b} kończy się. {c} płaci {d} {amount} EUR."
+      ],
+      "collision_name": "Anna Beispiel"
+    }
+  }
+}

@@ -39,3 +39,8 @@ Der vorhandene lokale Modelldienst dient nur als Entwicklungs-Testumgebung. Die 
 ## Native Adapter und Einführung
 
 Installationshooks richten kleine native Adapter unter `usr/extensions/python` ein. Sie erhalten die Mindestpolicy geschützter Elternchats auch bei deaktivierten Unteragenten-Profilhooks; unabhängige Chats anderer Profile bleiben unverändert. Sie betreiben keinen Dienst und schreiben keine gemeinsamen Presets. Eigentumsnachweise unter `usr/privacy-guard-adapters` überstehen Plugin-ZIP-Ersetzungen; fremde oder veränderte Dateien werden erhalten. Nach Installation/Aktualisierung Agent Zero neu starten. [Prüfergebnisse](STANDARD-TEST-RESULTS.md) unterscheiden erfolgreiche Filterprüfungen, falsche Modellantworten und manuelle Formulartestschritte.
+
+
+## Gemeinsamer Einstieg ab 1.5 / 0.5
+
+Siehe [Installationsweite Regeln und weiterer Ausblick](INSTANCE-PRIVACY-PLAN.md). Der zusätzliche Privacy Agent vereinheitlicht die Einrichtung; kontrollierte Netzwerkzugänge bleiben ein späterer eigener Ausbau.

@@ -127,6 +127,9 @@ def uninstall() -> dict:
     - spaCy models are preserved: they are shared packages that other
       plugins or agents may use.
     """
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    if manager() is not None:
+        raise ValueError('Deactivate Privacy Agent centrally before uninstalling a required component.')
     result = {
         "status": "ok",
         "note": "spaCy models preserved (may be used by other plugins)",

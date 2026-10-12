@@ -9,6 +9,13 @@
 <template x-if="config && config.pii_filter && config.local_embedding && config.verification && $store.localPrivacy">
 <div class="privacy-settings" x-init="$store.localPrivacy.cleanup()" x-destroy="$store.localPrivacy.cleanup()">
   <h2 class="section-title">Protect personal details</h2>
+  <p>If Requesty Privacy Agent protects this installation, its minimum rules also apply here. Profile switches and weaker settings do not disable those rules; use the central manager to change the installation-wide setup.</p>
+  <details class="privacy-card"><summary>Delete mappings for the current chat</summary>
+    <p>Original personal details are stored locally to restore names in this browser. Archiving retains these mappings. Final deletion through Agent Zero's chat removal API removes them.</p>
+    <p>Deleting mappings alone permanently prevents restoring old placeholders. It does not delete chat messages, memories, provider logs or backups.</p>
+    <label><input type="checkbox" x-model="$store.localPrivacy.confirmMappingDeletion"> I understand that old placeholders in the current chat can no longer be restored.</label>
+    <button class="btn" type="button" @click="$store.localPrivacy.deleteMappings()" :disabled="$store.localPrivacy.busy || !$store.localPrivacy.confirmMappingDeletion">Delete current chat mappings</button>
+  </details>
   <aside class="privacy-note"><strong>Protection belongs to one agent profile.</strong><p>Choose an Agent profile in the toolbar, enable protection and save settings for it. Global or project-only settings do not activate protection. Other profiles keep their own settings.</p><p x-text="context.agentProfileKey ? 'Selected profile: ' + context.agentProfileKey : 'Choose a profile before saving.'"></p></aside>
   <fieldset :disabled="!context.agentProfileKey"><legend>Profile privacy settings</legend>
   <p>Replace detected personal details before supported conversation and helper-model calls, and calculate memory embeddings locally.</p>

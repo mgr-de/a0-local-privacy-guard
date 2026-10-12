@@ -42,6 +42,15 @@ def test_ner_cannot_wrap_existing_placeholder(environment,monkeypatch):
     assert pipeline.text(source)==source
     assert pipeline.mapping.restore(source)=='Contact Anna Weber today'
 
+def test_complete_known_values_and_tokens_do_not_rerun_detection(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    token=pipeline.mapping.token('PERSON','Anna Weber')
+    def unexpected(text):raise AssertionError('Known complete values must not be detected again')
+    monkeypatch.setattr(pipeline.filter,'filter',unexpected)
+    assert pipeline.text('Anna Weber')==token or pipeline.mapping.restore(pipeline.text('Anna Weber'))=='Anna Weber'
+    assert pipeline.text(token)==token
+
 
 def test_old_masked_browser_identifier_is_recovered_as_protocol(environment):
     guard,agent,config=environment

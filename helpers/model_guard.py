@@ -19,6 +19,8 @@ from usr.plugins.local_privacy_guard.helpers.pii_detector import PIIFilter, PIID
 from usr.plugins.local_privacy_guard.helpers.secrets import check
 
 tool_agent = ContextVar("local_privacy_tool_agent", default=None)
+filtered_call = ContextVar('local_privacy_filtered_call',default=None)
+INSTANCE_API_VERSION=1
 CONTENT_OPTIONS=('tools','response_format','a0_responses_function_tools','responses_input_items',
                  'responses_local_input_items','responses_prompt_replacements')
 SAFE_KINDS=set(UNIVERSAL_PATTERNS)|{key for patterns in LANGUAGE_PATTERNS.values() for key in patterns}|{
@@ -51,6 +53,9 @@ def owning_agent(agent):
 def owner_and_config(agent):
     from helpers import projects, plugins
     owner = owning_agent(agent)
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    instance=manager()
+    if instance is not None:return owner,instance.local_config(owner)
     if not (Path(__file__).parents[1]/'plugin.yaml').is_file() or 'local_privacy_guard' not in plugins.get_enabled_plugins(owner):
         return owner,None
     cfg = agent_scope.configuration(owner)
@@ -62,7 +67,10 @@ def owner_and_config(agent):
 def mapping_for(agent):
     from helpers import projects
     owner = owning_agent(agent)
-    return Mapping((projects.get_context_project_name(owner.context) or "", owner.config.profile), owner.context.id)
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    instance=manager()
+    identity=instance.mapping_identity(owner) if instance is not None else (projects.get_context_project_name(owner.context) or "", owner.config.profile)
+    return Mapping(identity, owner.context.id)
 
 
 def is_local(wrapper, overrides=None):
@@ -145,6 +153,7 @@ class PayloadFilter:
         # Exclude existing tokens from detection; keep offsets unchanged.
         existing=list(TOKEN.finditer(text))
         scan = TOKEN.sub(lambda m: " " * len(m.group()), text)
+        if not scan.strip():return text
         known = []
         entries = self.mapping.entries()
         aliases = {}
@@ -165,7 +174,10 @@ class PayloadFilter:
             if len(set(token for token, _ in people)) == 1:
                 for match in re.finditer(r"(?<!\w)" + re.escape(alias) + r"(?=\b|'s\b|’s\b|s\b)", scan, re.IGNORECASE):
                     known.append(PIIDetection("PERSON", match.group(), match.start(), match.end(), people[0][0], "known"))
-        detected = self.filter.filter(scan).detections
+        # A complete known value cannot contain a larger new overlapping
+        # identity. Reuse its mapping instead of rerunning NER on every repeat.
+        complete_known=any(hit.start==0 and hit.end==len(scan) for hit in known)
+        detected = [] if complete_known else self.filter.filter(scan).detections
         def larger_complete_value(detection,known_hit):
             if detection.start>known_hit.start or detection.end<known_hit.end or detection.end-detection.start<=known_hit.end-known_hit.start:
                 return False
@@ -312,7 +324,9 @@ class PrivacyWrapper(LiteLLMChatWrapper):
         if tokens_callback:
             async def count_only(delta,count):return await tokens_callback('',count)
             kwargs['tokens_callback']=count_only
-        result=await getattr(self._privacy_inner,method)(*args,**kwargs)
+        marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
+        try:result=await getattr(self._privacy_inner,method)(*args,**kwargs)
+        finally:filtered_call.reset(marker)
         pipeline=self.output_filter()
         if method=="unified_call":
             response,reasoning=result
@@ -344,13 +358,19 @@ class PrivacyWrapper(LiteLLMChatWrapper):
 
     def _call(self, messages, stop=None, run_manager=None, **kwargs):
         args, kwargs = prepare(self, (messages,), kwargs, "_call")
-        return self.output_filter().text(self._privacy_inner._call(*args, stop=stop, run_manager=run_manager, **kwargs))
+        marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
+        try:result=self._privacy_inner._call(*args, stop=stop, run_manager=run_manager, **kwargs)
+        finally:filtered_call.reset(marker)
+        return self.output_filter().text(result)
 
     def _stream(self, messages, stop=None, run_manager=None, **kwargs):
         args, kwargs = prepare(self, (messages,), kwargs, "_stream")
         result=None
-        for chunk in self._privacy_inner._stream(*args, stop=stop, run_manager=None, **kwargs):
-            result=chunk if result is None else result+chunk
+        marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
+        try:
+            for chunk in self._privacy_inner._stream(*args, stop=stop, run_manager=None, **kwargs):
+                result=chunk if result is None else result+chunk
+        finally:filtered_call.reset(marker)
         if result is not None:
             pipeline=self.output_filter()
             result.message=pipeline.value(result.message)
@@ -362,8 +382,11 @@ class PrivacyWrapper(LiteLLMChatWrapper):
     async def _astream(self, messages, stop=None, run_manager=None, **kwargs):
         args, kwargs = prepare(self, (messages,), kwargs, "_astream")
         result=None
-        async for chunk in self._privacy_inner._astream(*args, stop=stop, run_manager=None, **kwargs):
-            result=chunk if result is None else result+chunk
+        marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
+        try:
+            async for chunk in self._privacy_inner._astream(*args, stop=stop, run_manager=None, **kwargs):
+                result=chunk if result is None else result+chunk
+        finally:filtered_call.reset(marker)
         if result is not None:
             pipeline=self.output_filter()
             result.message=pipeline.value(result.message)

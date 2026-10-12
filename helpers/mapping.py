@@ -4,6 +4,7 @@ import json
 import os
 import re
 import sqlite3
+from contextlib import contextmanager
 from pathlib import Path
 
 TOKEN = re.compile(r"\[LPG_[a-f0-9]{16}_[A-Z_]+_\d+(?:_V\d+)?\]")
@@ -32,8 +33,12 @@ class Mapping:
             db.execute("CREATE TABLE IF NOT EXISTS mapping(token TEXT PRIMARY KEY, kind TEXT, original TEXT, UNIQUE(kind,original))")
         os.chmod(self.path, 0o600)
 
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.path, timeout=30)
+        connection=sqlite3.connect(self.path, timeout=30)
+        try:
+            with connection:yield connection
+        finally:connection.close()
 
     def entries(self):
         with self.connect() as db:

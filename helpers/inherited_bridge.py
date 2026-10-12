@@ -9,6 +9,8 @@ PLUGIN='local_privacy_guard'
 
 def inherited(agent):
     if agent is None:return False
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    if manager() is not None:return True
     from helpers import plugins
     from usr.plugins.local_privacy_guard.helpers.model_guard import owning_agent
     from usr.plugins.local_privacy_guard.helpers.agent_scope import configuration
@@ -39,6 +41,8 @@ def sources():
             f"try:\n    from usr.plugins.local_privacy_guard.helpers.model_guard import filter_native,tool_agent\nexcept ImportError:return\nfrom helpers import plugins\nif tool_agent.get() is not None and 'local_privacy_guard' not in plugins.get_enabled_plugins(None):\n    data['_privacy_method']='{method}'\n    filter_native(data)")
         files[f'_functions/models/LiteLLMChatWrapper/{method}/end/_99_local_scoped_output.py']=body(
             "try:\n    from usr.plugins.local_privacy_guard.helpers.model_guard import filter_native_result,tool_agent\nexcept ImportError:return\nfrom helpers import plugins\nif tool_agent.get() is not None and 'local_privacy_guard' not in plugins.get_enabled_plugins(None):await filter_native_result(data)",async_=True)
+    files['_functions/agent/AgentContext/remove/end/_98_local_mapping_cleanup.py']=body(
+        "from flask import has_request_context,request\nif has_request_context() and request.path.rstrip('/').endswith('/chat_remove'):\n    from usr.plugins.local_privacy_guard.helpers.mapping_cleanup import remove_chat\n    chat=data['args'][0] if data.get('args') else data.get('kwargs',{}).get('id')\n    remove_chat(chat)")
     return files
 
 def manage(plugin_root,remove=False):

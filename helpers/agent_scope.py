@@ -16,6 +16,10 @@ def selected_path(project, profile):
 
 def configuration(agent):
     from helpers import projects
+    from usr.plugins.local_privacy_guard.helpers.instance import manager
+    instance=manager()
+    if instance is not None and agent is not None:
+        return instance.local_config(agent)
     if agent is None:
         return None
     from agent import AgentContext
@@ -75,7 +79,8 @@ def apply(data, agent):
             from plugins._model_config.helpers import model_config as mc
             preset = mc.resolve_preset(override["preset_name"]) if override.get("preset_name") else override
             candidate = (preset or {}).get("embedding", {})
-            if candidate and (candidate.get("provider") != local["provider"] or candidate.get("name") != local["name"]):
+            if candidate and (candidate.get("provider") != local["provider"] or candidate.get("name") != local["name"]
+                    or candidate.get('kwargs') not in (None,{}) or any(candidate.get(field) for field in ('api_base','api_key','base_url'))):
                 raise ValueError("This chat preset conflicts with profile-local embeddings. Clear the chat model override or use matching local embeddings.")
             if override.get("preset_name") and not candidate:
                 raise ValueError("The chat preset must explicitly use the profile-local embedding model.")
