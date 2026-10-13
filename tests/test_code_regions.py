@@ -94,6 +94,15 @@ def test_markdown_inside_source_literals_is_still_data(source):
 
 
 @pytest.mark.parametrize('source', [
+    'note = f"""Hello {user.name}\n```python\nclass CustomerService: pass\n```\n"""',
+    'const note = `Hello ${user.name}\n\u0060\u0060\u0060python\nclass CustomerService: pass\n\u0060\u0060\u0060`;',
+    'note = f"Hello {user.name} `CustomerService.create(user_input)`"',
+])
+def test_unsupported_outer_source_cannot_exempt_markdown_inside_literal_data(source):
+    assert analysis_text(source) == source
+
+
+@pytest.mark.parametrize('source', [
     'api_key = os.getenv("API_KEY")', 'password = user_input',
     'label = "Änderung"; api_key = os.getenv("API_KEY")',
     'password = settings["password"]', 'api_key = os.environ["API_KEY"]',

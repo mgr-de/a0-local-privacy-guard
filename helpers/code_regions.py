@@ -9,7 +9,7 @@ import io
 import re
 import tokenize
 
-POLICY_VERSION = 'code-regions-v1'
+POLICY_VERSION = 'code-regions-v2'
 LIMIT = 200_000
 PYTHON = {'py', 'python'}
 JAVASCRIPT = {'js', 'javascript', 'ts', 'typescript'}
@@ -185,6 +185,10 @@ def regions(text, hint=''):
     whole = _python(text) if FENCE.search(text) and language in PYTHON | {''} else (_parse(text, language) if not FENCE.search(text) else None)
     if whole is not None:
         return [Region(0, len(text), whole[0], whole[1])]
+    # Once a payload begins as source/literal data, unsupported outer syntax
+    # must not gain exemptions through Markdown embedded in its strings.
+    if re.match(r'\s*(?:[\w.]+\s*(?::[^=\n]+)?=|(?:def|class|import|from|async|if|for|with|try|const|let|var|function|export|interface|type)\b|[rubfRUBF]*[\"\'])', text):
+        return []
     found = []
     cursor = 0
     for opening in FENCE.finditer(text):

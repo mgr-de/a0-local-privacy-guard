@@ -1,5 +1,7 @@
 # Code-aware text filtering (Local Privacy Guard 1.8.0)
 
+Patch 1.8.1 also keeps unsupported outer source in ordinary text checks when it contains nested Markdown in literal data; embedded fences/inline expressions do not create a second exemption there.
+
 Source code still passes through the normal guarded model boundary. Code recognition is local and does not run the supplied code, execute imports, call a model or install another detector. spaCy plus Regex remains the sole detector.
 
 ## Recognized source
