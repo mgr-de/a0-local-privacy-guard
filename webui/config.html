@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Local Privacy Guard</title>
+  <title>A0 Privacy Suite - Local Guard</title>
   <link rel="stylesheet" href="/plugins/local_privacy_guard/webui/privacy-settings.css">
   <script type="module" src="/plugins/local_privacy_guard/webui/privacy-store.js"></script>
 </head>
@@ -8,8 +8,9 @@
 <div x-data>
 <template x-if="config && config.pii_filter && config.local_embedding && config.verification && $store.localPrivacy">
 <div class="privacy-settings" x-init="$store.localPrivacy.cleanup()" x-destroy="$store.localPrivacy.cleanup()">
-  <h2 class="section-title">Protect personal details</h2>
-  <p>If Requesty Privacy Agent protects this installation, its minimum rules also apply here. Profile switches and weaker settings do not disable those rules; use the central manager to change the installation-wide setup.</p>
+  <h2 class="section-title">A0 Privacy Suite - Local Guard</h2>
+<p>Private Vorabversion 0.9.0. Unabhängiges Projekt, kein Produkt von Requesty und keine Zugehörigkeit zum Anbieter.</p>
+  <p>If A0 Privacy Suite - Manager protects this installation, its minimum rules also apply here. Profile switches and weaker settings do not disable those rules; use the central manager to change the installation-wide setup.</p>
   <details class="privacy-card"><summary>Delete mappings for the current chat</summary>
     <p>Original personal details are stored locally to restore names in this browser. Archiving retains these mappings. Final deletion through Agent Zero's chat removal API removes them.</p>
     <p>Deleting mappings alone permanently prevents restoring old placeholders. It does not delete chat messages, memories, provider logs or backups.</p>
@@ -31,7 +32,7 @@
   </div>
   <section class="privacy-card" aria-labelledby="local-filter-title">
     <h3 id="local-filter-title" class="section-title">1. Personal-detail filtering</h3>
-    <div class="field"><div class="field-label"><label class="field-title" for="local-switch-1">Use Local Privacy Guard in this scope</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.enabled" id="local-switch-1"><span class="toggler" aria-hidden="true"></span></label></div></div>
+    <div class="field"><div class="field-label"><label class="field-title" for="local-switch-1">Use A0 Privacy Suite - Local Guard in this scope</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.enabled" id="local-switch-1"><span class="toggler" aria-hidden="true"></span></label></div></div>
     <fieldset :disabled="!config.enabled"><legend>Filter settings</legend>
       <div class="field"><div class="field-label"><label class="field-title" for="local-switch-2">Detect personal details before supported model calls</label></div><div class="field-control"><label class="toggle"><input type="checkbox" x-model="config.pii_filter.enabled" id="local-switch-2"><span class="toggler" aria-hidden="true"></span></label></div></div>
       <fieldset :disabled="!config.pii_filter.enabled"><legend>When details are detected</legend>

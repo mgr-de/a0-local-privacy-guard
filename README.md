@@ -1,6 +1,8 @@
+> **A0 Privacy Suite 0.9.0 - private pre-release.** Independently developed for local Agent Zero installations. Not a Requesty product; not affiliated with or endorsed by Requesty. Requesty is the external routing service used by the Model Gateway. All three components share version 0.9.0. Older numbers in historical reports document previous tests, not current requirements.
+
 <div align="center">
-  <img src="assets/icon.svg" width="150" alt="Local Privacy Guard Logo" />
-  <h1>🛡️ Local Privacy Guard</h1>
+  <img src="assets/icon.svg" width="150" alt="A0 Privacy Suite - Local Guard Logo" />
+  <h1>🛡️ A0 Privacy Suite - Local Guard</h1>
   <p><b>Local personal-detail filtering and memory embeddings for Agent Zero</b></p>
 </div>
 
@@ -11,13 +13,13 @@
 
 ## What does this plugin do?
 
-Version **1.9.0** retains local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
+Version **0.9.0** retains local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
 
-With Requesty Privacy Agent **0.3.0**, an instance operator can explicitly grant **new Developer chats** an exception from PII masking. The default stays masked. Secret checks, existing Requesty routes and local embeddings remain required; the Secret-only path uses no spaCy model or historical mapping. Supported outgoing text, tool/function payloads and responses retain Secret screening and buffered output. PII tokenization and local tool/display restoration are skipped. Old chats and protected Memory are not migrated; Developer Memory has its own project/profile-generation/mode identity.
+With A0 Privacy Suite - Manager **0.9.0**, an instance operator can explicitly grant **new Developer chats** an exception from PII masking. The default stays masked. Secret checks, existing Requesty routes and local embeddings remain required; the Secret-only path uses no spaCy model or historical mapping. Supported outgoing text, tool/function payloads and responses retain Secret screening and buffered output. PII tokenization and local tool/display restoration are skipped. Old chats and protected Memory are not migrated; Developer Memory has its own project/profile-generation/mode identity.
 
 Each unmasked provider attempt is reauthorized at the native LiteLLM dispatch boundary after rate limiting; internal provider retries are disabled. Revocation blocks further calls of that chat, including subordinate calls. Already admitted calls may finish in their original output mode with mandatory Secret checks. Changed profile/project, imported policy or missing authority block further calls; regrant never reactivates old receipts. This exception can transmit personal data from the **entire model context** without masking. Image, browser, raw-tool network and filesystem protection retain their existing limits. [Operator setup](https://github.com/mgr-de/a0-requesty-privacy-agent#developer-ohne-maskierung).
 
-### Standardschutz in 1.9.0
+### Standardschutz in 0.9.0
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
@@ -31,7 +33,7 @@ Bilder dürfen über zugelassene Modelle verarbeitet werden. Ihr Inhalt wird nic
 
 Siehe [Standardschutz und gehärteter Ausblick](docs/STANDARD-AND-HARDENED-PLAN.md). Die historischen Abschnitte zu 1.2/1.3 und Screenshots beschreiben ältere Entwicklungsstände; die obigen Angaben sind für die aktuelle Modellprüfung maßgeblich.
 
-Local Privacy Guard reduces the disclosure of detected personal details when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
+A0 Privacy Suite - Local Guard reduces the disclosure of detected personal details when using Agent Zero with external LLM APIs. It combines three privacy measures into one plugin:
 
 | Feature | Description |
 |---------|-------------|
@@ -41,9 +43,9 @@ Local Privacy Guard reduces the disclosure of detected personal details when usi
 
 ### Related plugin
 
-This plugin pairs with [Requesty Privacy Guard](https://github.com/mgr-de/a0-requesty-privacy-guard). Local Privacy Guard replaces detected details in supported model calls and configures local embeddings. Requesty Privacy Guard checks selected routing and provider data requirements against catalog metadata. Neither plugin independently audits provider practices or protects every tool, image or third-party data path.
+This plugin pairs with [A0 Privacy Suite - Model Gateway](https://github.com/mgr-de/a0-requesty-privacy-guard). A0 Privacy Suite - Local Guard replaces detected details in supported model calls and configures local embeddings. A0 Privacy Suite - Model Gateway checks selected routing and provider data requirements against catalog metadata. Neither plugin independently audits provider practices or protects every tool, image or third-party data path.
 
-### Settings in version 1.2.0
+### Settings
 
 The settings page separates everyday choices from advanced detection and startup options. Its summary describes the selected project/profile configuration, not verified protection of an active chat. Save changes and restart after changing languages or the embedding model.
 
@@ -51,7 +53,7 @@ The settings page separates everyday choices from advanced detection and startup
 
 The original screenshots below predate the 1.2.0 settings redesign. See [the UI review](docs/UI-REVIEW.md) for the design rationale and acceptance criteria.
 
-### Profile isolation in 1.3.0
+### Profile isolation
 
 Save configuration for one explicit Agent profile, optionally within a project. Settings inherited from a global or project-only installation cannot activate protection. The profile selection and disabled global form are visible in the settings page.
 
@@ -139,9 +141,9 @@ The historical diagram illustrates detected-detail replacement and local embeddi
 
 ## Installation
 
-### From Plugin Hub (recommended)
+### Local installation
 1. Open Agent Zero WebUI → **Settings** → **Plugins**
-2. Search for **"Local Privacy Guard"**
+2. Install the private pre-release package or use this repository through the native plugin installer.
 3. Click **Install**
 4. Enable the plugin
 5. Select your languages in the plugin settings
@@ -165,7 +167,7 @@ cp -r local_privacy_guard /a0/usr/plugins/
 
 ## Configuration
 
-Go to **Settings** → **Plugins** → **Local Privacy Guard** to configure:
+Go to **Settings** → **Plugins** → **A0 Privacy Suite - Local Guard** to configure:
 
 ### PII Filter Settings
 
@@ -301,7 +303,7 @@ Endgültige Chatlöschung über Agent Zeros `/api/chat_remove` entfernt die zuge
 
 Der synthetische [Sprachkorpus](tests/fixtures/multilingual_sessions.json) umfasst DE, EN, FR, ES, IT, NL, PL und gemischte Sitzungen mit vier Personen über 40 und 100 Nachrichten. [Der archivierte Vergleichsrunner](https://github.com/mgr-de/a0-local-privacy-guard/blob/archive/cpu-pii-evaluation-2026-10-13/tools/privacy_benchmark/language_sessions.py) bewertet Erkennung, Rückübersetzung, Tokenkontinuität, Kontextkürzung und Wiederöffnung von Zuordnungen. Er ist kein Test generierter Modellantworten und kein allgemeiner PII-Erkennungsnachweis. Erforderliche spaCy-Sprachmodelle müssen vorhanden sein; es wird kein lokaler Chat-LLM vorausgesetzt.
 
-[Requesty Privacy Agent](https://github.com/mgr-de/a0-requesty-privacy-agent) nutzt dieses Plugin für installationsweite Mindestregeln. Ohne aktivierten Manager bleibt die bestehende profilbezogene Nutzung erhalten. [Aktuelle Einführung und Grenzen](docs/INSTANCE-PRIVACY-PLAN.md).
+[A0 Privacy Suite - Manager](https://github.com/mgr-de/a0-requesty-privacy-agent) nutzt dieses Plugin für installationsweite Mindestregeln. Ohne aktivierten Manager bleibt die bestehende profilbezogene Nutzung erhalten. [Aktuelle Einführung und Grenzen](docs/INSTANCE-PRIVACY-PLAN.md).
 
 
 ## Native Requesty-Presets (Privacy Agent 0.2)
@@ -316,10 +318,14 @@ Die nativen Speicher- und Auswahladapter werden beim A0-Start eingerichtet, sind
 
 ## Fixed local detector and incremental filtering
 
-Version 1.8.1 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
+Version 0.9.0 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
 
 Backend selection and optional model-package installation have been removed from Advanced settings. Old `backend: presidio` or `backend: nym` settings are interpreted by the fixed local detector; their files are not rewritten. Unknown backend values still fail validation. Other detectors are not loaded, downloaded or used as fallbacks.
 
 Detector experiments, comparison tools and measurement reports are preserved on [archive/cpu-pii-evaluation-2026-10-13](https://github.com/mgr-de/a0-local-privacy-guard/tree/archive/cpu-pii-evaluation-2026-10-13). This is a reference branch, not an install/update branch. The product decision retains the already tested multilingual pipeline and controlled native browser behavior. [Performance and limits](docs/FILTER-PERFORMANCE.md).
 
 For primarily local installations without external access, Manager 0.3.1 makes the interface login optional but strongly recommends it. Anyone who can access an unauthenticated interface can manage profile exceptions. A configured login still requires an authenticated session; explicit full-context consent and native CSRF remain required.
+
+## Suite versioning and existing installations
+
+All three components use the same suite version. 0.9.0 starts the unified private pre-release numbering and replaces the former Local Guard 1.9.0, Model Gateway 0.6.1 and Manager 0.3.3; it does not remove their functionality. Patch versions (0.9.x) cover fixes, later 0.x minor versions cover feature or compatibility changes, and 1.0 is reserved for a separately decided stable release. Versions below 1.0 do not promise a stable public API. Update all three components together through the native Git plugin updater and restart Agent Zero; older Local Guard metadata has a higher number, so an installer that refuses downgrades may require the explicit Git update. Do not uninstall or delete user data to change the name. Existing internal IDs, repository URLs, keys, mappings and stored presets remain valid. Historical tags and reports remain unchanged; new packages are marked as pre-releases.
