@@ -29,3 +29,9 @@ Review covered changed lifecycle paths, manifest compatibility, synthetic native
 ![Current beta configuration](community-beta-config.png)
 
 The screenshot shows the real A0 plugin configuration with synthetic setup only. Historic screenshots/reports elsewhere retain original versions and must not be treated as this beta's acceptance evidence.
+
+## 0.9.2 follow-up: combined native presets and profile lifecycle
+
+The final existing-installation check found that 0.9.1's second ApiHandler wrapper conflicted with the native-preset bridge's ownership check. It failed closed but prevented native setup/status operations. 0.9.2 uses one owned HTTP boundary for both checks, with a combined regression. Runtime bridge initialization also refreshes owned adapters once per process, covering native updater imports cached before the Manager update. Existing 0.9.1 archives/checksums remain immutable; use 0.9.2 for new installs.
+
+The preceding cold-install figures and screenshots were captured on 0.9.1; their scope is retained instead of relabelling them. Follow-up evidence is attached to the 0.9.2 release and final submission report.
