@@ -14,10 +14,11 @@ export default function mediaNotice(context) {
       anchor.insertBefore(status,row);
     }
     const route=state.protection.last_route;
+    status.querySelector('summary').textContent=state.protection.mode_label || 'Privacy: Modellroute und Schutzgrenzen';
     status.querySelector('p').textContent='Schutzprofil: '+state.protection.owner_profile+
       (state.protection.inherited?' · vom Elternchat übernommen':'')+'. Letzte Modellroute: '+(route?.model || 'noch kein Aufruf')+
       (route?.local?' · lokal':route?.endpoint?' via '+route.endpoint:'')+
-      '. Textfilter: '+state.protection.text_filter+
+      '. '+(state.protection.mode_label || ('Textfilter: '+state.protection.text_filter))+
       '. Lokale Embeddings: '+(state.protection.local_embeddings_configured?'konfiguriert':'nicht konfiguriert')+
       '. Bildinhalte und Datenübertragungen durch Werkzeuge sind durch die Textmaskierung nicht abgedeckt.';
   }

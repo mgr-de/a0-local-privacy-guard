@@ -5,6 +5,8 @@ class RestoreLocalArguments(Extension):
     def execute(self, tool_args=None, tool_name="", **kwargs):
         if not self.agent or not tool_args or owner_and_config(self.agent)[1] is None:
             return
+        if not owner_and_config(self.agent)[1].get('pii_filter',{}).get('enabled',True):
+            return
         if tool_name == "response":
             return  # Canonical response remains masked; browser display restores it.
         mapping = mapping_for(self.agent)

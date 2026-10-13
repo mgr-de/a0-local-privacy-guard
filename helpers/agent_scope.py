@@ -22,6 +22,8 @@ def configuration(agent):
         return instance.local_config(agent)
     if agent is None:
         return None
+    if agent.context.get_data('privacy_agent_chat_policy') is not None:
+        raise ValueError('Restore central privacy protection before continuing this Developer chat.')
     from agent import AgentContext
     from plugins._agent_editor.helpers.editor import EditorAgent
     editing=isinstance(agent,EditorAgent)
@@ -99,6 +101,9 @@ def apply(data, agent):
     elif name == "_memory":
         from helpers import projects
         identity = [projects.get_context_project_name(agent.context) or "", agent.config.profile, local]
+        policy=config.get('_privacy_policy',{})
+        if policy.get('mode')=='unmasked':
+            identity=[policy['project'],policy['profile_id'],policy['generation'],'unmasked',local]
         result["project_memory_isolation"] = False
         result["agent_memory_subdir"] = "privacy-profiles/" + hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:32]
     data["result"] = result

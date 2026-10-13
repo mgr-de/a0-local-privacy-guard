@@ -2,7 +2,7 @@ import { callJsonApi } from "/js/api.js";
 
 export default async function localDisplay(context) {
   const id = globalThis.getContext?.();
-  if (!id || !context?.messages?.length) return;
+  if (!id || !context) return;
   const targets = [];
   const visit = (object) => {
     if (!object || typeof object !== "object") return;
@@ -11,7 +11,7 @@ export default async function localDisplay(context) {
       else if (value && typeof value === "object") visit(value);
     }
   };
-  visit(context.messages);
+  visit(context.messages || []);
   try {
     const expression=/\[LPG_[a-f0-9]{16}_[A-Z_]+_\d+(?:_V\d+)?\]/g;
     const tokens=[...new Set(targets.flatMap((entry)=>entry[2].match(expression)||[]))];

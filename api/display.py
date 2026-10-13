@@ -9,13 +9,22 @@ class Display(ApiHandler):
         texts = input.get("texts", [])
         if not isinstance(texts,list) or len(texts)>500 or any(not isinstance(t,str) for t in texts) or sum(map(len,texts))>500000:
             return {"ok":False,"error":"Display request is too large or invalid."}
-        owner,config=owner_and_config(context.agent0) if context and context.agent0 else (None,None)
+        try:
+            owner,config=owner_and_config(context.agent0) if context and context.agent0 else (None,None)
+        except ValueError:
+            return {'ok':True,'texts':texts,'media':False,'route':None,
+                'protection':{'blocked':True,'owner_profile':context.agent0.config.profile if context and context.agent0 else '',
+                    'inherited':False,'text_filter':'blocked','secret_guard':True,
+                    'mode_label':'Chat gesperrt · neuen geschützten Chat beginnen',
+                    'local_embeddings_configured':False,'last_route':None}}
         if config is None:
             return {"ok":True,"texts":texts,"media":False,"route":None}
-        mapping = mapping_for(context.agent0)
-        return {"ok":True,"texts":[mapping.restore(t) for t in texts],
+        masking=config.get('pii_filter',{}).get('enabled',True)
+        mapping = mapping_for(context.agent0) if masking else None
+        return {"ok":True,"texts":[mapping.restore(t) for t in texts] if mapping else texts,
             "media":bool(context.get_data("local_privacy_media")), "route":context.get_data("local_privacy_media_route"),
             "protection":{"last_route":context.get_data('local_privacy_route'),
                 "owner_profile":owner.config.profile,"inherited":owner.context is not context,
-                "text_filter":config.get('pii_filter',{}).get('action','redact') if config.get('pii_filter',{}).get('enabled',True) else 'off',
+                "text_filter":config.get('pii_filter',{}).get('action','redact') if masking else 'off',
+                "secret_guard":True,"mode_label":'PII-Maskierung aktiv · Secret-Prüfung aktiv' if masking else 'PII-Maskierung aus · Secret-Prüfung aktiv',
                 "local_embeddings_configured":bool(config.get('local_embedding',{}).get('enabled') and config.get('local_embedding',{}).get('auto_configure'))}}

@@ -23,7 +23,7 @@ from usr.plugins.local_privacy_guard.helpers.code_regions import analysis_text, 
 
 tool_agent = ContextVar("local_privacy_tool_agent", default=None)
 filtered_call = ContextVar('local_privacy_filtered_call',default=None)
-INSTANCE_API_VERSION=1
+INSTANCE_API_VERSION=2
 CONTENT_OPTIONS=('tools','response_format','a0_responses_function_tools','responses_input_items',
                  'responses_local_input_items','responses_prompt_replacements')
 SAFE_KINDS=set(UNIVERSAL_PATTERNS)|{key for patterns in LANGUAGE_PATTERNS.values() for key in patterns}|{
@@ -34,7 +34,9 @@ def owning_agent(agent):
     from agent import AgentContext
     seen=set()
     current=agent
-    while current.context.id not in seen:
+    while True:
+        if current.context.id in seen:
+            raise ValueError('Cyclic subordinate privacy context.')
         seen.add(current.context.id)
         parent_id=current.context.get_output_data('parent_context_id')
         if not parent_id:break
@@ -59,6 +61,8 @@ def owner_and_config(agent):
     from usr.plugins.local_privacy_guard.helpers.instance import manager
     instance=manager()
     if instance is not None:return owner,instance.local_config(owner)
+    if owner.context.get_data('privacy_agent_chat_policy') is not None:
+        raise ValueError('Restore central privacy protection before continuing this Developer chat.')
     if not (Path(__file__).parents[1]/'plugin.yaml').is_file() or 'local_privacy_guard' not in plugins.get_enabled_plugins(owner):
         return owner,None
     cfg = agent_scope.configuration(owner)
@@ -119,15 +123,26 @@ class _CheckedText(str):
     def __getnewargs__(self):return (str(self),self._proof[1],self._proof[2])
 
 class PayloadFilter:
-    def __init__(self, agent, config, external):
+    def __init__(self, agent, config, external, *, _mapping=None):
         self.agent = agent
+        self.config = deepcopy(config)
         self.external = external
         self.settings = config.get("pii_filter", {})
         if self.settings.get('action','redact') not in {'redact','block','log_only'}:
             raise ValueError('Invalid text filter action. Choose replacement, blocking or logging only in privacy settings.')
         self.detected_count=0
         self.started=time.perf_counter()
-        self.mapping = mapping_for(agent)
+        if _mapping is not None:
+            self.mapping=_mapping
+        elif self.settings.get('enabled',True):
+            self.mapping = mapping_for(agent)
+        else:
+            # Do not read historical mappings for a Secret-only call.
+            class NoMapping:
+                namespace=configuration({'chat':agent.context.id,'policy':config.get('_privacy_policy',{})})[:16]
+                metrics={'database_seconds':0,'sql_statements':0}
+                def snapshot(self):return (0,[])
+            self.mapping = NoMapping()
         self.snapshot = self.mapping.snapshot()
         detector_settings=dict(self.settings if self.settings.get('enabled',True) else {'use_regex':False,'use_ner':False})
         detector_settings['_cache_scope']=self.mapping.namespace
@@ -151,6 +166,12 @@ class PayloadFilter:
             self.known_secrets = [scope.key(scope.from_agent(agent))]
         except (ImportError, ValueError):
             pass
+
+    def for_output(self):
+        # Refresh known input tokens while retaining the admitted PII mode.
+        result=PayloadFilter(self.agent,self.config,False,_mapping=self.mapping)
+        result.known_secrets=list(dict.fromkeys([*self.known_secrets,*result.known_secrets]))
+        return result
 
     def log_summary(self,phase):
         if not self.settings.get('log_detections',False):return
@@ -303,7 +324,7 @@ class PayloadFilter:
                 else:
                     result[safe_key]=self.value(item,_data=_data or key in {'args','arguments','output'},
                         code_hint=hint if key in {'code','source','content','text'} else '')
-            if isinstance(result.get('tool_name'),str):
+            if self.settings.get('enabled',True) and isinstance(result.get('tool_name'),str):
                 candidate=self.mapping.restore(result['tool_name'])
                 if self._native_tool_id(candidate):result['tool_name']=candidate
             return result
@@ -320,7 +341,7 @@ class PayloadFilter:
         return deepcopy(value)
 
 
-def prepare(wrapper, args, kwargs, method):
+def prepare(wrapper, args, kwargs, method, *, _with_pipeline=False):
     agent = wrapper._privacy_agent()
     if agent is None:
         raise ValueError("The privacy owner is unavailable; rebuild the model.")
@@ -342,7 +363,7 @@ def prepare(wrapper, args, kwargs, method):
             if key in bound.arguments:
                 bound.arguments[key] = pipeline.value(bound.arguments[key])
         messages=bound.arguments.get("messages")
-        if messages and any("_V" in token for token,_,_ in pipeline.snapshot[1]):
+        if pipeline.settings.get('enabled',True) and messages and any("_V" in token for token,_,_ in pipeline.snapshot[1]):
             from langchain_core.messages import SystemMessage
             messages.insert(0,SystemMessage(content="Privacy placeholder tokens sharing a namespace, type and numeric ID denote the same identity. A trailing _V number only preserves a spelling or short-name variant. Preserve exact tokens in replies."))
         extras = bound.arguments.get("kwargs", {})
@@ -352,13 +373,15 @@ def prepare(wrapper, args, kwargs, method):
         # Normalize positional callbacks too, so buffering cannot be bypassed.
         normalized={k:v for k,v in bound.arguments.items() if k not in {"kwargs","self"}}
         pipeline.log_summary('Model input')
-        return (), {**extras,**normalized}
+        result=((), {**extras,**normalized})
+        return (*result,pipeline,config) if _with_pipeline else result
     copied = dict(kwargs)
     for key in CONTENT_OPTIONS:
         if key in copied or key in wrapper._privacy_inner.kwargs:
             copied[key]=pipeline.value(copied.get(key,wrapper._privacy_inner.kwargs.get(key)))
     messages=pipeline.value(args[0]);pipeline.log_summary('Model input')
-    return (messages, *args[1:]), copied
+    result=((messages, *args[1:]), copied)
+    return (*result,pipeline,config) if _with_pipeline else result
 
 
 class PrivacyWrapper(LiteLLMChatWrapper):
@@ -383,7 +406,10 @@ class PrivacyWrapper(LiteLLMChatWrapper):
             if progress is None:progress=agent.context.log.log(type='info',heading='Local Privacy Guard',content=message)
             elif hasattr(progress,'update'):progress.update(content=message)
         status('Checking model input locally.')
-        args, kwargs = prepare(self, args, kwargs, method)
+        args, kwargs, pipeline, config = prepare(self, args, kwargs, method,_with_pipeline=True)
+        from usr.plugins.local_privacy_guard.helpers import transport_admission
+        transport_admission.install()
+        admission=transport_admission.receipt.set(transport_admission.capture(pipeline.agent,config))
         status('Input checked. The selected model is processing the request.')
         model_started=time.perf_counter()
         callbacks={key:kwargs.get(key) for key in ("response_callback","reasoning_callback")}
@@ -398,10 +424,13 @@ class PrivacyWrapper(LiteLLMChatWrapper):
             kwargs['tokens_callback']=count_only
         marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
         try:result=await getattr(self._privacy_inner,method)(*args,**kwargs)
-        finally:filtered_call.reset(marker)
+        finally:
+            filtered_call.reset(marker)
+            transport_admission.receipt.reset(admission)
         model_seconds=time.perf_counter()-model_started
         status(f'Model processing finished ({model_seconds:.3f}s). Checking the response locally.')
-        pipeline=self.output_filter()
+        # An admitted request keeps its original mode even after a revocation.
+        pipeline=pipeline.for_output()
         if method=="unified_call":
             response,reasoning=result
             response,reasoning=pipeline.text(response),pipeline.text(reasoning)
@@ -432,22 +461,32 @@ class PrivacyWrapper(LiteLLMChatWrapper):
         return await self.buffered_call("unified_turn",args,kwargs)
 
     def _call(self, messages, stop=None, run_manager=None, **kwargs):
-        args, kwargs = prepare(self, (messages,), kwargs, "_call")
+        args, kwargs, pipeline, config = prepare(self, (messages,), kwargs, "_call",_with_pipeline=True)
+        from usr.plugins.local_privacy_guard.helpers import transport_admission
+        transport_admission.install()
+        admission=transport_admission.receipt.set(transport_admission.capture(pipeline.agent,config))
         marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
         try:result=self._privacy_inner._call(*args, stop=stop, run_manager=run_manager, **kwargs)
-        finally:filtered_call.reset(marker)
-        return self.output_filter().text(result)
+        finally:
+            filtered_call.reset(marker)
+            transport_admission.receipt.reset(admission)
+        return pipeline.for_output().text(result)
 
     def _stream(self, messages, stop=None, run_manager=None, **kwargs):
-        args, kwargs = prepare(self, (messages,), kwargs, "_stream")
+        args, kwargs, pipeline, config = prepare(self, (messages,), kwargs, "_stream",_with_pipeline=True)
+        from usr.plugins.local_privacy_guard.helpers import transport_admission
+        transport_admission.install()
+        admission=transport_admission.receipt.set(transport_admission.capture(pipeline.agent,config))
         result=None
         marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
         try:
             for chunk in self._privacy_inner._stream(*args, stop=stop, run_manager=None, **kwargs):
                 result=chunk if result is None else result+chunk
-        finally:filtered_call.reset(marker)
+        finally:
+            filtered_call.reset(marker)
+            transport_admission.receipt.reset(admission)
         if result is not None:
-            pipeline=self.output_filter()
+            pipeline=pipeline.for_output()
             result.message=pipeline.value(result.message)
             result.text=pipeline.text(result.text)
             result.generation_info=pipeline.value(result.generation_info)
@@ -455,15 +494,20 @@ class PrivacyWrapper(LiteLLMChatWrapper):
             yield result
 
     async def _astream(self, messages, stop=None, run_manager=None, **kwargs):
-        args, kwargs = prepare(self, (messages,), kwargs, "_astream")
+        args, kwargs, pipeline, config = prepare(self, (messages,), kwargs, "_astream",_with_pipeline=True)
+        from usr.plugins.local_privacy_guard.helpers import transport_admission
+        transport_admission.install()
+        admission=transport_admission.receipt.set(transport_admission.capture(pipeline.agent,config))
         result=None
         marker=filtered_call.set((self._privacy_inner,self._privacy_agent()))
         try:
             async for chunk in self._privacy_inner._astream(*args, stop=stop, run_manager=None, **kwargs):
                 result=chunk if result is None else result+chunk
-        finally:filtered_call.reset(marker)
+        finally:
+            filtered_call.reset(marker)
+            transport_admission.receipt.reset(admission)
         if result is not None:
-            pipeline=self.output_filter()
+            pipeline=pipeline.for_output()
             result.message=pipeline.value(result.message)
             result.text=pipeline.text(result.text)
             result.generation_info=pipeline.value(result.generation_info)
@@ -521,14 +565,25 @@ def filter_native(data):
     data["args"] = (wrapper,)
     data["kwargs"] = kwargs
     pipeline.log_summary('Tool model input')
+    from usr.plugins.local_privacy_guard.helpers import transport_admission
+    transport_admission.install()
+    data['_privacy_pipeline']=pipeline
+    if config.get('_privacy_policy',{}).get('mode')=='unmasked':
+        data['_privacy_admission']=transport_admission.receipt.set(transport_admission.capture(owner,config))
 
 
 async def filter_native_result(data):
+    from usr.plugins.local_privacy_guard.helpers import transport_admission
+    token=data.pop('_privacy_admission',None)
+    if token is not None:transport_admission.receipt.reset(token)
     agent=tool_agent.get()
     if agent is None or data.get("exception") is not None:return
-    owner,config=owner_and_config(agent)
-    if config is None:return
-    pipeline=PayloadFilter(owner,config,False)
+    pipeline=data.pop('_privacy_pipeline',None)
+    if pipeline is None:
+        owner,config=owner_and_config(agent)
+        if config is None:return
+        pipeline=PayloadFilter(owner,config,False)
+    else:pipeline=pipeline.for_output()
     include_transport_credentials(pipeline,data['args'][0])
     result=data.get("result")
     if isinstance(result,tuple) and len(result)==2:
