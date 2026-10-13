@@ -25,7 +25,7 @@ tool_agent = ContextVar("local_privacy_tool_agent", default=None)
 filtered_call = ContextVar('local_privacy_filtered_call',default=None)
 INSTANCE_API_VERSION=2
 CONTENT_OPTIONS=('tools','response_format','a0_responses_function_tools','responses_input_items',
-                 'responses_local_input_items','responses_prompt_replacements')
+                 'responses_local_input_items','responses_prompt_replacements','responses_history_context')
 SAFE_KINDS=set(UNIVERSAL_PATTERNS)|{key for patterns in LANGUAGE_PATTERNS.values() for key in patterns}|{
     kind for mapping in LABEL_MAPS.values() for kind in mapping.values()}|{'CUSTOM','MISC','CARDINAL','MONEY'}
 
@@ -441,6 +441,7 @@ class PrivacyWrapper(LiteLLMChatWrapper):
             result.input_items=pipeline.value(result.input_items)
             for item in result.output_items:item.data=pipeline.value(item.data)
             result.raw=pipeline.value(result.raw)
+            if hasattr(result,'history_extras'):result.history_extras=pipeline.text(result.history_extras)
             response,reasoning=result.response,result.reasoning
         pipeline.log_summary('Model output')
         status(f'Input and response checked locally. Model processing {model_seconds:.3f}s; output preparation {time.perf_counter()-pipeline.started:.3f}s.')
@@ -594,6 +595,7 @@ async def filter_native_result(data):
         result.input_items=pipeline.value(result.input_items)
         for item in result.output_items:item.data=pipeline.value(item.data)
         result.raw=pipeline.value(result.raw)
+        if hasattr(result,'history_extras'):result.history_extras=pipeline.text(result.history_extras)
         data['result']=result
     pipeline.log_summary('Tool model output')
     result=data.get('result')

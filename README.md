@@ -1,4 +1,5 @@
 > **A0 Privacy Suite 0.9.3 - community beta.** Independently developed for local Agent Zero installations. Not a Requesty product; not affiliated with or endorsed by Requesty. Requesty is the external routing service used by the Model Gateway. All three components share version 0.9.3. Older numbers in historical reports document previous tests, not current requirements.
+> **Agent Zero 2.14:** this branch includes the required Responses-history extras correction. Published 0.9.3 archives predate it. See [compatibility validation](docs/A0-2.14-COMPATIBILITY.md) before upgrading A0.
 
 <div align="center">
   <img src="assets/icon.svg" width="150" alt="A0 Privacy Suite - Local Guard Logo" />

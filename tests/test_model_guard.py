@@ -564,3 +564,79 @@ def test_old_false_intro_mapping_does_not_hide_grammar(environment):
     masked=pipeline.text('ich bin Herr Max Mustermann')
     assert masked=='ich bin Herr '+name
     assert pipeline.mapping.restore(old)=='ich bin Herr'
+
+
+# Agent Zero 2.14 adds a separate extras snapshot to Responses history.
+def test_responses_history_extras_are_filtered_at_projected_transport(environment):
+    guard,agent,config=environment
+    import models
+    from helpers.litellm_transport import LiteLLMTransport
+    from helpers.llm_result import LLMResult
+    if 'history_extras' not in LLMResult.__dataclass_fields__:
+        pytest.skip('Responses extras snapshots require Agent Zero 2.14')
+    from langchain_core.messages import SystemMessage,HumanMessage
+    from copy import deepcopy
+    captured=[]
+    class Projecting(models.LiteLLMChatWrapper):
+        async def unified_call(self,*args,**kwargs):
+            transport=LiteLLMTransport(model=self.model_name,
+                messages=self._convert_messages(kwargs['messages']),kwargs=kwargs)
+            captured.append(transport._responses_request(stream=False))
+            return '<ok/>',''
+    data={'result':Projecting(model='synthetic',provider='openai')};guard.bind(data,agent)
+    prefix=[{'role':'system','content':'Rules'},{'role':'user','content':'Question'}]
+    prompt=deepcopy(prefix);prompt[-1]['content']+='\nCurrent context'
+    context={'prompt':prompt,'prefix':prefix,'groups':[],'extras':'Contact anna@example.com'}
+    original=deepcopy(context)
+    asyncio.run(data['result'].unified_call(messages=[SystemMessage(content='Rules'),
+        HumanMessage(content='Question\nCurrent context')],a0_api_mode='responses',responses_state='local',
+        a0_responses_function_tools=[{'type':'function','name':'lookup',
+            'parameters':{'type':'object','properties':{}}}],responses_history_context=context))
+    encoded=str(captured)
+    assert 'anna@example.com' not in encoded
+    assert '[LPG_' in encoded
+    assert context==original
+
+
+def test_responses_history_sidechannel_secrets_block_before_transport(environment):
+    guard,agent,config=environment
+    import models
+    called=[]
+    class Forwarding(models.LiteLLMChatWrapper):
+        async def unified_call(self,*args,**kwargs):called.append(kwargs);return '<ok/>',''
+    data={'result':Forwarding(model='synthetic',provider='openai')};guard.bind(data,agent)
+    with pytest.raises(ValueError):
+        asyncio.run(data['result'].unified_call(user_message='Safe',responses_history_context={
+            'prompt':[],'prefix':[],'groups':[],'extras':'password="LongSyntheticPassword999"'}))
+    assert not called
+
+
+def test_responses_result_extras_masked_before_metadata_persistence(environment):
+    guard,agent,config=environment
+    import models
+    from helpers.llm_result import LLMResult
+    if 'history_extras' not in LLMResult.__dataclass_fields__:
+        pytest.skip('Responses extras snapshots require Agent Zero 2.14')
+    original=LLMResult(response='Safe',history_extras='Contact anna@example.com')
+    class Forwarding(models.LiteLLMChatWrapper):
+        async def unified_turn(self,*args,**kwargs):return original
+    data={'result':Forwarding(model='synthetic',provider='openai')};guard.bind(data,agent)
+    result=asyncio.run(data['result'].unified_turn(user_message='Safe'))
+    assert 'anna@example.com' not in str(result.metadata())
+    assert guard.mapping_for(agent).restore(result.history_extras)==original.history_extras
+    assert original.history_extras=='Contact anna@example.com'
+
+
+def test_direct_responses_result_extras_masked_before_metadata_persistence(environment):
+    guard,agent,config=environment
+    import models
+    from helpers.llm_result import LLMResult
+    if 'history_extras' not in LLMResult.__dataclass_fields__:
+        pytest.skip('Responses extras snapshots require Agent Zero 2.14')
+    wrapper=models.LiteLLMChatWrapper(model='synthetic',provider='openai')
+    data={'args':(wrapper,), 'result':LLMResult(response='Safe',history_extras='anna@example.com')}
+    marker=guard.tool_agent.set(agent)
+    try:asyncio.run(guard.filter_native_result(data))
+    finally:guard.tool_agent.reset(marker)
+    assert 'anna@example.com' not in str(data['result'].metadata())
+    assert guard.mapping_for(agent).restore(data['result'].history_extras)=='anna@example.com'
