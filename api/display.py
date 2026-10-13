@@ -21,7 +21,7 @@ class Display(ApiHandler):
             return {"ok":True,"texts":texts,"media":False,"route":None}
         masking=config.get('pii_filter',{}).get('enabled',True)
         mapping = mapping_for(context.agent0) if masking else None
-        return {"ok":True,"texts":[mapping.restore(t) for t in texts] if mapping else texts,
+        return {"ok":True,"texts":mapping.restore_many(texts, recover_types=True) if mapping else texts,
             "media":bool(context.get_data("local_privacy_media")), "route":context.get_data("local_privacy_media_route"),
             "protection":{"last_route":context.get_data('local_privacy_route'),
                 "owner_profile":owner.config.profile,"inherited":owner.context is not context,
