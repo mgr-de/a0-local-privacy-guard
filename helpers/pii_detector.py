@@ -391,7 +391,7 @@ class PIIFilter:
         "iban", "ready", "okay", "confirm", "summarize", "bestätige",
         "geschäftspartner", "partner", "partnership", "contacts",
         "user", "assistant", "agent", "agent zero", "response", "tool", "tools",
-        "css", "html", "javascript", "playwright", "json", "vision_load", "code_execution_tool", "call_subordinate", "english", "german",
+        "css", "html", "javascript", "python", "typescript", "playwright", "json", "vision_load", "code_execution_tool", "call_subordinate", "english", "german",
         "browser", "skills_tool", "memory_load", "memory_save", "memory_delete",
         "text_editor", "text_editor_remote", "a0", "workdir", "paths", "query",
         "action", "text", "selector", "ref", "browser_id", "value", "type",
@@ -584,19 +584,32 @@ class PIIFilter:
         merged = sorted(regex_dets + selected_ner, key=lambda d: d.start)
         return merged
 
-    def filter(self, text: str) -> FilterResult:
+    def filter(self, text: str, *, code_hint: str = '') -> FilterResult:
         """Filter PII from text."""
         if not text:
             return FilterResult(original_text="", filtered_text="", detections=[], mapping={})
 
         all_detections: List[PIIDetection] = []
+        from usr.plugins.local_privacy_guard.helpers.code_regions import analysis_text
+        scan = analysis_text(text, code_hint)
+        strong = {'EMAIL', 'IBAN', 'IBAN_DE', 'API_KEY'}
+        strong.update(pattern.get('name', 'CUSTOM') for pattern in self.config.get('custom_patterns', []))
 
         if self.use_regex:
             started=time.perf_counter()
-            all_detections.extend(self._detect_regex(text))
+            all_detections.extend(self._detect_regex(scan))
+            if scan != text:
+                # Explicit custom rules and recognizable contact/key formats
+                # also cover unquoted code; numeric syntax is preserved.
+                all_detections.extend(hit for hit in self._detect_regex(text) if hit.pii_type in strong)
             self.metrics['regex_seconds']+=time.perf_counter()-started
         if self.use_ner:
-            all_detections.extend(self._detect_ner(text))
+            all_detections.extend(self._detect_ner(scan))
+
+        # A recognition span must never bridge masked syntax between literals.
+        all_detections = [hit for hit in all_detections if
+            scan[hit.start:hit.end] == text[hit.start:hit.end] or
+            (hit.source == 'regex' and scan != text and hit.pii_type in strong)]
 
         detections = self._merge_detections(all_detections)
 
