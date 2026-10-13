@@ -1,6 +1,6 @@
 # Security policy
 
-A0 Privacy Suite is an independent community beta for local Agent Zero installations. Version 0.9.2 is supported on a best-effort basis; older releases and evaluation archive branches are not supported for new deployments. There is no security audit certification or completeness guarantee.
+A0 Privacy Suite is an independent community beta for local Agent Zero installations. Version 0.9.3 is supported on a best-effort basis; older releases and evaluation archive branches are not supported for new deployments. There is no security audit certification or completeness guarantee.
 
 ## Report privately
 
