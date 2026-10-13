@@ -12,5 +12,6 @@ def manager():
         from usr.plugins.requesty_privacy_agent.helpers import manager as implementation
     except ImportError:
         raise ValueError('Privacy Agent is active but its manager is missing. Restore the plugin or deactivate centrally.') from None
+    if not getattr(implementation,'local_guard_enabled',lambda:True)():return None
     implementation.require_components()
     return implementation
