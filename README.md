@@ -1,4 +1,4 @@
-> **A0 Privacy Suite 0.9.1 - community beta.** Independently developed for local Agent Zero installations. Not a Requesty product; not affiliated with or endorsed by Requesty. Requesty is the external routing service used by the Model Gateway. All three components share version 0.9.1. Older numbers in historical reports document previous tests, not current requirements.
+> **A0 Privacy Suite 0.9.2 - community beta.** Independently developed for local Agent Zero installations. Not a Requesty product; not affiliated with or endorsed by Requesty. Requesty is the external routing service used by the Model Gateway. All three components share version 0.9.2. Older numbers in historical reports document previous tests, not current requirements.
 
 <div align="center">
   <img src="assets/icon.svg" width="150" alt="A0 Privacy Suite - Local Guard Logo" />
@@ -13,13 +13,13 @@
 
 ## What does this plugin do?
 
-Version **0.9.1** retains local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
+Version **0.9.2** retains local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
 
-With A0 Privacy Suite - Manager **0.9.1**, an instance operator can explicitly grant **new Developer chats** an exception from PII masking. The default stays masked. Secret checks, existing Requesty routes and local embeddings remain required; the Secret-only path uses no spaCy model or historical mapping. Supported outgoing text, tool/function payloads and responses retain Secret screening and buffered output. PII tokenization and local tool/display restoration are skipped. Old chats and protected Memory are not migrated; Developer Memory has its own project/profile-generation/mode identity.
+With A0 Privacy Suite - Manager **0.9.2**, an instance operator can explicitly grant **new Developer chats** an exception from PII masking. The default stays masked. Secret checks, existing Requesty routes and local embeddings remain required; the Secret-only path uses no spaCy model or historical mapping. Supported outgoing text, tool/function payloads and responses retain Secret screening and buffered output. PII tokenization and local tool/display restoration are skipped. Old chats and protected Memory are not migrated; Developer Memory has its own project/profile-generation/mode identity.
 
 Each unmasked provider attempt is reauthorized at the native LiteLLM dispatch boundary after rate limiting; internal provider retries are disabled. Revocation blocks further calls of that chat, including subordinate calls. Already admitted calls may finish in their original output mode with mandatory Secret checks. Changed profile/project, imported policy or missing authority block further calls; regrant never reactivates old receipts. This exception can transmit personal data from the **entire model context** without masking. Image, browser, raw-tool network and filesystem protection retain their existing limits. [Operator setup](https://github.com/mgr-de/a0-requesty-privacy-agent#developer-ohne-maskierung).
 
-### Standardschutz in 0.9.1
+### Standardschutz in 0.9.2
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
@@ -318,7 +318,7 @@ Die nativen Speicher- und Auswahladapter werden beim A0-Start eingerichtet, sind
 
 ## Fixed local detector and incremental filtering
 
-Version 0.9.1 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
+Version 0.9.2 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
 
 Backend selection and optional model-package installation have been removed from Advanced settings. Old `backend: presidio` or `backend: nym` settings are interpreted by the fixed local detector; their files are not rewritten. Unknown backend values still fail validation. Other detectors are not loaded, downloaded or used as fallbacks.
 
@@ -328,9 +328,9 @@ For primarily local installations without external access, Manager 0.3.1 makes t
 
 ## Suite versioning and existing installations
 
-All three components use the same suite version. 0.9.1 starts the unified community beta numbering and replaces the former Local Guard 1.9.0, Model Gateway 0.6.1 and Manager 0.3.3; it does not remove their functionality. Patch versions (0.9.x) cover fixes, later 0.x minor versions cover feature or compatibility changes, and 1.0 is reserved for a separately decided stable release. Versions below 1.0 do not promise a stable public API. Update all three components together through the native Git plugin updater and restart Agent Zero; older Local Guard metadata has a higher number, so an installer that refuses downgrades may require the explicit Git update. Do not uninstall or delete user data to change the name. Existing internal IDs, repository URLs, keys, mappings and stored presets remain valid. Historical tags and reports remain unchanged; new packages are marked as pre-releases.
+All three components use the same suite version. 0.9.2 starts the unified community beta numbering and replaces the former Local Guard 1.9.0, Model Gateway 0.6.1 and Manager 0.3.3; it does not remove their functionality. Patch versions (0.9.x) cover fixes, later 0.x minor versions cover feature or compatibility changes, and 1.0 is reserved for a separately decided stable release. Versions below 1.0 do not promise a stable public API. Update all three components together through the native Git plugin updater and restart Agent Zero; older Local Guard metadata has a higher number, so an installer that refuses downgrades may require the explicit Git update. Do not uninstall or delete user data to change the name. Existing internal IDs, repository URLs, keys, mappings and stored presets remain valid. Historical tags and reports remain unchanged; new packages are marked as pre-releases.
 
-## Community beta 0.9.1: compatibility and installation
+## Community beta 0.9.2: compatibility and installation
 
 Test target: Agent Zero 2.13 on Linux Docker, framework Python 3.12, CPU-only privacy detection. The exact image/framework commit and observed cold-install/download measurements are recorded in `docs/COMMUNITY-BETA-VALIDATION.md`. Other versions and deployment types have not been certified. This is independent community software, not an official Requesty product.
 
