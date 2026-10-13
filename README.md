@@ -11,7 +11,9 @@
 
 ## What does this plugin do?
 
-### Standardschutz in 1.5.0
+Version **1.8.0** adds local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
+
+### Standardschutz in 1.8.0
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
@@ -71,7 +73,7 @@ Similarly, Agent Zero's default memory embedding configuration may use external 
 
 | Architecture Overview | PII Filter Demo |
 |:---:|:---:|
-| ![Architecture Overview](docs/screenshots/architecture_demo.png) | ![PII Filter Demo](docs/screenshots/pii_filter_demo.png) |
+| ![Architecture Overview](docs/screenshots/privacy_architecture.svg) | ![PII Filter Demo](docs/screenshots/pii_filter_demo.png) |
 
 | Plugin Settings | Startup Verification |
 |:---:|:---:|
@@ -90,7 +92,7 @@ The PII filter supports **multiple languages simultaneously**. Select which lang
 | 🇵🇹 Português | `pt` | `pt_core_news_sm` | — |
 | 🇵🇱 Polski | `pl` | `pl_core_news_sm` | — |
 
-> ⚠️ **Note**: Each additional language requires its spaCy model (~50-100 MB RAM). Select only languages you actually need.
+> Each additional language requires its spaCy model and additional memory. Actual memory use depends on the loaded models and workload. Select only languages you need.
 
 ---
 
@@ -207,7 +209,7 @@ Choose an explicit Agent profile in the settings toolbar, enable protection and 
 3. Text with **detected details replaced** is sent on supported calls in redact mode; missed details can remain
 4. **Memory embeddings** are computed locally when configured successfully; recalled memory text can still be sent to a helper model
 
-### Example
+### Illustrative example
 
 Original details remain readable in the local browser. The relevant privacy boundary is the outgoing model request. Version 1.4 uses persistent unique placeholders and restores replies for local display. Model replies can still invent identities, damage placeholders or confuse relationships; detection is imperfect. The older type-token example below is illustrative only. See [current test results](docs/STANDARD-TEST-RESULTS.md) and [the historical comparison](docs/PII-TEST-RESULTS.md).
 
@@ -221,7 +223,7 @@ Original details remain readable in the local browser. The relevant privacy boun
 
 ## Requirements
 
-- Agent Zero (latest version)
+- Agent Zero 2.13 (the native integration tested here)
 - Python packages: `spacy`, `sentence-transformers` (installed automatically)
 - spaCy language models:
   - `en_core_web_sm` — **required** (always loaded)
@@ -231,9 +233,9 @@ Original details remain readable in the local browser. The relevant privacy boun
 
 ## Privacy & Security
 
-- 🏠 **100% local processing** — no data is sent to external services for PII detection
-- ✅ **No telemetry** — the plugin does not phone home
-- 🔌 **No external API calls** — all detection and embedding is done locally
+- 🏠 **Local detection** — spaCy and Regex inspect text on your device; no hosted detector is used
+- 🔌 **Local embeddings** — configured sentence-transformers embeddings run locally; installation/preparation may download packages and weights
+- **Model requests** — remaining text can still be sent to the configured model service; local detection does not make that service local
 - ✅ **Open source** — audit the code yourself
 - ⚠️ **Local mappings** — redact mode stores original details in chat-owned mapping files. Protect and back up local storage; the legacy `store_mapping` flag does not disable runtime persistence.
 
@@ -282,7 +284,7 @@ To add support for a new language:
 
 ## Current standard-protection validation
 
-See [1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Local models remain native Agent Zero choices; no local-server metadata or weight checks are performed by these plugins. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.
+See [the fixed-detector validation](docs/SINGLE-DETECTOR-VALIDATION.md), [current code handling](docs/CODE-FILTERING.md) and [historical 1.4 / 0.4 test results](docs/STANDARD-TEST-RESULTS.md) for native routes, multilingual sessions, secrets, inherited subordinate policy, images and the partly manual form test. Historical comparison reports describe earlier code. Installation/update hooks create owned native adapters for inherited policies, with ownership journals outside the plugin ZIP; restart Agent Zero after installation/update. Independent other-profile chats are unaffected. Local models remain native Agent Zero choices; no local-server metadata or weight checks are performed by these plugins. Full mappings contain local original values; malformed/truncated model tokens cannot reliably be restored, and truncated native chat titles use a neutral caption.
 
 See [the 12 October correction](docs/KORREKTUR-2026-10-12.md): effective Requesty model labels replace misleading shared-default labels in protected chats, without changing presets. Provider-specific local-server probes were removed.
 
@@ -293,7 +295,7 @@ See [test environment and settings entry](docs/TEST-ENVIRONMENT.md) for the fixe
 
 Endgültige Chatlöschung über Agent Zeros `/api/chat_remove` entfernt die zugehörigen Zuordnungen und SQLite-Nebendateien. Archivierung behält sie. Config bietet außerdem eine ausdrücklich bestätigte Löschung nur der Zuordnungen; alte Platzhalter lassen sich danach nicht zurückübersetzen. Chattexte, Speicher, Sicherungen und externe Logs werden dadurch nicht entfernt.
 
-Der synthetische [Sprachkorpus](tests/fixtures/multilingual_sessions.json) umfasst DE, EN, FR, ES, IT, NL, PL und gemischte Sitzungen mit vier Personen über 40 und 100 Nachrichten. [Der lokale Runner](tools/privacy_benchmark/language_sessions.py) bewertet Erkennung, Rückübersetzung, Tokenkontinuität, Kontextkürzung und Wiederöffnung von Zuordnungen. Er ist kein Test generierter Modellantworten und kein allgemeiner PII-Erkennungsnachweis. Erforderliche spaCy-Sprachmodelle müssen vorhanden sein; es wird kein lokaler Chat-LLM vorausgesetzt.
+Der synthetische [Sprachkorpus](tests/fixtures/multilingual_sessions.json) umfasst DE, EN, FR, ES, IT, NL, PL und gemischte Sitzungen mit vier Personen über 40 und 100 Nachrichten. [Der archivierte Vergleichsrunner](https://github.com/mgr-de/a0-local-privacy-guard/blob/archive/cpu-pii-evaluation-2026-10-13/tools/privacy_benchmark/language_sessions.py) bewertet Erkennung, Rückübersetzung, Tokenkontinuität, Kontextkürzung und Wiederöffnung von Zuordnungen. Er ist kein Test generierter Modellantworten und kein allgemeiner PII-Erkennungsnachweis. Erforderliche spaCy-Sprachmodelle müssen vorhanden sein; es wird kein lokaler Chat-LLM vorausgesetzt.
 
 [Requesty Privacy Agent](https://github.com/mgr-de/a0-requesty-privacy-agent) nutzt dieses Plugin für installationsweite Mindestregeln. Ohne aktivierten Manager bleibt die bestehende profilbezogene Nutzung erhalten. [Aktuelle Einführung und Grenzen](docs/INSTANCE-PRIVACY-PLAN.md).
 
@@ -310,7 +312,7 @@ Die nativen Speicher- und Auswahladapter werden beim A0-Start eingerichtet, sind
 
 ## Fixed local detector and incremental filtering
 
-Version 1.7.4 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
+Version 1.8.0 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
 
 Backend selection and optional model-package installation have been removed from Advanced settings. Old `backend: presidio` or `backend: nym` settings are interpreted by the fixed local detector; their files are not rewritten. Unknown backend values still fail validation. Other detectors are not loaded, downloaded or used as fallbacks.
 

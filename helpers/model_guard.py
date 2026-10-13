@@ -19,6 +19,7 @@ from usr.plugins.local_privacy_guard.helpers import agent_scope
 from usr.plugins.local_privacy_guard.helpers.mapping import Mapping, TOKEN
 from usr.plugins.local_privacy_guard.helpers.pii_detector import PIIFilter, PIIDetection, UNIVERSAL_PATTERNS, LANGUAGE_PATTERNS, LABEL_MAPS
 from usr.plugins.local_privacy_guard.helpers.secrets import check
+from usr.plugins.local_privacy_guard.helpers.code_regions import analysis_text, POLICY_VERSION
 
 tool_agent = ContextVar("local_privacy_tool_agent", default=None)
 filtered_call = ContextVar('local_privacy_filtered_call',default=None)
@@ -143,7 +144,7 @@ class PayloadFilter:
             for language in self.filter.ner_languages:
                 model=pii_detector._get_nlp(language)
                 model_identity[language]={'identity':id(model),'meta':getattr(model,'meta',{})}
-        self.signature=configuration({'settings':self.settings,'models':model_identity,'cache_generation':spans.generation})
+        self.signature=configuration({'settings':self.settings,'models':model_identity,'cache_generation':spans.generation,'code_policy':POLICY_VERSION})
         self.known_secrets = []
         try:
             from usr.plugins.requesty.helpers import scope
@@ -158,7 +159,7 @@ class PayloadFilter:
         self.agent.context.log.log(type='info',heading='Local Privacy Guard',
             content=f'{phase}: {self.detected_count} replacements across the full model context ({description}); repeated occurrences are counted. Preparation {time.perf_counter()-self.started:.3f}s; NER {self.filter.metrics["ner_seconds"]:.3f}s, regex {self.filter.metrics["regex_seconds"]:.3f}s; cached units {self.filter.metrics["cache_hits"]}, new units {self.filter.metrics["ner_units"]}; database {self.mapping.metrics["database_seconds"]:.3f}s / {self.mapping.metrics["sql_statements"]} statements; {self.blocks} text blocks. Detection can miss details.')
 
-    def text(self, text):
+    def text(self, text, *, code_hint=''):
         self.blocks+=1
         check(text, self.known_secrets)
         trusted=isinstance(text,_CheckedText) and getattr(text,'_proof',None)==(_seal,self.mapping.namespace,self.signature,fingerprint(text))
@@ -181,6 +182,7 @@ class PayloadFilter:
         existing=[match for match in TOKEN.finditer(text) if match.group() in registered]
         scan = TOKEN.sub(lambda m: " "*len(m.group()) if m.group() in registered else m.group(),text)
         if not scan.strip():return text
+        known_scan = analysis_text(scan, code_hint)
         known = []
         entries = self.snapshot[1]
         aliases = {}
@@ -198,17 +200,20 @@ class PayloadFilter:
                 pattern=self._patterns.get(value)
                 if pattern is None:
                     pattern=re.compile(r"(?<!\w)"+re.escape(value)+r"(?!\w)",re.IGNORECASE);self._patterns[value]=pattern
-                for match in pattern.finditer(scan):
-                    known.append(PIIDetection(kind, match.group(), match.start(), match.end(), token, "known"))
+                for match in pattern.finditer(known_scan):
+                    if scan[match.start():match.end()] == match.group():
+                        known.append(PIIDetection(kind, match.group(), match.start(), match.end(), token, "known"))
         for alias, people in aliases.items():
             if len(set(token for token, _ in people)) == 1:
-                for match in re.finditer(r"(?<!\w)" + re.escape(alias) + r"(?=\b|'s\b|’s\b|s\b)", scan, re.IGNORECASE):
-                    known.append(PIIDetection("PERSON", match.group(), match.start(), match.end(), people[0][0], "known"))
+                for match in re.finditer(r"(?<!\w)" + re.escape(alias) + r"(?=\b|'s\b|’s\b|s\b)", known_scan, re.IGNORECASE):
+                    if scan[match.start():match.end()] == match.group():
+                        known.append(PIIDetection("PERSON", match.group(), match.start(), match.end(), people[0][0], "known"))
         # A complete known value cannot contain a larger new overlapping
         # identity. Reuse its mapping instead of rerunning NER on every repeat.
         complete_known=any(hit.start==0 and hit.end==len(scan) for hit in known)
         try:
-            detected = [] if complete_known or trusted else self.filter.filter(scan).detections
+            detected = [] if complete_known or trusted else (
+                self.filter.filter(scan, code_hint=code_hint) if code_hint else self.filter.filter(scan)).detections
         except Exception:
             raise ValueError('Local text detection failed. No model content was sent. Check the selected engine and installed models.') from None
         def larger_complete_value(detection,known_hit):
@@ -256,11 +261,11 @@ class PayloadFilter:
             return bool(subagents.get_paths(self.agent,'tools',value+'.py'))
         except (ImportError,AttributeError,ValueError):return False
 
-    def value(self, value, *, _data=False):
+    def value(self, value, *, _data=False, code_hint=''):
         if isinstance(value, str):
-            return self.text(value)
+            return self.text(value, code_hint=code_hint)
         if isinstance(value, list):
-            return [self.value(part,_data=_data) for part in value]
+            return [self.value(part,_data=_data,code_hint=code_hint) for part in value]
         if isinstance(value, dict):
             kind = value.get("type", "")
             # Never pretend that image bytes/URLs were protected by text scanning.
@@ -284,12 +289,20 @@ class PayloadFilter:
             # Protocol privileges come from the adapter, never from JSON
             # entered as text. Only registered tool IDs retain routing semantics.
             result={}
+            from usr.plugins.local_privacy_guard.helpers.code_regions import PYTHON, JAVASCRIPT, SUFFIXES
+            hint = code_hint
+            for field in ('language', 'filename', 'file_path', 'path'):
+                candidate = value.get(field)
+                if isinstance(candidate, str) and (candidate.lower() in PYTHON | JAVASCRIPT or any(candidate.lower().endswith(suffix) for suffix in SUFFIXES)):
+                    hint = candidate
+                    break
             for key,item in value.items():
                 safe_key=key if not isinstance(key,str) or re.fullmatch(r'[a-z_][A-Za-z0-9_]*',key) else self.text(key)
                 if (not _data and key in identifiers) or (key=='tool_name' and self._native_tool_id(item)):
                     result[safe_key]=deepcopy(item)
                 else:
-                    result[safe_key]=self.value(item,_data=_data or key in {'args','arguments','output'})
+                    result[safe_key]=self.value(item,_data=_data or key in {'args','arguments','output'},
+                        code_hint=hint if key in {'code','source','content','text'} else '')
             if isinstance(result.get('tool_name'),str):
                 candidate=self.mapping.restore(result['tool_name'])
                 if self._native_tool_id(candidate):result['tool_name']=candidate
