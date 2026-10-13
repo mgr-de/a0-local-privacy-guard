@@ -10,7 +10,7 @@ Only internally produced string objects may carry process-local inspection proof
 
 Native calls expose input preparation, model processing and output preparation separately. Diagnostics contain counts and durations, never content or fingerprints. Replacement counts cover repeated occurrences throughout the full model context, not unique people.
 
-No Ollama runtime, additional service, new model route or image/browser restriction is introduced. Presidio remains a separate optional second phase.
+No Ollama runtime, additional service, new model route or image/browser restriction is introduced. Version 1.7.4 retains spaCy/Regex as the sole production engine. Alternative-detector evaluations are preserved on the archive branch.
 
 ## Measured phase-1 result (12 October 2026)
 

@@ -9,7 +9,7 @@ pii_filter:
   enabled: true
   use_regex: true
   use_ner: true
-  backend: local  # Optional: presidio (DE/EN only; install optional dependencies first)
+  backend: local  # Fixed production engine: spaCy NER with shared regex rules
   action: redact
   log_detections: true
   # Legacy key retained for configuration compatibility. Runtime redact mode

@@ -402,9 +402,15 @@ class PIIFilter:
     def __init__(self, config: dict = None):
         self.config = config or {}
         self.scope = self.config.get('_cache_scope') or os.urandom(16)
-        self.backend = self.config.get('backend', 'local')
-        if self.backend not in {'local', 'presidio'}:
+        requested_backend = self.config.get('backend', 'local')
+        if requested_backend not in {'local', 'presidio', 'nym'}:
             raise ValueError('Unknown local detection backend.')
+        # Retired evaluation settings remain readable without rewriting user
+        # files or mapping rows. There is exactly one production detector.
+        self.backend = 'local'
+        self.config = {k: v for k, v in self.config.items()
+                       if not k.startswith(('nym_', 'presidio_'))}
+        self.config['backend'] = 'local'
         self.signature = configuration({k:v for k,v in self.config.items() if not k.startswith('_')})
         self.metrics = {'ner_seconds':0.0,'regex_seconds':0.0,'cache_hits':0,'ner_units':0,'characters':0}
         self.use_regex = self.config.get("use_regex", True)
@@ -420,9 +426,6 @@ class PIIFilter:
         if BASE_LANGUAGE not in ner_languages:
             ner_languages = [BASE_LANGUAGE] + list(ner_languages)
         self.ner_languages = ner_languages
-        if self.backend=='presidio':
-            from .presidio_backend import validate
-            validate(self.ner_languages)
         self.skip_words = set(self.NER_SKIP_WORDS)
         if self.use_ner:
             import importlib
@@ -525,16 +528,12 @@ class PIIFilter:
                     pending[key].append(i)
         for lang,work in jobs.items():
             with _nlp_lock:
-                if self.backend=='presidio':
-                    from .presidio_backend import detect_batch
-                    batches=detect_batch([w[1] for w in work],lang,work[0][3],self)
-                else:
-                    nlp=work[0][3]
-                    docs=nlp.pipe([w[1] for w in work],batch_size=32) if hasattr(nlp,'pipe') else (nlp(w[1]) for w in work)
-                    label_map=LABEL_MAPS.get(lang,{**LABEL_MAPS[BASE_LANGUAGE],'PER':'PERSON','persName':'PERSON','orgName':'ORGANISATION','placeName':'ORT','geogName':'ORT','date':'DATUM','time':'DATUM'})
-                    batches=([ (ent.start_char,ent.end_char,label_map.get(ent.label_,ent.label_),'ner',0.85,lang)
-                        for ent in doc.ents if (ent.label_ in self.ner_entity_types if self.ner_entity_types else ent.label_ in label_map)
-                        and not (len(ent.text.strip())==1 and ent.text.strip().isalpha()) ] for doc in docs)
+                nlp=work[0][3]
+                docs=nlp.pipe([w[1] for w in work],batch_size=32) if hasattr(nlp,'pipe') else (nlp(w[1]) for w in work)
+                label_map=LABEL_MAPS.get(lang,{**LABEL_MAPS[BASE_LANGUAGE],'PER':'PERSON','persName':'PERSON','orgName':'ORGANISATION','placeName':'ORT','geogName':'ORT','date':'DATUM','time':'DATUM'})
+                batches=([ (ent.start_char,ent.end_char,label_map.get(ent.label_,ent.label_),'ner',0.85,lang)
+                    for ent in doc.ents if (ent.label_ in self.ner_entity_types if self.ner_entity_types else ent.label_ in label_map)
+                    and not (len(ent.text.strip())==1 and ent.text.strip().isalpha()) ] for doc in docs)
                 for (i,unit,key,_),hits in zip(work,batches,strict=True):
                     hits=tuple(hits);spans.put(key,hits)
                     for position in pending[key]:results[(position,lang)]=hits

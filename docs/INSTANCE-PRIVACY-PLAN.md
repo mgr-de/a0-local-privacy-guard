@@ -1,3 +1,5 @@
+> Historical report / plan. The current production decision is spaCy + Regex only; see [PRODUCTION-DETECTOR.md](PRODUCTION-DETECTOR.md). Alternative detector code and evidence are preserved on `archive/cpu-pii-evaluation-2026-10-13`. Older install and backend-selection instructions below are not current release instructions.
+
 # Standardschutz, gemeinsamer Privacy Agent und gehärteter Ausblick
 
 ## Stand 12. Oktober 2026
