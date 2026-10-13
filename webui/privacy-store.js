@@ -17,21 +17,9 @@ export const store = createStore("localPrivacy", {
         }catch(e){if(epoch===this.epoch)toastFrontendError(e.message,'Local Privacy Guard');}
         finally{if(epoch===this.epoch)this.busy=false;}
     },
-    backendBusy:false, backendResult:null,
-    async setupPresidio(action='check') {
-        if(this.backendBusy)return;
-        this.backendBusy=true;const epoch=this.epoch;
-        try{
-            const result=await callJsonApi('plugins/local_privacy_guard/presidio_setup',{action});
-            if(epoch!==this.epoch)return;
-            this.backendResult=result;
-            if(!result.ok)throw new Error(result.error);
-        }catch(e){if(epoch===this.epoch)toastFrontendError(e.message,'Local Privacy Guard');}
-        finally{if(epoch===this.epoch)this.backendBusy=false;}
-    },
     busy: false, result: null, checkedConfig: "", checkedAt: "", error: "", epoch: 0,
     ocrPath: "", ocrText: "", ocrBusy: false, ocrError: "",
-    cleanup() { this.backendBusy=false; this.backendResult=null; this.confirmMappingDeletion=false; this.epoch++; this.busy = false; this.result = null; this.checkedConfig = ""; this.error = ""; this.ocrBusy=false; this.ocrPath=""; this.ocrText=""; this.ocrError=""; },
+    cleanup() { this.confirmMappingDeletion=false; this.epoch++; this.busy = false; this.result = null; this.checkedConfig = ""; this.error = ""; this.ocrBusy=false; this.ocrPath=""; this.ocrText=""; this.ocrError=""; },
     current(config) { return !!this.result && this.checkedConfig === JSON.stringify(config); },
     async runOcr() {
         if (this.ocrBusy || !this.ocrPath.trim()) return;

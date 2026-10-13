@@ -28,20 +28,7 @@ test('OCR is local, reports failures and discards results after close',async()=>
 });
 
 
-test('optional backend setup has fixed actions and ignores results after close',async()=>{
-  let request,resolve;
-  const s=setup((path,body)=>{request={path,body};return new Promise(r=>resolve=r);});
-  const pending=s.setupPresidio('install');
-  assert.equal(request.path,'plugins/local_privacy_guard/presidio_setup');
-  assert.deepEqual(JSON.parse(JSON.stringify(request.body)),{action:'install'});
-  assert.equal(s.backendBusy,true);
-  s.cleanup();resolve({ok:true,available:true,restart_required:true});await pending;
-  assert.equal(s.backendResult,null);assert.equal(s.backendBusy,false);
-});
-
-test('optional installation failure remains visible without changing the engine',async()=>{
-  const errors=[];const s=setup(async()=>({ok:false,error:'Install failed'}),message=>errors.push(message));
-  await s.setupPresidio('install');
-  assert.equal(s.backendResult.error,'Install failed');assert.deepEqual(errors,['Install failed']);
-  assert.equal(s.backendBusy,false);assert.equal(s.config,undefined);
+test('fixed detector exposes no optional package installer',()=>{
+  const s=setup(async()=>{throw new Error('No installation request expected');});
+  assert.equal(s.setupPresidio,undefined);assert.equal(s.backendBusy,undefined);
 });
