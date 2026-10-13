@@ -11,9 +11,9 @@
 
 ## What does this plugin do?
 
-Version **1.8.0** adds local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
+Version **1.8.1** adds local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
 
-### Standardschutz in 1.8.0
+### Standardschutz in 1.8.1
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 
@@ -312,7 +312,7 @@ Die nativen Speicher- und Auswahladapter werden beim A0-Start eingerichtet, sind
 
 ## Fixed local detector and incremental filtering
 
-Version 1.8.0 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
+Version 1.8.1 ships one production detector: spaCy NER together with built-in and custom Regex rules. The 32 MiB / 15 minute process-local span cache, paragraph batching, transactional mappings, secret checks and separate input/model/output timing remain in place. Existing tokens and saved profile settings are retained.
 
 Backend selection and optional model-package installation have been removed from Advanced settings. Old `backend: presidio` or `backend: nym` settings are interpreted by the fixed local detector; their files are not rewritten. Unknown backend values still fail validation. Other detectors are not loaded, downloaded or used as fallbacks.
 
