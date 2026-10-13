@@ -11,9 +11,13 @@
 
 ## What does this plugin do?
 
-Version **1.8.1** adds local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
+Version **1.9.0** retains local code recognition to the fixed spaCy/Regex detector. Supported source syntax and identifiers remain intact; comments, string literals, recognizable contacts and secrets continue to be checked. See [code handling and its limits](docs/CODE-FILTERING.md).
 
-### Standardschutz in 1.8.1
+With Requesty Privacy Agent **0.3.0**, an authenticated instance operator can explicitly grant **new Developer chats** an exception from PII masking. The default stays masked. Secret checks, existing Requesty routes and local embeddings remain required; the Secret-only path uses no spaCy model or historical mapping. Supported outgoing text, tool/function payloads and responses retain Secret screening and buffered output. PII tokenization and local tool/display restoration are skipped. Old chats and protected Memory are not migrated; Developer Memory has its own project/profile-generation/mode identity.
+
+Each unmasked provider attempt is reauthorized at the native LiteLLM dispatch boundary after rate limiting; internal provider retries are disabled. Revocation blocks further calls of that chat, including subordinate calls. Already admitted calls may finish in their original output mode with mandatory Secret checks. Changed profile/project, imported policy or missing authority block further calls; regrant never reactivates old receipts. This exception can transmit personal data from the **entire model context** without masking. Image, browser, raw-tool network and filesystem protection retain their existing limits. [Operator setup](https://github.com/mgr-de/a0-requesty-privacy-agent#developer-ohne-maskierung).
+
+### Standardschutz in 1.9.0
 
 Native Chat-, Utility-, Browser-/Vision- und Kompaktierungsaufrufe werden am Modellwrapper geprüft. Alle Textblöcke, Systemtexte und Werkzeugergebnisse werden berücksichtigt, ohne die lokal sichtbare Eingabe zu überschreiben. Erforderliche, fehlende Namenserkennungsmodelle stoppen externe Textaufrufe. Erkannte Secrets in Modellinhalten werden lokal blockiert; Transport-Credentials werden nicht als Promptinhalt behandelt.
 

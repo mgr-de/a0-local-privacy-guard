@@ -16,6 +16,9 @@ globalThis.document={createElement:tag=>new Element(tag),querySelector:selector=
 const state={localPrivacyDisplay:{media:true,route:{model:'test/vision',endpoint:'router.test'},
   protection:{owner_profile:'own',last_route:{model:'test/main'},text_filter:'redact',local_embeddings_configured:true}}};
 notice(state);notice(state);
+state.localPrivacyDisplay.protection.mode_label='PII-Maskierung aus · Secret-Prüfung aktiv';
+notice(state);
+assert.equal(document.getElementById('local-privacy-model-status').querySelector('summary').textContent,state.localPrivacyDisplay.protection.mode_label);
 assert.equal(host.children.length,3);
 assert.equal(host.children[2],row);
 assert.equal(row.children.length,1);
