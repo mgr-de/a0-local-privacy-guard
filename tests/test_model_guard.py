@@ -640,3 +640,99 @@ def test_direct_responses_result_extras_masked_before_metadata_persistence(envir
     finally:guard.tool_agent.reset(marker)
     assert 'anna@example.com' not in str(data['result'].metadata())
     assert guard.mapping_for(agent).restore(data['result'].history_extras)=='anna@example.com'
+
+
+
+def test_changed_placeholder_type_restores_only_unique_same_chat_identity(tmp_path):
+    from usr.plugins.local_privacy_guard.helpers.mapping import Mapping
+    mapping=Mapping(('','synthetic'), 'synthetic-chat', tmp_path)
+    token=mapping.token('PERSON','Anna Weber')
+    variant=mapping.token('PERSON','Anna',canonical=token)
+    changed=token.replace('_PERSON_', '_ORGANISATION_')
+    changed_variant=variant.replace('_PERSON_', '_DATUM_')
+    foreign=changed.replace(mapping.namespace, 'f'*16)
+    unknown=changed.replace('_1]', '_9000]')
+    wrong_variant=changed_variant.replace('_V2]', '_V9000]')
+    assert mapping.restore_many([changed,changed_variant,foreign,unknown,wrong_variant],recover_types=True)==[
+        'Anna Weber','Anna',foreign,unknown,wrong_variant]
+    assert Mapping(('','other-profile'),'synthetic-chat',tmp_path).restore(changed)==changed
+    # Historical duplicate identity is ambiguous: exact matches still work,
+    # but changing the type must not select an arbitrary original.
+    duplicate=token.replace('_PERSON_', '_ORT_')
+    with mapping.connect() as db:
+        db.execute('INSERT INTO mapping VALUES (?,?,?)',(duplicate,'ORT','Exampletown'))
+    assert mapping.restore(changed,recover_types=True)==changed
+    assert mapping.restore(token)=='Anna Weber'
+    assert mapping.restore(duplicate)=='Exampletown'
+
+
+def test_output_type_recovery_preserves_masking_without_input_privileges(environment,monkeypatch):
+    guard,agent,config=environment
+    pipeline=guard.PayloadFilter(agent,config,False)
+    token=pipeline.mapping.token('PERSON','Anna Weber')
+    changed=token.replace('_PERSON_', '_ORGANISATION_')
+    # This is not a registered incoming token and must pass normal detection.
+    scanned=[]
+    monkeypatch.setattr(pipeline.filter,'filter',lambda text:scanned.append(text) or SimpleNamespace(detections=[]))
+    assert pipeline.text(changed)==changed
+    assert scanned==[changed]
+    assert pipeline.mapping.restore(changed)==changed
+    tool=pipeline.mapping.token('PERSON','browser')
+    changed_tool=tool.replace('_PERSON_', '_ORGANISATION_')
+    assert pipeline.value({'tool_name':changed_tool})['tool_name']==changed_tool
+    output=pipeline.for_output()
+    assert output.text(changed)==token
+    assert 'Anna Weber' not in output.text(changed)
+    assert output.value({'answer':changed,'email':'anna@example.com'})['answer']==token
+    assert 'anna@example.com' not in str(output.value({'email':'anna@example.com'}))
+    with pytest.raises(ValueError):output.text('password="LongSyntheticPassword999"')
+
+
+@pytest.mark.parametrize('with_messages',[True,False])
+def test_exact_token_guidance_applies_from_first_turn(environment,with_messages):
+    guard,agent,config=environment
+    import models
+    from langchain_core.messages import HumanMessage
+    captured=[]
+    class Forwarding(models.LiteLLMChatWrapper):
+        async def unified_call(self,*args,**kwargs):
+            captured.append(kwargs);return 'READY',''
+    data={'result':Forwarding(model='synthetic',provider='openai')};guard.bind(data,agent)
+    arguments={'messages':[HumanMessage(content='hello')]} if with_messages else {'user_message':'hello'}
+    asyncio.run(data['result'].unified_call(**arguments))
+    guidance=captured[0]['messages'][0].content if with_messages else captured[0]['system_message']
+    assert 'byte for byte' in guidance
+    assert 'Never rename, reclassify or invent' in guidance
+    config['pii_filter']['enabled']=False
+    captured.clear()
+    asyncio.run(data['result'].unified_call(**arguments))
+    assert 'byte for byte' not in str(captured)
+
+
+
+def test_authenticated_display_batches_recovery_without_changing_canonical_history(environment,monkeypatch):
+    guard,agent,config=environment
+    from usr.plugins.local_privacy_guard.api import display
+    mapping=guard.mapping_for(agent)
+    token=mapping.token('PERSON','Anna Weber')
+    changed=token.replace('_PERSON_', '_DATUM_')
+    monkeypatch.setattr(display,'owner_and_config',lambda a:(agent,config))
+    monkeypatch.setattr(display,'mapping_for',lambda a:mapping)
+    before=mapping.metrics['sql_statements']
+    originals=[changed]*500
+    result=asyncio.run(display.Display(None,None).process({'context_id':agent.context.id,'texts':originals},None))
+    assert result['texts']==['Anna Weber']*500
+    assert originals==[changed]*500
+    assert mapping.restore(changed)==changed  # normal protocol decoding stays exact
+    assert mapping.metrics['sql_statements']-before<10
+    result=asyncio.run(display.Display(None,None).process({'context_id':'unknown-context','texts':[changed]},None))
+    assert result['texts']==[changed]
+
+
+def test_log_only_output_does_not_rewrite_changed_types(environment):
+    guard,agent,config=environment
+    config['pii_filter']['action']='log_only'
+    pipeline=guard.PayloadFilter(agent,config,False)
+    token=pipeline.mapping.token('PERSON','Anna Weber')
+    changed=token.replace('_PERSON_', '_ORT_')
+    assert pipeline.for_output().text(changed)==changed

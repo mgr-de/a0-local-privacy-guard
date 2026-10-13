@@ -170,6 +170,9 @@ class PayloadFilter:
     def for_output(self):
         # Refresh known input tokens while retaining the admitted PII mode.
         result=PayloadFilter(self.agent,self.config,False,_mapping=self.mapping)
+        from usr.plugins.local_privacy_guard.helpers.mapping import TokenResolver
+        if result.settings.get('enabled', True) and result.settings.get('action', 'redact') != 'log_only':
+            result._output_tokens = TokenResolver(result.mapping.namespace, result.snapshot[1])
         result.known_secrets=list(dict.fromkeys([*self.known_secrets,*result.known_secrets]))
         return result
 
@@ -183,6 +186,8 @@ class PayloadFilter:
     def text(self, text, *, code_hint=''):
         self.blocks+=1
         check(text, self.known_secrets)
+        if hasattr(self, '_output_tokens'):
+            text = self._output_tokens.canonicalize(text)
         trusted=isinstance(text,_CheckedText) and getattr(text,'_proof',None)==(_seal,self.mapping.namespace,self.signature,fingerprint(text))
         if not self.settings.get("enabled", True):
             return text
@@ -363,9 +368,13 @@ def prepare(wrapper, args, kwargs, method, *, _with_pipeline=False):
             if key in bound.arguments:
                 bound.arguments[key] = pipeline.value(bound.arguments[key])
         messages=bound.arguments.get("messages")
-        if pipeline.settings.get('enabled',True) and messages and any("_V" in token for token,_,_ in pipeline.snapshot[1]):
+        if pipeline.settings.get('enabled',True):
             from langchain_core.messages import SystemMessage
-            messages.insert(0,SystemMessage(content="Privacy placeholder tokens sharing a namespace, type and numeric ID denote the same identity. A trailing _V number only preserves a spelling or short-name variant. Preserve exact tokens in replies."))
+            guidance = "Privacy placeholders [LPG_...] represent private values. Copy every placeholder byte for byte, including its namespace, type, numeric ID and optional _V variant. Never rename, reclassify or invent placeholders. Tokens with the same namespace, type and numeric ID denote the same identity; _V preserves spelling variants. Use a placeholder only for the value it represents; ask for missing facts."
+            if messages:
+                messages.insert(0,SystemMessage(content=guidance))
+            else:
+                bound.arguments['system_message'] = guidance + "\n\n" + bound.arguments.get('system_message', '')
         extras = bound.arguments.get("kwargs", {})
         for key in CONTENT_OPTIONS:
             if key in extras or key in wrapper._privacy_inner.kwargs:

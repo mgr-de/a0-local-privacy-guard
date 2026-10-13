@@ -13,6 +13,53 @@ from pathlib import Path
 TOKEN = re.compile(r"\[LPG_[a-f0-9]{16}_[A-Z_]+_\d+(?:_V\d+)?\]")
 
 
+_TOKEN_PARTS = re.compile(r"\[LPG_([a-f0-9]{16})_[A-Z_]+_(\d+)(?:_V(\d+))?\]")
+
+
+class TokenResolver:
+    """Resolve a changed type only when namespace, ID and variant are unique.
+
+    This is a local display/output recovery mechanism, never an input proof.
+    Numeric IDs are not enough when a historical database is ambiguous.
+    """
+    def __init__(self, namespace, rows):
+        self.known = {token: original for token, _, original in rows}
+        self.identities = {}
+        self.namespace = namespace
+        for token in self.known:
+            match = _TOKEN_PARTS.fullmatch(token)
+            if match and match[1] == namespace:
+                key = (match[2], match[3])
+                candidates = self.identities.setdefault(key, set())
+                candidates.add(token)
+
+    def canonical(self, token):
+        if token in self.known:
+            return token
+        match = _TOKEN_PARTS.fullmatch(token)
+        if not match or match[1] != self.namespace:
+            return token
+        candidates = self.identities.get((match[2], match[3]), ())
+        return next(iter(candidates)) if len(candidates) == 1 else token
+
+    def canonicalize(self, text):
+        return TOKEN.sub(lambda match: self.canonical(match.group()), text)
+
+    def restore(self, text, *, recover_types=False):
+        # Recover nested entries from older builds; bound recursion and cycles.
+        seen = set()
+        for _ in range(16):
+            if text in seen:
+                break
+            seen.add(text)
+            restored = TOKEN.sub(lambda match: self.known.get(
+                (self.canonical(match.group()) if recover_types else match.group()), match.group()), text)
+            if restored == text:
+                break
+            text = restored
+        return text
+
+
 _live = weakref.WeakSet()
 _lock = threading.RLock()
 
@@ -95,15 +142,9 @@ class Mapping:
     def token(self, kind, value, canonical=None):
         return self.token_many([(kind,value,canonical)])[0]
 
-    def restore(self, text):
-        known = {token: original for token, _, original in self.entries()}
-        # Recover nested entries made by older development builds; new filters
-        # reject overlaps with existing tokens. Bound recursion and cycles.
-        seen=set()
-        for _ in range(16):
-            if text in seen:break
-            seen.add(text)
-            restored=TOKEN.sub(lambda match: known.get(match.group(), match.group()), text)
-            if restored==text:break
-            text=restored
-        return text
+    def restore_many(self, texts, *, recover_types=False):
+        resolver = TokenResolver(self.namespace, self.snapshot()[1])
+        return [resolver.restore(text, recover_types=recover_types) for text in texts]
+
+    def restore(self, text, *, recover_types=False):
+        return self.restore_many([text], recover_types=recover_types)[0]
