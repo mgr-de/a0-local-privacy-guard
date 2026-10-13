@@ -9,3 +9,5 @@ Historical alternative-detector adapters, long comparisons and their dependent s
 Do not run paid transport scripts without a separate established budget. The single-detector release is tested with local Ollama and simulated transports only. Existing language model packages and mappings are not removed during plugin uninstall.
 
 Developer profile exceptions (1.9.0/manager 0.3.0) are tested in the native offline integration suite; this detector benchmark does not grant exemptions or change the default detector or routes. It makes no paid Requesty calls.
+
+Manager 0.3.1 recommends interface authentication strongly while permitting local use without configured login; this does not alter detector benchmarks or grant exceptions automatically.
