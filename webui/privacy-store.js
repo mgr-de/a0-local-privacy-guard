@@ -13,8 +13,8 @@ export const store = createStore("localPrivacy", {
             if(epoch!==this.epoch)return;
             if(!result.ok)throw new Error(result.error);
             this.confirmMappingDeletion=false;
-            toastFrontendSuccess('Local mappings deleted for this chat. Old placeholders cannot be restored.','Local Privacy Guard');
-        }catch(e){if(epoch===this.epoch)toastFrontendError(e.message,'Local Privacy Guard');}
+            toastFrontendSuccess('Local mappings deleted for this chat. Old placeholders cannot be restored.','A0 Privacy Suite - Local Guard');
+        }catch(e){if(epoch===this.epoch)toastFrontendError(e.message,'A0 Privacy Suite - Local Guard');}
         finally{if(epoch===this.epoch)this.busy=false;}
     },
     busy: false, result: null, checkedConfig: "", checkedAt: "", error: "", epoch: 0,

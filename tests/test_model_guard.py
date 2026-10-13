@@ -448,7 +448,7 @@ def test_native_disabled_child_plugins_still_enforce_parent_without_changing_ind
     async def direct_tool_call():
         await extension.call_extensions_async('tool_execute_before',child,tool_name='vision_load',tool_args={})
         try:
-            with pytest.raises(PolicyError,match='bypasses Requesty'):
+            with pytest.raises(PolicyError,match='bypasses the required Requesty connection'):
                 await direct.unified_call(user_message='anna@example.com')
         finally:await extension.call_extensions_async('tool_execute_after',child)
     asyncio.run(direct_tool_call())
